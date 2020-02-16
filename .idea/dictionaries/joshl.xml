@@ -6,6 +6,7 @@
       <w>drivetrain</w>
       <w>feedforward</w>
       <w>odometry</w>
+      <w>omni</w>
     </words>
   </dictionary>
 </component>
