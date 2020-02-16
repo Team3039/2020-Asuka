@@ -5,7 +5,7 @@ import frc.team3039.robot.subsystems.Hopper;
 
 public class OverrideIndexing extends Command {
 
-    private Hopper mHopper = RobotContainer.mHooper;
+    private Hopper hopper = RobotContainer.hopper;
     private boolean overrideIndexing;
 
     public OverrideIndexing(boolean overrideIndexing){
@@ -14,7 +14,7 @@ public class OverrideIndexing extends Command {
 
     @Override
     public void initialize() {
-        mHopper.overrideIndexing(overrideIndexing);
+        hopper.setOverrideStatus(overrideIndexing);
     }
 
     @Override

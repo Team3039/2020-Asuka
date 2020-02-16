@@ -2,20 +2,23 @@ package frc.team3039.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public abstract class Command extends CommandBase {
+public class Command extends CommandBase {
 
     public Command(){}
 
     @Override
-    public abstract void initialize();
+    public void initialize() {
+    }
 
     @Override
-    public abstract void execute();
+    public void execute() {}
 
     @Override
-    public abstract boolean isFinished();
+    public boolean isFinished() {
+        return true;
+    }
 
     @Override
-    public abstract void end(boolean interrupted);
+    public void end(boolean interrupted) {}
 
 }

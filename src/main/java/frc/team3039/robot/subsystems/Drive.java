@@ -3,7 +3,6 @@ package frc.team3039.robot.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,20 +13,20 @@ import frc.team3039.robot.Constants;
 import frc.team3039.robot.RobotContainer;
 import frc.team3039.robot.RobotMap;
 import frc.team3039.robot.RobotState;
+import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 import frc.team3039.robot.planners.DriveMotionPlanner;
 import frc.team3039.utility.DriveSignal;
 import frc.team3039.utility.ReflectingCSVWriter;
 import frc.team3039.utility.lib.drivers.TalonFXFactory;
 import frc.team3039.utility.lib.drivers.TalonSRXEncoder;
-import frc.team3039.utility.lib.drivers.TalonSRXFactory;
 import frc.team3039.utility.lib.geometry.Pose2d;
 import frc.team3039.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3039.utility.lib.geometry.Rotation2d;
 import frc.team3039.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3039.utility.lib.trajectory.timing.TimedState;
 
-public class Drive extends Subsystem implements Loop{
+public class Drive extends Subsystem implements Loop {
 	private static Drive mInstance = new Drive();
 
 	public enum DriveControlMode {
@@ -36,12 +35,9 @@ public class Drive extends Subsystem implements Loop{
 
 	private static final int kVelocityControlSlot = 0;
 	private static final double DRIVE_ENCODER_PPR = 2048.0;
-//	private static final double ENCODER_TICKS_TO_INCHES = DRIVE_ENCODER_PPR/
-//			(Constants.kDriveWheelDiameterInches * Math.PI);
 
 	// Motor Controller Setup
 	private TalonFX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
-	private TalonSRX mPigeonTalon;
 
 	private DriveControlMode mDriveControlMode = DriveControlMode.JOYSTICK;
 
@@ -97,8 +93,9 @@ public class Drive extends Subsystem implements Loop{
 				}
 			}
 		}
+	
 
-	private void configureMaster(TalonFX talon, boolean left) { //TODO
+	private void configureMaster(TalonFX talon, boolean left) {
 		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
 		final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 100);
 		if (sensorPresent != ErrorCode.OK) {
@@ -113,33 +110,31 @@ public class Drive extends Subsystem implements Loop{
 		talon.configNeutralDeadband(0.04, 0);
 	}
 
-	private Drive() {
+	public Drive() {
 		try {
 			mPeriodicIO = new PeriodicIO();
 
 			mLeftMaster =  TalonFXFactory.createDefaultTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID);
 			configureMaster(mLeftMaster, true);
 			mLeftMaster.setInverted(TalonFXInvertType.Clockwise);
+			mLeftMaster.configOpenloopRamp(.5);
 
 			mRightMaster = TalonFXFactory.createDefaultTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
 			configureMaster(mRightMaster, false);
 			mRightMaster.setInverted(TalonFXInvertType.CounterClockwise);
+			mRightMaster.configOpenloopRamp(.5);
 
 			mLeftSlave = TalonFXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID,
 					RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID);
-			mLeftSlave.setInverted(InvertType.FollowMaster);
+			mLeftSlave.setInverted(TalonFXInvertType.FollowMaster);
 
 			mRightSlave = TalonFXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID,
-					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
-			mRightSlave.setInverted(InvertType.FollowMaster);
-
-			mPigeonTalon = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.PIGEON_IMU_TALON,
-					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
-
+					RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID);
+			mRightSlave.setInverted(TalonFXInvertType.FollowMaster);
 
 			reloadGains();
 
-			gyroPigeon = new PigeonIMU(mPigeonTalon);
+			gyroPigeon = new PigeonIMU(1);
 			gyroPigeon.configFactoryDefault();
 			mRightSlave.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
@@ -160,6 +155,7 @@ public class Drive extends Subsystem implements Loop{
 		}
 		return mInstance;
 	}
+	
 
 	// Encoder and Gryo Setup
 	private static double rotationsToInches(double rotations) {
@@ -474,25 +470,27 @@ public class Drive extends Subsystem implements Loop{
 		setFinished(false);
 	}
 
+	public void driveWithJoysticks() {
+		//Tele-Op Driving
+		//Each Motor is Set to Brake Mode, the motor speeds are set in an Arcade Drive fashion
+		double y = RobotContainer.getInstance().getDriverController().getLeftYAxis() * .9;
+		double rot = -1 * RobotContainer.getInstance().getDriverController().getRightXAxis() * .35;
 
-	public synchronized void driveWithJoysticks() {
-		double STICK_DEADZONE = .05;
-		double y = -1 * RobotContainer.getInstance().getDriverController().getLeftYAxis() * .9;
-		double rot =  -1 * RobotContainer.getInstance().getDriverController().getRightXAxis() * .30;
-
-		//Calculated Outputs (Limits Output to 12V)12312312312312312312312312312311123
-		double leftOutput = y - rot;
-		double rightOutput = rot + y;
+		//Calculated Outputs (Limits Output to 12V)
+		double leftOutput = y + rot;
+		double rightOutput = rot - y;
 
 		//Assigns Each Motor's Power
-		if(Math.abs(RobotContainer.getInstance().getDriverController().getLeftYAxis()) > STICK_DEADZONE ||
-				Math.abs(RobotContainer.getInstance().getDriverController().getRightXAxis()) > STICK_DEADZONE) {
+		double STICK_DEADZONE = .02;
+		if(RobotContainer.getInstance().getDriverController().getLeftYAxis() > STICK_DEADZONE ||
+				RobotContainer.getInstance().getDriverController().getRightXAxis() > STICK_DEADZONE){
 			mLeftMaster.set(ControlMode.PercentOutput, leftOutput);
 			mRightMaster.set(ControlMode.PercentOutput, rightOutput);
 		}else{
-			mLeftMaster.set(ControlMode.PercentOutput, 0.0);
-			mRightMaster.set(ControlMode.PercentOutput, 0.0);
+			mLeftMaster.set(ControlMode.PercentOutput, 0);
+			mRightMaster.set(ControlMode.PercentOutput, 0);
 		}
+
 	}
 
 	public synchronized  void setBrakeMode(boolean setBrake) {

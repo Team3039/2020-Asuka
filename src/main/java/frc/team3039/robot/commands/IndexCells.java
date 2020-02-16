@@ -1,14 +1,14 @@
 package frc.team3039.robot.commands;
 
-import frc.team3039.robot.RobotContainer;
-import frc.team3039.robot.subsystems.Hopper;
+import static frc.team3039.robot.RobotContainer.hopper;
+
+import frc.team3039.robot.subsystems.Hopper.HopperControlMode;
 
 public class IndexCells extends ExtraTimeoutCommand {
 
-    private Hopper mHopper = RobotContainer.mHooper;
     private boolean isBallsLoaded;
     private int ballsLoaded;
-    private boolean isOverrode = mHopper.isIndexOverrode();
+    private boolean isOverrode = hopper.isOverrode;
 
     public IndexCells(){}
 
@@ -23,16 +23,17 @@ public class IndexCells extends ExtraTimeoutCommand {
     @Override
     public void execute() {
         while (ballsLoaded != 2) {
-            if (mHopper.getRevolverCurrent() < mHopper.kRevolverSpikeCurrentThreshold) {
-                mHopper.setControlMode(Hopper.HopperControlMode.INDEXING);
-                if (mHopper.getFeederOmniCurrent() > mHopper.kOmniCurrentSpikeThreshold) {
+            if (hopper.getFeederOmniCurrent() < hopper.HOPPER_CURRENT_INDEX_THRESHOLD) {
+                hopper.setControlMode(HopperControlMode.LOADING);
+                if (hopper.getFeederOmniCurrent() > hopper.HOPPER_CURRENT_INDEX_THRESHOLD) {
                     ballsLoaded++;
                     startExtraOneTimeout(.5);
                 }
                 resetExtraOneTimer();
-            }else{
+            }
+            else{
                 startExtraTwoTimeout(.75);
-                mHopper.setControlMode(Hopper.HopperControlMode.UNJAMMING);
+                hopper.setControlMode(HopperControlMode.UNJAMMING);
 
             }
             resetExtraTwoTimer();
@@ -47,8 +48,8 @@ public class IndexCells extends ExtraTimeoutCommand {
 
     @Override
     public void end() {
-        mHopper.setControlMode(Hopper.HopperControlMode.OPEN_LOOP);
-        mHopper.stopHopper();
+        hopper.setControlMode(HopperControlMode.OPEN_LOOP);
+        hopper.stopHopper();
         ballsLoaded = 0;
 
     }

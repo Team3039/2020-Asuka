@@ -1,7 +1,13 @@
 package frc.team3039.utility.lib.drivers;
 
 import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlFrame;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 /**
@@ -61,22 +67,6 @@ public class TalonSRXFactory {
         // Create a CANTalon with the default (out of the box) configuration.
         public static TalonSRX createDefaultTalon(int id) {
                 return createTalon(id, kDefaultConfiguration);
-        }
-
-        public static TalonSRXEncoder createTalonEncoder(int id, double encoderTicksToWorld,
-                                                         FeedbackDevice feedbackDevice) {
-                TalonSRXEncoder talon = new TalonSRXEncoder(id, encoderTicksToWorld, feedbackDevice);
-                talon.configFactoryDefault();
-                /// initializeTalon(talon, kDefaultConfiguration);
-                return talon;
-        }
-
-        public static TalonSRXEncoder createTalonEncoder(int id, double encoderTicksToWorld, boolean isRight,
-                                                         FeedbackDevice feedbackDevice) {
-                TalonSRXEncoder talon = new TalonSRXEncoder(id, encoderTicksToWorld, isRight, feedbackDevice);
-                talon.configFactoryDefault();
-                /// initializeTalon(talon, kDefaultConfiguration);
-                return talon;
         }
 
         public static TalonSRX createPermanentSlaveTalon(int id, int master_id) {

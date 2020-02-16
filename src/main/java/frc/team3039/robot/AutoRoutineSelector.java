@@ -24,7 +24,7 @@ public class AutoRoutineSelector {
     }
 
     enum AutoChooser {
-        DO_NOTHING, TRENCH, STEAL, RENDEZVOUS_TRENCH, SAFE, TEST, TEST_CONTROL_FLOW, DRIVE_CHARACTERIZATION_STRAIGHT,
+        DO_NOTHING, TRENCH, STEAL, RENDEZVOUS, SAFE, TEST, TEST_CONTROL_FLOW, DRIVE_CHARACTERIZATION_STRAIGHT,
         DRIVE_CHARACTERIZATION_TURN
     }
 
@@ -56,10 +56,10 @@ public class AutoRoutineSelector {
         mAutoChooser.setDefaultOption("Do Nothing", AutoChooser.DO_NOTHING);
 
         mAutoChooser.addOption("Trench 8 Ball Auto", AutoChooser.TRENCH);
-        mAutoChooser.addOption("Trench Steal 5 Ball Auto", AutoChooser.STEAL);
+        mAutoChooser.addOption("Trench Steal Ball Auto", AutoChooser.STEAL);
 
-        mAutoChooser.addOption("Rendezvous/Trench 10 Ball Auto", AutoChooser.RENDEZVOUS_TRENCH);
-        mAutoChooser.addOption("Safe 3 Ball Auto", AutoChooser.SAFE);
+        mAutoChooser.addOption("Rendezvous 5 Ball Auto", AutoChooser.RENDEZVOUS);
+        mAutoChooser.addOption("Safe Ball Auto", AutoChooser.SAFE);
 
         mAutoChooser.addOption("Test", AutoChooser.TEST);
         mAutoChooser.addOption("Test control flow", AutoChooser.TEST_CONTROL_FLOW);
@@ -91,8 +91,8 @@ public class AutoRoutineSelector {
             return Optional.of(new AutoDoNothing());
         case TRENCH:
             return Optional.of(new AutoTrench8Ball());
-        case RENDEZVOUS_TRENCH:
-            return Optional.of(new AutoRendezvousTrench10Ball());
+        // case RENDEZVOUS:
+        //     return Optional.of(new AutoRendezvous5Ball());
         case SAFE:
             return Optional.of(new AutoSafe());
         case STEAL:

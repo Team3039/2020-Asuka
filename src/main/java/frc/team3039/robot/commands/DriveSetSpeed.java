@@ -2,7 +2,6 @@ package frc.team3039.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team3039.robot.RobotContainer;
-import frc.team3039.robot.subsystems.Drive;
 
 public class DriveSetSpeed extends CommandBase {
     double speed;
@@ -13,7 +12,7 @@ public class DriveSetSpeed extends CommandBase {
 
     @Override
     public void initialize() {
-        RobotContainer.mDrive.setSpeed(speed);
+        RobotContainer.drive.setSpeed(speed);
     }
 
     @Override

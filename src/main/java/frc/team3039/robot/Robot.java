@@ -1,17 +1,18 @@
 package frc.team3039.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.team3039.robot.AutoRoutineSelector.DesiredMode;
 import frc.team3039.robot.auto.AutoModeExecutor;
 import frc.team3039.robot.auto.AutoRoutineBase;
 import frc.team3039.robot.loops.Looper;
 import frc.team3039.robot.paths.TrajectoryGenerator;
 import frc.team3039.robot.subsystems.Drive;
-import frc.team3039.robot.subsystems.Hopper;
 import frc.team3039.robot.subsystems.RobotStateEstimator;
 import frc.team3039.utility.CrashTracker;
 import frc.team3039.utility.lib.geometry.Pose2d;
@@ -21,6 +22,14 @@ import java.util.Optional;
 
 public class Robot extends TimedRobot {
 	RobotContainer mRobotContainer;
+
+   //Vision Information
+   public static double targetValid; //Whether the limelight has any valid targets (0 or 1)
+   public static double targetX; //Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+   public static double targetY; //Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
+   public static double targetArea; //Target Area (0% of image to 100% of image)
+   public static double targetSkew; //Skew or rotation (-90 degrees to 0 degrees)
+
 
 	private Looper mEnabledLooper = new Looper();
 	private Looper mDisabledLooper = new Looper();
@@ -32,15 +41,13 @@ public class Robot extends TimedRobot {
 
 	// Declare subsystems
 	public static final Drive mDrive = Drive.getInstance();
-	public static final Hopper mHopper = Hopper.getInstance();
 	public static final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
 	private RobotState mRobotState = RobotState.getInstance();
 
 	private final SubsystemManager mSubsystemManager = new SubsystemManager(
 			Arrays.asList(
 					RobotStateEstimator.getInstance(),
-					Drive.getInstance(),
-					Hopper.getInstance()
+					Drive.getInstance()
 			)
 	);
 
@@ -52,10 +59,11 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		mRobotContainer = new RobotContainer();
-
+		SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
+		RobotContainer.hopper.isLoading = false;
+		RobotContainer.hopper.isJammed = false;
 
 		mEnabledLooper.register(mDrive);
-		mEnabledLooper.register(mHopper);
 
 		RobotStateEstimator.getInstance().registerEnabledLoops(mEnabledLooper);
 		mTrajectoryGenerator.generateTrajectories();
@@ -68,7 +76,15 @@ public class Robot extends TimedRobot {
 	}
 
 	// Called every loop for all modes
-	public void robotPeriodic() {}
+	public void robotPeriodic() {
+		outputToSmartDashboard();
+		targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+		targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+		targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+		targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+		targetSkew = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ts").getDouble(0);
+		CommandScheduler.getInstance().run();
+	}
 
 	// Called once when is disabled
 	@Override
@@ -82,8 +98,9 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
+			// mInfrastructure.setIsDuringAuto(true);
 			mDrive.zeroSensors();
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			// RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			// Reset all auto mode state.
 			mAutoRoutineSelector.reset();
@@ -118,6 +135,7 @@ public class Robot extends TimedRobot {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
+		RobotContainer.drive.resetEncoders();
 	}
 
 // Called once at the start of auto
@@ -169,14 +187,13 @@ public class Robot extends TimedRobot {
 
 		mEnabledLooper.start();
 		mDrive.endGyroCalibration();
-
+		RobotContainer.shooter.resetShooterPosition();
 	}
 
 	// Called constantly through teleOp
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		outputToSmartDashboard();
 	}
 
 	public double getMatchTime() {
@@ -188,8 +205,6 @@ public class Robot extends TimedRobot {
 		mRobotStateEstimator.outputTelemetry(mOperationMode);
 		mAutoRoutineSelector.outputTelemetry();
 		mRobotState.outputToSmartDashboard();
-
-
 	}
 }
 
