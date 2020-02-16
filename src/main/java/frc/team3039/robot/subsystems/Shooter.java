@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3039.robot.AutoRoutineSelector.DesiredMode;
 import frc.team3039.robot.RobotMap;
+import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 
 import static frc.team3039.robot.Constants.*;
@@ -14,7 +15,7 @@ import static frc.team3039.robot.Constants.*;
 /**
  * The Shooter launches "Power Cells" from the robot to the "Power Port"
  */
-public class Shooter extends Subsystem implements Loop {
+public class Shooter extends Subsystem {
     private static Shooter mInstance = new Shooter();
 
     public TalonFX shooterA,shooterB;
@@ -28,34 +29,42 @@ public class Shooter extends Subsystem implements Loop {
 
     public ShooterControlMode mShooterControlMode = ShooterControlMode.OPEN_LOOP;
 
-    @Override
-    public void onStart(double timestamp) {
-    }
+    private Loop mLoop  = new Loop() {
 
-    @Override
-    public void onStop(double timestamp) {
-    }
+        @Override
+        public void onStart(double timestamp) {
+        }
 
-    @Override
-    public void onLoop(double timestamp) {
-        synchronized (Shooter.this) {
-            switch (getControlMode()) {
-                case OPEN_LOOP:
-                    break;
-                case CALCULATE:
-                    System.out.println("Calculate Target RPM based on vision values and set speed");
-                    break;
-                case HOLD:
-                    System.out.println("Once desired RPM is reached set KF value using formula and hold the RPM");
-                    break;
-                case SHOOT:
-                    System.out.println("Use the Kf value calculated to shoot");
-                    break;
-                default:
-                    System.out.println("Unknown hopper control mode");
-                    break;
+        @Override
+        public void onStop(double timestamp) {
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
+            synchronized (Shooter.this) {
+                switch (getControlMode()) {
+                    case OPEN_LOOP:
+                        break;
+                    case CALCULATE:
+                        System.out.println("Calculate Target RPM based on vision values and set speed");
+                        break;
+                    case HOLD:
+                        System.out.println("Once desired RPM is reached set KF value using formula and hold the RPM");
+                        break;
+                    case SHOOT:
+                        System.out.println("Use the Kf value calculated to shoot");
+                        break;
+                    default:
+                        System.out.println("Unknown hopper control mode");
+                        break;
+                }
             }
         }
+    };
+
+    @Override
+    public void registerEnabledLoops(ILooper in) {
+        in.register(mLoop);
     }
 
     public synchronized ShooterControlMode getControlMode() {

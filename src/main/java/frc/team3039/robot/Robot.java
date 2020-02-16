@@ -38,15 +38,6 @@ public class Robot extends TimedRobot {
 	private AutoModeExecutor mAutoModeExecutor;
 	private DesiredMode mOperationMode;
 
-	// Declare subsystems
-	public static final Drive mDrive = Drive.getInstance();
-	public static final Hopper mHopper = Hopper.getInstance();
-	public static final Shooter mShooter = Shooter.getInstance();
-	public static final Turret mTurret = Turret.getInstance();
-	public static final ControlPanel mControlPanel = ControlPanel.getInstance();
-	public static final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
-	private RobotState mRobotState = RobotState.getInstance();
-
 	private final SubsystemManager mSubsystemManager = new SubsystemManager(
 			Arrays.asList(
 					RobotStateEstimator.getInstance(),
@@ -61,41 +52,45 @@ public class Robot extends TimedRobot {
 			)
 	);
 
+	// Declare subsystems
+	public static final Drive mDrive = Drive.getInstance();
+	public static final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
+	private RobotState mRobotState = RobotState.getInstance();
+
 	public void zeroAllSensors() {
 		mSubsystemManager.zeroSensors();
+	}
+
+	public Robot(){
+		CrashTracker.logRobotConstruction();
 	}
 
 	// Called at the start of connection
 	@Override
 	public void robotInit() {
-		mRobotContainer = new RobotContainer();
-		SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
+		try {
+			mRobotContainer = new RobotContainer();
 
-		mEnabledLooper.register(mDrive);
-		mEnabledLooper.register(mHopper);
-		mEnabledLooper.register(mShooter);
-		mEnabledLooper.register(mControlPanel);
-		mEnabledLooper.register(mTurret);
+			CrashTracker.logRobotInit();
 
+			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-		RobotStateEstimator.getInstance().registerEnabledLoops(mEnabledLooper);
-		mTrajectoryGenerator.generateTrajectories();
+			mTrajectoryGenerator.generateTrajectories();
 
-		LiveWindow.setEnabled(false);
-		LiveWindow.disableAllTelemetry();
+			mAutoRoutineSelector.updateModeCreator();
 
-		zeroAllSensors();
+			zeroAllSensors();
 
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
 	}
 
 	// Called every loop for all modes
 	public void robotPeriodic() {
 		outputToSmartDashboard();
-		targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-		targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-		targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-		targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-		targetSkew = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ts").getDouble(0);
 		CommandScheduler.getInstance().run();
 	}
 
@@ -111,7 +106,7 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
-			mDrive.zeroSensors();
+			zeroAllSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			// Reset all auto mode state.
@@ -122,7 +117,6 @@ public class Robot extends TimedRobot {
 			mDisabledLooper.start();
 
 			zeroAllSensors();
-
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -136,8 +130,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putString("Match Cycle", "DISABLED");
 
 		try {
-			mOperationMode = mAutoRoutineSelector.getDesiredMode();
 			outputToSmartDashboard();
+			mOperationMode = mAutoRoutineSelector.getDesiredMode();
 			mAutoRoutineSelector.updateModeCreator();
 
 			Optional<AutoRoutineBase> autoMode = mAutoRoutineSelector.getAutoMode();
@@ -197,9 +191,11 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
+		RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+		mEnabledLooper.start();
+
 		mDrive.setControlMode(Drive.DriveControlMode.JOYSTICK);
 
-		mEnabledLooper.start();
 		mDrive.endGyroCalibration();
 
 	}
@@ -208,6 +204,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+
+		try {
+			outputToSmartDashboard();
+
+		}catch (Throwable t){
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
 	}
 
 	public double getMatchTime() {
@@ -219,6 +223,11 @@ public class Robot extends TimedRobot {
 		mRobotStateEstimator.outputTelemetry(mOperationMode);
 		mAutoRoutineSelector.outputTelemetry();
 		mRobotState.outputToSmartDashboard();
+		targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+		targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+		targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+		targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+		targetSkew = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ts").getDouble(0);
 	}
 }
 

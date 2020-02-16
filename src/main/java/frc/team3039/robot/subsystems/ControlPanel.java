@@ -22,9 +22,10 @@ import frc.team3039.robot.AutoRoutineSelector;
 import frc.team3039.robot.RobotContainer;
 import frc.team3039.robot.RobotMap;
 import frc.team3039.robot.controller.GameController;
+import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 
-public class ControlPanel extends Subsystem implements Loop {
+public class ControlPanel extends Subsystem {
   private static ControlPanel mInstance = new ControlPanel();
 
   public Solenoid deployer;
@@ -50,34 +51,42 @@ public class ControlPanel extends Subsystem implements Loop {
 
   public ControlPanelControlMode mControlPanelControlMode = ControlPanelControlMode.OPEN_LOOP;
 
-  @Override
-  public void onStart(double timestamp) {
+  private Loop mLoop = new Loop() {
 
-  }
+    @Override
+    public void onStart(double timestamp) {
 
-  @Override
-  public void onStop(double timestamp) {
-  }
+    }
 
-  @Override
-  public void onLoop(double timestamp) {
-    synchronized (ControlPanel.this) {
-      switch (getControlMode()) {
-        case OPEN_LOOP:
-          break;
-        case JOYSTICK:
-          manualControl(RobotContainer.getInstance().getOperatorController());
-          break;
-        case POSITION:
-          getColor();
-          break;
-        case ROTATION:
-          System.out.println("Rotation control");
-          break;
-        default:
-          break;
+    @Override
+    public void onStop(double timestamp) {
+    }
+
+    @Override
+    public void onLoop(double timestamp) {
+      synchronized (ControlPanel.this) {
+        switch (getControlMode()) {
+          case OPEN_LOOP:
+            break;
+          case JOYSTICK:
+            manualControl(RobotContainer.getInstance().getOperatorController());
+            break;
+          case POSITION:
+            getColor();
+            break;
+          case ROTATION:
+            System.out.println("Rotation control");
+            break;
+          default:
+            break;
+        }
       }
     }
+  };
+
+  @Override
+  public void registerEnabledLoops(ILooper in) {
+    in.register(mLoop);
   }
 
   public synchronized ControlPanelControlMode getControlMode() {

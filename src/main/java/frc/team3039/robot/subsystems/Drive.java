@@ -14,6 +14,7 @@ import frc.team3039.robot.Constants;
 import frc.team3039.robot.RobotContainer;
 import frc.team3039.robot.RobotMap;
 import frc.team3039.robot.RobotState;
+import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 import frc.team3039.robot.planners.DriveMotionPlanner;
 import frc.team3039.utility.DriveSignal;
@@ -27,7 +28,7 @@ import frc.team3039.utility.lib.geometry.Rotation2d;
 import frc.team3039.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3039.utility.lib.trajectory.timing.TimedState;
 
-public class Drive extends Subsystem implements Loop{
+public class Drive extends Subsystem {
 	private static Drive mInstance = new Drive();
 
 	public enum DriveControlMode {
@@ -61,41 +62,50 @@ public class Drive extends Subsystem implements Loop{
 	private boolean mOverrideTrajectory = false;
 	private boolean isFinished;
 
-	@Override
-	public void onStart(double timestamp) {
-		synchronized (Drive.this) {
-			setBrakeMode(false);
-		}
-	}
+	private Loop mLoop = new Loop() {
 
-	@Override
-	public void onStop(double timestamp) {
-	}
-
-	@Override
-	public void onLoop(double timestamp) {
-		synchronized (Drive.this) {
-			DriveControlMode currentControlMode = getControlMode();
-			if (currentControlMode == DriveControlMode.JOYSTICK) {
-				driveWithJoysticks();
-			} else if (!isFinished()) {
-//				readPeriodicInputs();
-				switch (currentControlMode) {
-					case PATH_FOLLOWING:
-						updatePathFollower();
-//					writePeriodicOutputs();
-						break;
-					case OPEN_LOOP:
-//					writePeriodicOutputs();
-						break;
-					default:
-						System.out.println("Unknown drive control mode: " + currentControlMode);
-						break;
-				}
-			} else {
-				// hold in current state
+		@Override
+		public void onStart(double timestamp) {
+			synchronized (Drive.this) {
+				setBrakeMode(false);
 			}
 		}
+
+		@Override
+		public void onStop(double timestamp) {
+			stopLogging();
+		}
+
+		@Override
+		public void onLoop(double timestamp) {
+			synchronized (Drive.this) {
+				DriveControlMode currentControlMode = getControlMode();
+				if (currentControlMode == DriveControlMode.JOYSTICK) {
+					driveWithJoysticks();
+				} else if (!isFinished()) {
+//				readPeriodicInputs();
+					switch (currentControlMode) {
+						case PATH_FOLLOWING:
+							updatePathFollower();
+//					writePeriodicOutputs();
+							break;
+						case OPEN_LOOP:
+//					writePeriodicOutputs();
+							break;
+						default:
+							System.out.println("Unknown drive control mode: " + currentControlMode);
+							break;
+					}
+				} else {
+					// hold in current state
+				}
+			}
+		}
+	};
+
+	@Override
+	public void registerEnabledLoops(ILooper in) {
+		in.register(mLoop);
 	}
 
 	private void configureMaster(TalonFX talon, boolean left) {
@@ -140,7 +150,6 @@ public class Drive extends Subsystem implements Loop{
 			reloadGains();
 
 			gyroPigeon = new PigeonIMU(mPigeonTalon);
-			gyroPigeon.configFactoryDefault();
 			mRightSlave.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
 			mMotionPlanner = new DriveMotionPlanner();

@@ -12,13 +12,14 @@ import static frc.team3039.robot.Constants.*;
 import frc.team3039.robot.AutoRoutineSelector;
 import frc.team3039.robot.Robot;
 import frc.team3039.robot.RobotMap;
+import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 
 /**
  * This device is responisble for the rotational control of the "Shooter" and the tracking of the 
  * retro-reflective target on the "Power Port"
  */
-public class Turret extends Subsystem implements Loop {
+public class Turret extends Subsystem {
   private static Turret mInstance = new Turret();
 
 
@@ -32,33 +33,41 @@ public class Turret extends Subsystem implements Loop {
 
   public TurretControlMode mTurretControlMode = TurretControlMode.OPEN_LOOP;
 
-  @Override
-  public void onStart(double timestamp) {
+  private final Loop mLoop = new Loop() {
 
-  }
+    @Override
+    public void onStart(double timestamp) {
 
-  @Override
-  public void onStop(double timestamp) {
-  }
+    }
 
-  @Override
-  public void onLoop(double timestamp) {
-    synchronized (Turret.this) {
-      switch (getControlMode()) {
-        case OPEN_LOOP:
-          break;
-        case TRACKING:
-          aim();
-          break;
-        case POSITION:
-          System.out.println("Set turret to specific angle");
-          break;
-        default:
-          System.out.println("Unknown turret control mode");
-          break;
+    @Override
+    public void onStop(double timestamp) {
+    }
+
+    @Override
+    public void onLoop(double timestamp) {
+      synchronized (Turret.this) {
+        switch (getControlMode()) {
+          case OPEN_LOOP:
+            break;
+          case TRACKING:
+            aim();
+            break;
+          case POSITION:
+            System.out.println("Set turret to specific angle");
+            break;
+          default:
+            System.out.println("Unknown turret control mode");
+            break;
+        }
       }
     }
-  }
+  };
+
+    @Override
+    public void registerEnabledLoops(ILooper in) {
+      in.register(mLoop);
+    }
 
   public synchronized TurretControlMode getControlMode() {
     return mTurretControlMode;
@@ -162,9 +171,9 @@ public class Turret extends Subsystem implements Loop {
       try {
         SmartDashboard.putNumber("Turret Position", getCurrentPosition());
         SmartDashboard.putNumber("target Y", getTargetY());
-        // double errorX = getTargetX() - getCurrentPosition();
-        // SmartDashboard.putNumber("Error", errorX);
-        // SmartDashboard.putNumber("TargetX", getTargetX())
+        double errorX = getTargetX() - getCurrentPosition();
+        SmartDashboard.putNumber("Error", errorX);
+        SmartDashboard.putNumber("TargetX", getTargetX());
       } catch (Exception e) {
         System.out.println("Desired Mode Error in Turret Subsystem");
       }

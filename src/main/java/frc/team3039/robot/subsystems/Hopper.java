@@ -7,9 +7,10 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3039.robot.AutoRoutineSelector.DesiredMode;
 import frc.team3039.robot.RobotMap;
+import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 
-public class Hopper extends Subsystem implements Loop {
+public class Hopper extends Subsystem  {
     private static Hopper mInstance = new Hopper();
 
     public TalonSRX revolverMotor,feederOmni;
@@ -30,37 +31,45 @@ public class Hopper extends Subsystem implements Loop {
 
     public HopperControlMode mHopperControlMode = HopperControlMode.OPEN_LOOP;
 
-    @Override
-    public void onStart(double timestamp) {
-        overrideIndexing = false;
-    }
+    private Loop mLoop = new Loop() {
 
-    @Override
-    public void onStop(double timestamp) {
-    }
+        @Override
+        public void onStart(double timestamp) {
+            overrideIndexing = false;
+        }
 
-    @Override
-    public void onLoop(double timestamp) {
-        synchronized (Hopper.this) {
-            switch (getControlMode()) {
-                case INDEXING:
-                    setHooperIndexing(.5);
-                    isOverrode();
-                    break;
-                case SHOOTING:
-                    setHooperShooting(.75);
-                    break;
-                case UNJAMMING:
-                    System.out.println("Hooper jammed starting UNJAM sequence");
-                    setHooperJamming();
-                    break;
-                case OPEN_LOOP:
-                    break;
-                default:
-                    System.out.println("Unknown hopper control mode");
-                    break;
+        @Override
+        public void onStop(double timestamp) {
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
+            synchronized (Hopper.this) {
+                switch (getControlMode()) {
+                    case INDEXING:
+                        setHooperIndexing(.5);
+                        isOverrode();
+                        break;
+                    case SHOOTING:
+                        setHooperShooting(.75);
+                        break;
+                    case UNJAMMING:
+                        System.out.println("Hooper jammed starting UNJAM sequence");
+                        setHooperJamming();
+                        break;
+                    case OPEN_LOOP:
+                        break;
+                    default:
+                        System.out.println("Unknown hopper control mode");
+                        break;
+                }
             }
         }
+    };
+
+    @Override
+    public void registerEnabledLoops(ILooper in) {
+        in.register(mLoop);
     }
 
     public synchronized HopperControlMode getControlMode() {
