@@ -1,12 +1,13 @@
 package frc.team3039.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.team3039.robot.RobotContainer;
 
 public class ActuateIntake extends CommandBase {
 
   public ActuateIntake() {
-    addRequirements(RobotContainer.intake);
+    addRequirements((Subsystem) RobotContainer.intake);
   }
 
   @Override

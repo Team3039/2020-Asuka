@@ -8,12 +8,13 @@ public class IndexCells extends ExtraTimeoutCommand {
 
     private boolean isBallsLoaded;
     private int ballsLoaded;
-    private boolean isOverrode = hopper.isOverrode;
+    private boolean isOverrode = hopper.isOverrode();
 
     public IndexCells(){}
 
     @Override
     public void initialize() {
+        isOverrode = false;
         isBallsLoaded = false;
         ballsLoaded = 0;
         resetExtraOneTimer();
@@ -23,9 +24,9 @@ public class IndexCells extends ExtraTimeoutCommand {
     @Override
     public void execute() {
         while (ballsLoaded != 2) {
-            if (hopper.getFeederOmniCurrent() < hopper.HOPPER_CURRENT_INDEX_THRESHOLD) {
-                hopper.setControlMode(HopperControlMode.LOADING);
-                if (hopper.getFeederOmniCurrent() > hopper.HOPPER_CURRENT_INDEX_THRESHOLD) {
+            if (hopper.getRevolverCurrent() < hopper.kRevolverCurrentThreshold) {
+                hopper.setControlMode(HopperControlMode.INDEXING);
+                if (hopper.getFeederOmniCurrent() > hopper.kFeederOmniCurrentThreshold) {
                     ballsLoaded++;
                     startExtraOneTimeout(.5);
                 }
