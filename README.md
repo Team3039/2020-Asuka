@@ -15,7 +15,8 @@
   ### Eclipse
     Run ./gradlew eclipse
     Open Eclipse and go to "File > Open Projects" from "File System..."
-    Set the import source to the 2020-Template folder then click finish
+    Set the import source to the 2020-InfiniteRecharge-Asuka folder then click finish
+    
   ### IntelliJ
     If you used the Use This Template button, you can open the repository through the Open Project through version control option
     or
