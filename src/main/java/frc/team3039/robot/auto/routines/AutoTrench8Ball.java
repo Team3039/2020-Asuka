@@ -13,7 +13,6 @@ import frc.team3039.robot.auto.actions.DriveTrajectory;
 import frc.team3039.robot.auto.actions.SeriesAction;
 import frc.team3039.robot.auto.actions.WaitAction;
 import frc.team3039.robot.paths.TrajectoryGenerator;
-import frc.team3039.robot.subsystems.Drive;
 
 /**
  * Add your docs here.
@@ -21,7 +20,6 @@ import frc.team3039.robot.subsystems.Drive;
 public class AutoTrench8Ball extends AutoRoutineBase {
     DriveTrajectory first_path;
     DriveTrajectory second_path;
-    DriveTrajectory third_path;
 
     public AutoTrench8Ball() {
 
@@ -31,10 +29,6 @@ public class AutoTrench8Ball extends AutoRoutineBase {
 
         second_path = new DriveTrajectory(
                 registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().endOfTrenchToCenterPort),
-                false);
-
-        third_path = new DriveTrajectory(
-                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().centerStartToEndOfTrench),
                 false);
 
     }

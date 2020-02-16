@@ -88,7 +88,11 @@ public class TrajectoryGenerator {
         // +y is to the left.
         // ALL POSES DEFINED FOR THE CASE THAT ROBOT STARTS ON RIGHT! (mirrored about +x
         // axis for LEFT)
-        public static final Pose2d kStartCenterPowerPort = new Pose2d(136, 67.34, Rotation2d.fromDegrees(90.0));
+        public static final Pose2d kStartCenterPowerPortFaceTrench = new Pose2d(136, 67.34,
+                Rotation2d.fromDegrees(90.0));
+
+        public static final Pose2d kStartCenterPowerPortFaceRendezvous = new Pose2d(136, 67.34,
+                Rotation2d.fromDegrees(0.0));
 
         public static final Pose2d kStartStealBallTrench = new Pose2d(136, -133, Rotation2d.fromDegrees(0.0));
 
@@ -114,11 +118,8 @@ public class TrajectoryGenerator {
                         Rotation2d.fromDegrees(0.0));
 
         //Shooting Poses
-        public static final Pose2d kShootCenterFaceTrenchPose = new Pose2d(new Translation2d(136, 67.34),
+        public static final Pose2d kShootCenterNearPose = new Pose2d(new Translation2d(136, 67.34),
                 Rotation2d.fromDegrees(90.0));
-
-        public static final Pose2d kShootCenterFaceRendezvousPose = new Pose2d(new Translation2d(136, 67.34),
-                Rotation2d.fromDegrees(0.0));
 
         public static final Pose2d kShootCenterFarPose = new Pose2d(new Translation2d(180,67.34),
                 Rotation2d.fromDegrees(-90.0));
@@ -129,6 +130,9 @@ public class TrajectoryGenerator {
 
         public static final Pose2d kRendezvousPose = new Pose2d(new Translation2d(223,-11),
                 Rotation2d.fromDegrees(20.0));
+
+        public static final Pose2d kRendezvous2BallPose = new Pose2d(new Translation2d(234,60),
+                Rotation2d.fromDegrees(-67));
   
         public static final Pose2d kSafeEndPose = new Pose2d(new Translation2d(60,16),
                 Rotation2d.fromDegrees(0.0));
@@ -141,8 +145,8 @@ public class TrajectoryGenerator {
                 public final LazyLoadTrajectory stealStartToStealBall;
                 public final LazyLoadTrajectory stealBallToFarShot;
 
-                public final LazyLoadTrajectory leftStartToRendezvous;
-                public final LazyLoadTrajectory rendezvousToCloseShot;
+                public final LazyLoadTrajectory centerStartToRendezvous2ball;
+                public final LazyLoadTrajectory rendezvous2ballToCloseShot;
 
                 public final LazyLoadTrajectory driveStraight;
                 public final LazyLoadTrajectory driveStraightReversed;
@@ -157,13 +161,15 @@ public class TrajectoryGenerator {
                         stealStartToStealBall = new LazyLoadTrajectory(() -> getStealStartToStealBall());
                         stealBallToFarShot = new LazyLoadTrajectory(() -> getStealBallToFarShotPose());
 
+                        centerStartToRendezvous2ball = new LazyLoadTrajectory(() -> getCenterStartToRendezvous2ball());
+                        rendezvous2ballToCloseShot = new LazyLoadTrajectory(() -> getRendezvous2ballToCloseShot());
+
+                        leftStartToSafe = new LazyLoadTrajectory(() -> getLeftStartToSafe());
+
+
                         driveStraight = new LazyLoadTrajectory(() -> getLevel2StartDriveStraight());
                         driveStraightReversed = new LazyLoadTrajectory(() -> getLevel2StartDriveStraightReversed());
 
-                        leftStartToRendezvous = new LazyLoadTrajectory(() -> getLeftStartToRendezvous());
-                        rendezvousToCloseShot = new LazyLoadTrajectory(() -> getRendezvousToCloseShot());
-
-                        leftStartToSafe = new LazyLoadTrajectory(() -> getLeftStartToSafe());
                 }
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLevel2StartDriveStraightReversed() {
                         List<Pose2d> waypoints = new ArrayList<>();
@@ -190,8 +196,11 @@ public class TrajectoryGenerator {
                 //Trench 8 Ball Auto Path Start
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCenterStartToEndOfTrench() {
                         List<Pose2d> waypoints = new ArrayList<>();
-                        waypoints.add(kStartCenterPowerPort);
+                        waypoints.add(kStartCenterPowerPortFaceTrench);
                         waypoints.add(kStartOfTrenchPose);
+                        waypoints.add(kFirstBallTrenchPose);
+                        waypoints.add(kSecondBallTrenchPose);
+                        waypoints.add(kThirdBallTrenchPose);
                         waypoints.add(kEndOfTrenchBallsPose);
 
                         return generateTrajectory(false, waypoints,
@@ -203,7 +212,7 @@ public class TrajectoryGenerator {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kEndOfTrenchBallsPose);
                         waypoints.add(kStartOfTrenchPose);
-                        waypoints.add(kShootCenterFaceTrenchPose);
+                        waypoints.add(kShootCenterNearPose);
 
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(kPathMaxCentripetalAccel)),
@@ -234,26 +243,29 @@ public class TrajectoryGenerator {
                 }
                 //Trench Steal Auto Path End
 
-                //Rendezvous 6 Ball Auto Path Start
-                private Trajectory<TimedState<Pose2dWithCurvature>> getLeftStartToRendezvous() {
+                //Rendezvous/Trench 10 Ball Auto Start
+                private Trajectory<TimedState<Pose2dWithCurvature>> getCenterStartToRendezvous2ball() {
                         List<Pose2d> waypoints = new ArrayList<>();
-                        waypoints.add(kStartLeftPowerPort);
-                        waypoints.add(kRendezvousPose);
+                        waypoints.add(kStartCenterPowerPortFaceRendezvous);
+                        waypoints.add(kRendezvous2BallPose);
 
                         return generateTrajectory(false, waypoints,
                                 Arrays.asList(new CentripetalAccelerationConstraint(kPathMaxCentripetalAccel)),
                                 kFirstPathMaxVel, kFirstPathMaxAccel, kFirstPathMaxVoltage);
                 }
-                private Trajectory<TimedState<Pose2dWithCurvature>> getRendezvousToCloseShot() {
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> getRendezvous2ballToCloseShot() {
                         List<Pose2d> waypoints = new ArrayList<>();
-                        waypoints.add(kRendezvousPose);
-                        waypoints.add(kShootCenterFaceRendezvousPose);
+                        waypoints.add(kRendezvous2BallPose);
+                        waypoints.add(kShootCenterNearPose);
 
                         return generateTrajectory(true, waypoints,
                                 Arrays.asList(new CentripetalAccelerationConstraint(kPathMaxCentripetalAccel)),
                                 kFirstPathMaxVel, kFirstPathMaxAccel, kFirstPathMaxVoltage);
                 }
+                //Rendezvous 10 Ball Auto End (Uses 8 Ball Start to End of Trench as 3rd and 4th paths)
 
+                //Safe Auto Start
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLeftStartToSafe() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kStartLeftPowerPort);
@@ -263,5 +275,6 @@ public class TrajectoryGenerator {
                                 Arrays.asList(new CentripetalAccelerationConstraint(kPathMaxCentripetalAccel)),
                                 kFirstPathMaxVel, kFirstPathMaxAccel, kFirstPathMaxVoltage);
                 }
+                //Safe Auto End
         }
 }
