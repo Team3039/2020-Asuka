@@ -16,9 +16,7 @@ public class DriveSetSpeed extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        System.out.println("Drive");
-    }
+    public void execute() {}
 
     @Override
     public boolean isFinished() {

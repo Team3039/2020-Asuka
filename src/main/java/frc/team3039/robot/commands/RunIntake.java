@@ -1,12 +1,13 @@
 package frc.team3039.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.team3039.robot.RobotContainer;
 
 public class RunIntake extends CommandBase {
 
   public RunIntake() {
-    addRequirements(RobotContainer.intake);
+    addRequirements((Subsystem) RobotContainer.intake);
   }
 
   @Override
@@ -15,14 +16,12 @@ public class RunIntake extends CommandBase {
 
   @Override
   public void execute() {
-    RobotContainer.intake.start();
-    // RobotContainer.hopper.runRevolver();
+    RobotContainer.intake.setSpeed(.65);
   }
 
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.intake.stop();
-    // RobotContainer.hopper.stopRevolver();
+    RobotContainer.intake.setSpeed(0);
   }
 
   @Override

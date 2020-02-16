@@ -14,7 +14,7 @@ public class OverrideIndexing extends Command {
 
     @Override
     public void initialize() {
-        hopper.setOverrideStatus(overrideIndexing);
+        hopper.overrideIndexing(overrideIndexing);
     }
 
     @Override

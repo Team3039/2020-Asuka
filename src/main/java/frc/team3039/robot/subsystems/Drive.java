@@ -3,6 +3,7 @@ package frc.team3039.robot.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,20 +14,20 @@ import frc.team3039.robot.Constants;
 import frc.team3039.robot.RobotContainer;
 import frc.team3039.robot.RobotMap;
 import frc.team3039.robot.RobotState;
-import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 import frc.team3039.robot.planners.DriveMotionPlanner;
 import frc.team3039.utility.DriveSignal;
 import frc.team3039.utility.ReflectingCSVWriter;
 import frc.team3039.utility.lib.drivers.TalonFXFactory;
 import frc.team3039.utility.lib.drivers.TalonSRXEncoder;
+import frc.team3039.utility.lib.drivers.TalonSRXFactory;
 import frc.team3039.utility.lib.geometry.Pose2d;
 import frc.team3039.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3039.utility.lib.geometry.Rotation2d;
 import frc.team3039.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3039.utility.lib.trajectory.timing.TimedState;
 
-public class Drive extends Subsystem implements Loop {
+public class Drive extends Subsystem implements Loop{
 	private static Drive mInstance = new Drive();
 
 	public enum DriveControlMode {
@@ -35,9 +36,12 @@ public class Drive extends Subsystem implements Loop {
 
 	private static final int kVelocityControlSlot = 0;
 	private static final double DRIVE_ENCODER_PPR = 2048.0;
+//	private static final double ENCODER_TICKS_TO_INCHES = DRIVE_ENCODER_PPR/
+//			(Constants.kDriveWheelDiameterInches * Math.PI);
 
 	// Motor Controller Setup
 	private TalonFX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
+	private TalonSRX mPigeonTalon;
 
 	private DriveControlMode mDriveControlMode = DriveControlMode.JOYSTICK;
 
@@ -57,43 +61,42 @@ public class Drive extends Subsystem implements Loop {
 	private boolean mOverrideTrajectory = false;
 	private boolean isFinished;
 
-		@Override
-		public void onStart(double timestamp) {
-			synchronized (Drive.this) {
-				setBrakeMode(false);
-			}
+	@Override
+	public void onStart(double timestamp) {
+		synchronized (Drive.this) {
+			setBrakeMode(false);
 		}
+	}
 
-		@Override
-		public void onStop(double timestamp) {
-		}
+	@Override
+	public void onStop(double timestamp) {
+	}
 
-		@Override
-		public void onLoop(double timestamp) {
-			synchronized (Drive.this) {
-				DriveControlMode currentControlMode = getControlMode();
-				if (currentControlMode == DriveControlMode.JOYSTICK) {
-					driveWithJoysticks();
-				} else if (!isFinished()) {
+	@Override
+	public void onLoop(double timestamp) {
+		synchronized (Drive.this) {
+			DriveControlMode currentControlMode = getControlMode();
+			if (currentControlMode == DriveControlMode.JOYSTICK) {
+				driveWithJoysticks();
+			} else if (!isFinished()) {
 //				readPeriodicInputs();
-					switch (currentControlMode) {
-						case PATH_FOLLOWING:
-							updatePathFollower();
+				switch (currentControlMode) {
+					case PATH_FOLLOWING:
+						updatePathFollower();
 //					writePeriodicOutputs();
-							break;
-						case OPEN_LOOP:
+						break;
+					case OPEN_LOOP:
 //					writePeriodicOutputs();
-							break;
-						default:
-							System.out.println("Unknown drive control mode: " + currentControlMode);
-							break;
-					}
-				} else {
-					// hold in current state
+						break;
+					default:
+						System.out.println("Unknown drive control mode: " + currentControlMode);
+						break;
 				}
+			} else {
+				// hold in current state
 			}
 		}
-	
+	}
 
 	private void configureMaster(TalonFX talon, boolean left) {
 		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
@@ -110,37 +113,39 @@ public class Drive extends Subsystem implements Loop {
 		talon.configNeutralDeadband(0.04, 0);
 	}
 
-	public Drive() {
+	private Drive() {
 		try {
 			mPeriodicIO = new PeriodicIO();
 
 			mLeftMaster =  TalonFXFactory.createDefaultTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID);
 			configureMaster(mLeftMaster, true);
 			mLeftMaster.setInverted(TalonFXInvertType.Clockwise);
-			mLeftMaster.configOpenloopRamp(.5);
 
 			mRightMaster = TalonFXFactory.createDefaultTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
 			configureMaster(mRightMaster, false);
 			mRightMaster.setInverted(TalonFXInvertType.CounterClockwise);
-			mRightMaster.configOpenloopRamp(.5);
 
 			mLeftSlave = TalonFXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID,
 					RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID);
-			mLeftSlave.setInverted(TalonFXInvertType.FollowMaster);
+			mLeftSlave.setInverted(InvertType.FollowMaster);
 
 			mRightSlave = TalonFXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID,
-					RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID);
-			mRightSlave.setInverted(TalonFXInvertType.FollowMaster);
+					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
+			mRightSlave.setInverted(InvertType.FollowMaster);
+
+			mPigeonTalon = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.PIGEON_IMU_TALON_CAN_ID,
+					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
+
 
 			reloadGains();
 
-			gyroPigeon = new PigeonIMU(1);
+			gyroPigeon = new PigeonIMU(mPigeonTalon);
 			gyroPigeon.configFactoryDefault();
 			mRightSlave.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
 			mMotionPlanner = new DriveMotionPlanner();
 
-            //Force Message
+			//Force Message
 			setBrakeMode(true);
 			setBrakeMode(false);
 
@@ -155,7 +160,6 @@ public class Drive extends Subsystem implements Loop {
 		}
 		return mInstance;
 	}
-	
 
 	// Encoder and Gryo Setup
 	private static double rotationsToInches(double rotations) {
@@ -470,44 +474,42 @@ public class Drive extends Subsystem implements Loop {
 		setFinished(false);
 	}
 
-	public void driveWithJoysticks() {
-		//Tele-Op Driving
-		//Each Motor is Set to Brake Mode, the motor speeds are set in an Arcade Drive fashion
-		double y = RobotContainer.getInstance().getDriverController().getLeftYAxis() * .9;
-		double rot = -1 * RobotContainer.getInstance().getDriverController().getRightXAxis() * .35;
+
+	public synchronized void driveWithJoysticks() {
+		double STICK_DEADZONE = .05;
+		double y = -1 * RobotContainer.getInstance().getDriverController().getLeftYAxis() * .9;
+		double rot =  -1 * RobotContainer.getInstance().getDriverController().getRightXAxis() * .30;
 
 		//Calculated Outputs (Limits Output to 12V)
-		double leftOutput = y + rot;
-		double rightOutput = rot - y;
+		double leftOutput = y - rot;
+		double rightOutput = rot + y;
 
 		//Assigns Each Motor's Power
-		double STICK_DEADZONE = .02;
-		if(RobotContainer.getInstance().getDriverController().getLeftYAxis() > STICK_DEADZONE ||
-				RobotContainer.getInstance().getDriverController().getRightXAxis() > STICK_DEADZONE){
+		if(Math.abs(RobotContainer.getInstance().getDriverController().getLeftYAxis()) > STICK_DEADZONE ||
+				Math.abs(RobotContainer.getInstance().getDriverController().getRightXAxis()) > STICK_DEADZONE) {
 			mLeftMaster.set(ControlMode.PercentOutput, leftOutput);
 			mRightMaster.set(ControlMode.PercentOutput, rightOutput);
 		}else{
-			mLeftMaster.set(ControlMode.PercentOutput, 0);
-			mRightMaster.set(ControlMode.PercentOutput, 0);
+			mLeftMaster.set(ControlMode.PercentOutput, 0.0);
+			mRightMaster.set(ControlMode.PercentOutput, 0.0);
 		}
-
 	}
 
 	public synchronized  void setBrakeMode(boolean setBrake) {
-        if (setBrake) {
-            System.out.println("Brake Mode");
-            mRightMaster.setNeutralMode(NeutralMode.Brake);
-            mRightSlave.setNeutralMode(NeutralMode.Brake);
-            mLeftMaster.setNeutralMode(NeutralMode.Brake);
-            mLeftSlave.setNeutralMode(NeutralMode.Brake);
-        } else {
-            System.out.println("Coast Mode");
-            mRightMaster.setNeutralMode(NeutralMode.Coast);
-            mRightSlave.setNeutralMode(NeutralMode.Coast);
-            mLeftMaster.setNeutralMode(NeutralMode.Coast);
-            mLeftSlave.setNeutralMode(NeutralMode.Coast);
-        }
-    }
+		if (setBrake) {
+			System.out.println("Brake Mode");
+			mRightMaster.setNeutralMode(NeutralMode.Brake);
+			mRightSlave.setNeutralMode(NeutralMode.Brake);
+			mLeftMaster.setNeutralMode(NeutralMode.Brake);
+			mLeftSlave.setNeutralMode(NeutralMode.Brake);
+		} else {
+			System.out.println("Coast Mode");
+			mRightMaster.setNeutralMode(NeutralMode.Coast);
+			mRightSlave.setNeutralMode(NeutralMode.Coast);
+			mLeftMaster.setNeutralMode(NeutralMode.Coast);
+			mLeftSlave.setNeutralMode(NeutralMode.Coast);
+		}
+	}
 
 	public synchronized boolean isFinished() {
 		return isFinished;

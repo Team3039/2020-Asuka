@@ -3,12 +3,14 @@ package frc.team3039.robot.commands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.team3039.robot.RobotContainer;
+import frc.team3039.robot.subsystems.Turret;
 
 public class SetTurretModeFar extends CommandBase {
 
   public SetTurretModeFar() {
-    addRequirements(RobotContainer.turret);
+    addRequirements((Subsystem) RobotContainer.getInstance().turret);
   }
 
   @Override
@@ -18,7 +20,7 @@ public class SetTurretModeFar extends CommandBase {
   @Override
   public void execute() {
     RobotContainer.turret.setTrackingModeFar();
-    RobotContainer.turret.aim();
+    RobotContainer.turret.setControlMode(Turret.TurretControlMode.TRACKING);
 
   }
 

@@ -7,66 +7,60 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3039.robot.AutoRoutineSelector.DesiredMode;
 import frc.team3039.robot.RobotMap;
-import frc.team3039.robot.loops.ILooper;
 import frc.team3039.robot.loops.Loop;
 
-public class Hopper extends Subsystem {
+public class Hopper extends Subsystem implements Loop {
+    private static Hopper mInstance = new Hopper();
 
-    public TalonSRX HopperMotor,feederOmni;
+    public TalonSRX revolverMotor,feederOmni;
     public VictorSPX kickerOmni, feederBelts;
 
-    public boolean isLoading;
-    public boolean isJammed;
-    public boolean isOverrode = false;
 
-    public final double HOPPER_CURRENT_INDEX_THRESHOLD = 0;
+    public double kFeederOmniCurrentThreshold;
+    public double kRevolverCurrentThreshold;
 
-    public static enum HopperControlMode {
+    private boolean overrideIndexing;
+
+    public enum HopperControlMode {
         OPEN_LOOP,
-        LOADING,
+        INDEXING,
         SHOOTING,
         UNJAMMING,
     }
 
     public HopperControlMode mHopperControlMode = HopperControlMode.OPEN_LOOP;
 
-    private final Loop mLoop = new Loop() {
-
-        @Override
-        public void onStart(double timestamp) {
-            isLoading = false;
-            isJammed = false;
-        }
-
-        @Override
-        public void onStop(double timestamp) {
-        }
-
-        @Override
-        public void onLoop(double timestamp) {
-            synchronized (Hopper.this) {
-                switch (getControlMode()) {
-                    case LOADING:
-                        setHopperSpeed(.65);
-                        break;
-                    case SHOOTING:
-                        break;
-                    case UNJAMMING:
-                        setHopperSpeed(-.5);
-                        break;
-                    case OPEN_LOOP:
-                        break;
-                    default:
-                        System.out.println("Unknown Hopper control mode");
-                        break;
-                }
-            }
-        }
-    };
+    @Override
+    public void onStart(double timestamp) {
+        overrideIndexing = false;
+    }
 
     @Override
-    public void registerEnabledLoops(ILooper in) {
-        in.register(mLoop);
+    public void onStop(double timestamp) {
+    }
+
+    @Override
+    public void onLoop(double timestamp) {
+        synchronized (Hopper.this) {
+            switch (getControlMode()) {
+                case INDEXING:
+                    setHooperIndexing(.5);
+                    isOverrode();
+                    break;
+                case SHOOTING:
+                    setHooperShooting(.75);
+                    break;
+                case UNJAMMING:
+                    System.out.println("Hooper jammed starting UNJAM sequence");
+                    setHooperJamming();
+                    break;
+                case OPEN_LOOP:
+                    break;
+                default:
+                    System.out.println("Unknown hopper control mode");
+                    break;
+            }
+        }
     }
 
     public synchronized HopperControlMode getControlMode() {
@@ -78,23 +72,37 @@ public class Hopper extends Subsystem {
     }
 
     public Hopper(){
-        HopperMotor = new TalonSRX(RobotMap.HOPPER_SPIN_MOTOR_CAN_ID);
+        revolverMotor = new TalonSRX(RobotMap.HOPPER_REVOLVER_MOTOR_CAN_ID);
         feederOmni = new TalonSRX(RobotMap.HOPPER_FEEDER_OMNI_CAN_ID);
 
         kickerOmni = new VictorSPX(RobotMap.HOPPER_KICKER_OMNI_CAN_ID);
         feederBelts = new VictorSPX(RobotMap.HOPPER_FEEDER_BELTS_CAN_ID);
 
         setBrakeMode(true);
+
     }
 
-    public void setHopperSpeed(double speed){
-        if(speed != 0.0){
-            HopperMotor.set(ControlMode.PercentOutput, speed);
-            isLoading = true;
+    public static Hopper getInstance() {
+        if (mInstance == null) {
+            mInstance = new Hopper();
         }
-        else{
-            HopperMotor.set(ControlMode.PercentOutput, 0);
-            isLoading = false;
+        return mInstance;
+    }
+
+    public void overrideIndexing(boolean override){
+        this.overrideIndexing = override;
+    }
+
+    public boolean isOverrode(){
+        return overrideIndexing;
+    }
+
+
+    public void setRevolverSpeed(double speed){
+        if(speed != 0.0){
+            revolverMotor.set(ControlMode.PercentOutput, speed);
+        }else{
+            revolverMotor.set(ControlMode.PercentOutput, 0);
         }
     }
 
@@ -110,40 +118,53 @@ public class Hopper extends Subsystem {
         feederBelts.set(ControlMode.PercentOutput, speed);
     }
 
+    public void setHooperIndexing(double speed){
+        setRevolverSpeed(speed);
+        setFeederOmniSpeed(speed);
+        setKickerOmniSpeed(speed * 1.5);
+        setFeederBeltsSpeed(speed);
+    }
+
+    public void setHooperShooting(double speed){
+        setRevolverSpeed(speed);
+        setFeederOmniSpeed(speed);
+        setKickerOmniSpeed(speed);
+        setFeederBeltsSpeed(speed);
+    }
+
+    public void setHooperJamming(){
+        setRevolverSpeed(-.6);
+        setKickerOmniSpeed(.75);
+    }
+
     public void stopHopper(){
-        setHopperSpeed(0.0);
+        setRevolverSpeed(0.0);
         setFeederOmniSpeed(0.0);
         setKickerOmniSpeed(0.0);
         setFeederBeltsSpeed(0.0);
     }
 
-    public double getHopperCurrent(){ return HopperMotor.getStatorCurrent(); }
+    public double getRevolverCurrent(){ return revolverMotor.getStatorCurrent(); }
 
     public double getFeederOmniCurrent(){  return feederOmni.getStatorCurrent(); }
 
-    public void setOverrideStatus(boolean overrideStatus) {
-        isOverrode = overrideStatus;
-    }
-    
     public void setBrakeMode(boolean setBrake){
-
         if(setBrake){
-            HopperMotor.setNeutralMode(NeutralMode.Brake);
+            revolverMotor.setNeutralMode(NeutralMode.Brake);
             feederOmni.setNeutralMode(NeutralMode.Brake);
 
             kickerOmni.setNeutralMode(NeutralMode.Brake);
             feederBelts.setNeutralMode(NeutralMode.Brake);
 
-            System.out.println("Hopper Motors in Brake");
-        }
-        else{
-            HopperMotor.setNeutralMode(NeutralMode.Coast);
+            System.out.println("Revolver Motors in Brake");
+        }else{
+            revolverMotor.setNeutralMode(NeutralMode.Coast);
             feederOmni.setNeutralMode(NeutralMode.Coast);
 
             kickerOmni.setNeutralMode(NeutralMode.Coast);
             feederBelts.setNeutralMode(NeutralMode.Coast);
 
-            System.out.println("Hopper Motors in Coast");
+            System.out.println("Revolver Motors in Coast");
         }
     }
 
@@ -161,8 +182,8 @@ public class Hopper extends Subsystem {
     public void outputTelemetry(DesiredMode mode) {
         if (mode == DesiredMode.TEST) {
             try {
-                SmartDashboard.putNumber("Hopper Motor Current: " , HopperMotor.getStatorCurrent());
-
+                SmartDashboard.putNumber("Revolver Motor Current: " , getRevolverCurrent());
+                SmartDashboard.putNumber("Feeder Omni Current: ", getFeederOmniCurrent());
             } catch (Exception e) {
                 System.out.println("Desired Mode Error");
             }

@@ -2,45 +2,67 @@ package frc.team3039.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team3039.robot.AutoRoutineSelector;
 import frc.team3039.robot.RobotMap;
 
-public class Climber extends SubsystemBase {
+public class Climber extends Subsystem {
+  private static Climber mInstance = new Climber();
+
+
+  public Solenoid climbDeployer;
+  public TalonSRX climberA;
+  public TalonSRX climberB;
+  public Solenoid buddyDeploy;
   
-  public Solenoid climbDeployer = new Solenoid(RobotMap.CLIMB_DEPLOYER);
-  public TalonSRX climberA = new TalonSRX(RobotMap.CLIMBER_A);
-  public TalonSRX climberB = new TalonSRX(RobotMap.CLIMBER_B);
-  public Solenoid buddyDeploy = new Solenoid(RobotMap.BUDDY_DEPLOY);
-  
-  public Climber() {}
+  public Climber() {
+    climbDeployer = new Solenoid(RobotMap.CLIMB_DEPLOY_PCM_ID);
+    climberA = new TalonSRX(RobotMap.CLIMB_MOTOR_A_CAN_ID);
+    climberB = new TalonSRX(RobotMap.CLIMB_MOTOR_B_CAN_ID);
+    buddyDeploy = new Solenoid(RobotMap.BUDDY_RELEASE_PCM_ID);
+  }
+
+  public static Climber getInstance() {
+    if (mInstance == null) {
+      mInstance = new Climber();
+    }
+    return mInstance;
+  }
 
   public void deploy() {
     climbDeployer.set(true);
   }
 
-  public void retract() {
-    climberA.set(ControlMode.PercentOutput, -.75);
-    climberB.follow(climberA);
-  }
-
-  public void stop() {
-    climberA.set(ControlMode.PercentOutput, 0);
-    climberB.follow(climberA);
-  }
-
   public void extend(){
     buddyDeploy.set(true);
   }
- 
+
+  public void setSpeed(double speed){
+    climberA.set(ControlMode.PercentOutput, speed);
+    climberB.follow(climberA);
+  }
+
+
+  @Override
+  public void stop() {
+
+  }
+
+  @Override
+  public boolean checkSystem() {
+    return false;
+  }
+
+  @Override
+  public void outputTelemetry(AutoRoutineSelector.DesiredMode mode) {
+
+  }
+
  
   
 
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+
 }

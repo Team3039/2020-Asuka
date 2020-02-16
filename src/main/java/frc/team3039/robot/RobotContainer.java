@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.team3039.robot.commands.DriveSetSpeed;
+import frc.team3039.robot.commands.OverrideIndexing;
 import frc.team3039.robot.controller.GameController;
 import frc.team3039.robot.controller.Playstation;
 import frc.team3039.robot.subsystems.Drive;
@@ -23,15 +24,16 @@ public class RobotContainer {
          }
          return mInstance;
      }
-      public final static Drive drive = new Drive();
-      public final static Intake intake = new Intake();
-      public final static Turret turret = new Turret();
-      public final static Hopper hopper = new Hopper();
-      public final static Shooter shooter = new Shooter();
-      public final static Climber climber = new Climber();
 
-      private GameController m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
-      private static GameController m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Playstation());
+    public final static Drive drive = Drive.getInstance();
+    public final static Hopper hopper = Hopper.getInstance();
+    public final static Intake intake =  Intake.getInstance();
+    public final static Turret turret = Turret.getInstance();
+    public final static Shooter shooter = Shooter.getInstance();
+    public final static Climber climber =  Climber.getInstance();
+
+    private GameController m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
+    private GameController m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Playstation());
 
   public RobotContainer() {
     // Configure the button bindings
@@ -52,13 +54,16 @@ public class RobotContainer {
     Button setSpeedOff = m_driver.getButtonA();
     setSpeedOff.whenReleased(new DriveSetSpeed(0));
 
+    Button overrideIndexing = m_driver.getStartButton();
+    overrideIndexing.whenPressed(new OverrideIndexing(true));
+
   }
 
   public GameController getDriverController() {
     return m_driver;
   }
 
-  public static GameController getOperatorController() {
+  public GameController getOperatorController() {
     return m_operator;
      }
  }

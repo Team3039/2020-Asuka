@@ -1,12 +1,13 @@
 package frc.team3039.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.team3039.robot.RobotContainer;
 
 public class DeployClimb extends CommandBase {
 
   public DeployClimb() {
-    addRequirements(RobotContainer.climber);
+    addRequirements((Subsystem) RobotContainer.climber);
   }
   
   @Override
@@ -16,15 +17,10 @@ public class DeployClimb extends CommandBase {
 
 
   @Override
-  public void execute() {
-    RobotContainer.climber.deploy();
-  }
+  public void execute() {}
 
   @Override
-  public void end(boolean interrupted) {
-  RobotContainer.climber.stop();  
-
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {

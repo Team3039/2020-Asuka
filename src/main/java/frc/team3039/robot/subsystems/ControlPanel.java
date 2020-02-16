@@ -18,33 +18,93 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team3039.robot.AutoRoutineSelector;
 import frc.team3039.robot.RobotContainer;
 import frc.team3039.robot.RobotMap;
 import frc.team3039.robot.controller.GameController;
+import frc.team3039.robot.loops.Loop;
 
-public class WheelSpinner extends SubsystemBase {
+public class ControlPanel extends Subsystem implements Loop {
+  private static ControlPanel mInstance = new ControlPanel();
 
-  public Solenoid deployer = new Solenoid(RobotMap.DEPLOYER);
-  public TalonSRX spinner = new TalonSRX(RobotMap.SPINNER);
+  public Solenoid deployer;
+  public TalonSRX spinner;
 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch colorMatcher = new ColorMatch();
 
-  public WheelSpinner() {
-    colorMatcher.addColorMatch(kBlueTarget);
-    colorMatcher.addColorMatch(kGreenTarget);
-    colorMatcher.addColorMatch(kRedTarget);
-    colorMatcher.addColorMatch(kYellowTarget);
-    colorMatcher.setConfidenceThreshold(0.80);
-  }
-  
   public static final Color kBlueTarget = ColorMatch.makeColor(0.136, 0.412, 0.450);
   public static final Color kGreenTarget = ColorMatch.makeColor(0.196, 0.557, 0.246);
   public static final Color kRedTarget = ColorMatch.makeColor(0.475, 0.371, 0.153);
   public static final Color kYellowTarget = ColorMatch.makeColor(0.293, 0.561, 0.144);
   public static final double OPERATOR_ROT = .65;
   private static final int COLOR_WHEEL_PPR = 0;
+
+  public enum ControlPanelControlMode{
+    OPEN_LOOP,
+    JOYSTICK,
+    POSITION,
+    ROTATION,
+  }
+
+  public ControlPanelControlMode mControlPanelControlMode = ControlPanelControlMode.OPEN_LOOP;
+
+  @Override
+  public void onStart(double timestamp) {
+
+  }
+
+  @Override
+  public void onStop(double timestamp) {
+  }
+
+  @Override
+  public void onLoop(double timestamp) {
+    synchronized (ControlPanel.this) {
+      switch (getControlMode()) {
+        case OPEN_LOOP:
+          break;
+        case JOYSTICK:
+          manualControl(RobotContainer.getInstance().getOperatorController());
+          break;
+        case POSITION:
+          getColor();
+          break;
+        case ROTATION:
+          System.out.println("Rotation control");
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  public synchronized ControlPanelControlMode getControlMode() {
+    return mControlPanelControlMode;
+  }
+
+  public synchronized void setControlMode(ControlPanelControlMode controlMode) {
+    this.mControlPanelControlMode = controlMode;
+  }
+
+  public ControlPanel() {
+    deployer = new Solenoid(RobotMap.CONTROL_PANEL_DEPLOY_PCM_ID);
+    spinner = new TalonSRX(RobotMap.CONTROL_PANEL_MOTOR_CAN_ID);
+
+    colorMatcher.addColorMatch(kBlueTarget);
+    colorMatcher.addColorMatch(kGreenTarget);
+    colorMatcher.addColorMatch(kRedTarget);
+    colorMatcher.addColorMatch(kYellowTarget);
+    colorMatcher.setConfidenceThreshold(0.80);
+  }
+
+  public static ControlPanel getInstance() {
+    if (mInstance == null) {
+      mInstance = new ControlPanel();
+    }
+    return mInstance;
+  }
 
   private ColorMatchResult matchedResult = new ColorMatchResult(Color.kBlack, 0);
 
@@ -96,12 +156,22 @@ public class WheelSpinner extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    manualControl(RobotContainer.getOperatorController());
-    getColor();
+  public void zeroSensors() {
+    spinner.setSelectedSensorPosition(0,0,0);
   }
 
-  //@Override
-  public void robotPeriodic() {
+  @Override
+  public void stop() {
+
+  }
+
+  @Override
+  public boolean checkSystem() {
+    return false;
+  }
+
+  @Override
+  public void outputTelemetry(AutoRoutineSelector.DesiredMode mode) {
+
   }
 }

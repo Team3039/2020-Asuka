@@ -12,8 +12,7 @@ import frc.team3039.robot.auto.AutoModeExecutor;
 import frc.team3039.robot.auto.AutoRoutineBase;
 import frc.team3039.robot.loops.Looper;
 import frc.team3039.robot.paths.TrajectoryGenerator;
-import frc.team3039.robot.subsystems.Drive;
-import frc.team3039.robot.subsystems.RobotStateEstimator;
+import frc.team3039.robot.subsystems.*;
 import frc.team3039.utility.CrashTracker;
 import frc.team3039.utility.lib.geometry.Pose2d;
 
@@ -41,13 +40,24 @@ public class Robot extends TimedRobot {
 
 	// Declare subsystems
 	public static final Drive mDrive = Drive.getInstance();
+	public static final Hopper mHopper = Hopper.getInstance();
+	public static final Shooter mShooter = Shooter.getInstance();
+	public static final Turret mTurret = Turret.getInstance();
+	public static final ControlPanel mControlPanel = ControlPanel.getInstance();
 	public static final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
 	private RobotState mRobotState = RobotState.getInstance();
 
 	private final SubsystemManager mSubsystemManager = new SubsystemManager(
 			Arrays.asList(
 					RobotStateEstimator.getInstance(),
-					Drive.getInstance()
+					Drive.getInstance(),
+					Hopper.getInstance(),
+					Shooter.getInstance(),
+					Turret.getInstance(),
+					ControlPanel.getInstance(),
+					Intake.getInstance(),
+					Climber.getInstance()
+
 			)
 	);
 
@@ -60,10 +70,13 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		mRobotContainer = new RobotContainer();
 		SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
-		RobotContainer.hopper.isLoading = false;
-		RobotContainer.hopper.isJammed = false;
 
 		mEnabledLooper.register(mDrive);
+		mEnabledLooper.register(mHopper);
+		mEnabledLooper.register(mShooter);
+		mEnabledLooper.register(mControlPanel);
+		mEnabledLooper.register(mTurret);
+
 
 		RobotStateEstimator.getInstance().registerEnabledLoops(mEnabledLooper);
 		mTrajectoryGenerator.generateTrajectories();
@@ -98,9 +111,8 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
-			// mInfrastructure.setIsDuringAuto(true);
 			mDrive.zeroSensors();
-			// RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			// Reset all auto mode state.
 			mAutoRoutineSelector.reset();
@@ -108,6 +120,9 @@ public class Robot extends TimedRobot {
 			mAutoModeExecutor = new AutoModeExecutor();
 
 			mDisabledLooper.start();
+
+			zeroAllSensors();
+
 
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -135,7 +150,6 @@ public class Robot extends TimedRobot {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
-		RobotContainer.drive.resetEncoders();
 	}
 
 // Called once at the start of auto
@@ -187,7 +201,7 @@ public class Robot extends TimedRobot {
 
 		mEnabledLooper.start();
 		mDrive.endGyroCalibration();
-		RobotContainer.shooter.resetShooterPosition();
+
 	}
 
 	// Called constantly through teleOp
