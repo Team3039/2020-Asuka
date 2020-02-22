@@ -7,10 +7,15 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.DRIVER_ROT;
+import static frc.robot.Constants.DRIVER_Y;
+import static frc.robot.Constants.DRIVE_PPR_TO_INCHES;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import static frc.robot.Constants.*;
+import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -98,7 +103,23 @@ public class Drivetrain extends SubsystemBase {
 
   // public void calibrateGyro() {
 	// 	gyroPigeon.enterCalibrationMode(CalibrationMode.Temperature, TalonSRXEncoder.TIMEOUT_MS);
-	// }
+  // }
+  
+  public void driveToDistance(double inches) {
+    leftFrontDrive.set(ControlMode.Position,inches);
+    rightFrontDrive.set(ControlMode.Position,inches);
+  }
+
+  public void turnToDegree(double degrees) {}
+
+  public void configDrivePID() {
+    leftFrontDrive.config_kP(0, 0);
+    rightFrontDrive.config_kP(0, 0);
+    leftFrontDrive.config_kI(0, 0);
+    rightFrontDrive.config_kI(0, 0);
+    leftFrontDrive.config_kD(0, 0);
+    rightFrontDrive.config_kD(0, 0);
+  }
 
   @Override
   public void periodic() {
@@ -109,6 +130,4 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
     SmartDashboard.putNumber("Right Velocity", getRightVelocity());
   }
-
-  
 }

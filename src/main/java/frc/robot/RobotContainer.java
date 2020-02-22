@@ -4,21 +4,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.auto.AutoCommand;
 import frc.robot.commands.ActuateIntake;
-import frc.robot.commands.AutoCommand;
 import frc.robot.commands.DeployBuddyClimb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinWheel;
+import frc.robot.commands.Test;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ColorWheel;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.ColorWheel;
 
 public class RobotContainer {
  
@@ -31,6 +32,7 @@ public class RobotContainer {
   public final static ColorWheel colorWheel = new ColorWheel();
 
   public final static AutoCommand autoCommand = new AutoCommand();
+  public final static Test test = new Test();
 
   public static PS4Gamepad driverPad = new PS4Gamepad(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
   public static PS4Gamepad operatorPad = new PS4Gamepad(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
@@ -68,6 +70,7 @@ public class RobotContainer {
   
   public RobotContainer() {
     configureButtonBindings();
+
   }
 
   //Put Button Bindings Here
