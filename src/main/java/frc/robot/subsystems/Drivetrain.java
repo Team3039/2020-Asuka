@@ -30,10 +30,11 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
-    rightFrontDrive.follow(rightRearDrive);
-    leftFrontDrive.follow(leftRearDrive);
+    rightRearDrive.follow(rightFrontDrive);
+    leftRearDrive.follow(leftFrontDrive);
     leftRearDrive.configSelectedFeedbackCoefficient(DRIVE_PPR_TO_INCHES);
     rightRearDrive.configSelectedFeedbackCoefficient(DRIVE_PPR_TO_INCHES);
+    resetEncoders();
   }
   
   public void joystickControl(PS4Gamepad gp) {
@@ -47,8 +48,8 @@ public class Drivetrain extends SubsystemBase {
     double rightOutput = rot - y;
 
     //Assigns Each Motor's Power
-    leftRearDrive.set(ControlMode.PercentOutput, leftOutput);
-    rightRearDrive.set(ControlMode.PercentOutput, rightOutput);
+    leftFrontDrive.set(ControlMode.PercentOutput, leftOutput);
+    rightFrontDrive.set(ControlMode.PercentOutput, rightOutput);
   }
 
   public void stop() {
@@ -102,7 +103,6 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     joystickControl(RobotContainer.getDriver());
-    setNeutralMode(NeutralMode.Brake);
     // differentialDriveControl(RobotContainer.getDriver());
     SmartDashboard.putNumber("Left Position", getLeftPosition());
     SmartDashboard.putNumber("Right Position", getRightPosition());

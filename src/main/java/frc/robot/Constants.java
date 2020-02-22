@@ -17,8 +17,8 @@ package frc.robot;
  */
 public final class Constants {
     //Drivetrain 
-    public static final double DRIVER_Y = .75;
-    public static final double DRIVER_ROT = .45;
+    public static final double DRIVER_Y = .85;
+    public static final double DRIVER_ROT = .35;
 
     public static final double DRIVETRAIN_ENCODER_PPR = 2048.0; //TODO: Get this Number
     public static final double DRIVE_GEAR_RATIO = 9; //TODO: Check this Number

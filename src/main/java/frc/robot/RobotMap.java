@@ -24,7 +24,6 @@ public class RobotMap {
 
   //Color Wheel
   public final static int spinner = 14;
-  public final static int deployer = 15;
 
   //CLimber
   public final static int climberA = 3;
@@ -35,6 +34,8 @@ public class RobotMap {
   public final static int intakeTilt = 0;
   public final static int climbDeployer = 1;
   public final static int buddyDeploy = 2;
+  public final static int deployer = 3;
+
 //PWM
 
 //DIO	
