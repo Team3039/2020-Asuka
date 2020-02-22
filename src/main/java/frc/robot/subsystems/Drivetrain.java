@@ -102,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     joystickControl(RobotContainer.getDriver());
-    setNeutralMode(NeutralMode.Coast);
+    setNeutralMode(NeutralMode.Brake);
     // differentialDriveControl(RobotContainer.getDriver());
     SmartDashboard.putNumber("Left Position", getLeftPosition());
     SmartDashboard.putNumber("Right Position", getRightPosition());

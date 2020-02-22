@@ -7,19 +7,17 @@ public class RobotMap {
 
 //CAN
   //Drivetrain
-  public static int leftFrontDrive = 0;
-  public static int rightFrontDrive = 1; 
-  public static int leftRearDrive = 2;
-  public static int rightRearDrive = 3; 
+  public static int leftFrontDrive = 4;
+  public static int rightFrontDrive = 12; 
+  public static int leftRearDrive = 5;
+  public static int rightRearDrive = 13; 
   
   //intake/shooter
-  public static int shooterA = 7;
-  public static int shooterB = 8;
-  public static int turret = 6;
-  public static int intake = 4;
+  public static int shooterA = 6;
+  public static int shooterB = 7;
+  public static int turret = 2;
+  public static int intake = 0;
 
-  //SOLENOID
-  public static int intakeTilt = 1;
 
   //Indexer
   public final static int feeder = 13;
@@ -29,11 +27,14 @@ public class RobotMap {
   public final static int deployer = 15;
 
   //CLimber
-  public final static int climberA = 17;
-  public final static int climberB = 18;
-  public final static int climbDeployer = 0;
-  public final static int buddyDeploy = 1;
+  public final static int climberA = 3;
+  public final static int climberB = 11;
 
+
+//SOLENOID
+  public final static int intakeTilt = 0;
+  public final static int climbDeployer = 1;
+  public final static int buddyDeploy = 2;
 //PWM
 
 //DIO	

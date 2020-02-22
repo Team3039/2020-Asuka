@@ -20,9 +20,9 @@ public final class Constants {
     public static final double DRIVER_Y = .75;
     public static final double DRIVER_ROT = .45;
 
-    public static final double DRIVETRAIN_ENCODER_PPR = 4096.0; //TODO: Get this Number
-    public static final double DRIVE_GEAR_RATIO = 1; //TODO: Get this Number
-    public static final double WHEEL_DIAMETER = 6; //TODO: Get this Number
+    public static final double DRIVETRAIN_ENCODER_PPR = 2048.0; //TODO: Get this Number
+    public static final double DRIVE_GEAR_RATIO = 9; //TODO: Check this Number
+    public static final double WHEEL_DIAMETER = 5.875; //TODO: Check this Number
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI; // pi * diameter
     public static final double DRIVE_PPR_TO_INCHES = WHEEL_CIRCUMFERENCE / (DRIVETRAIN_ENCODER_PPR * DRIVE_GEAR_RATIO); //How many inches is one encoder tick
 
