@@ -24,6 +24,23 @@ public class Shooter extends SubsystemBase {
     public TalonFX shooterA = new TalonFX(RobotMap.shooterA);
     public TalonFX shooterB = new TalonFX(RobotMap.shooterB);
 
+    private enum ShooterControlMode {
+        IDLE,
+        HOLD,
+        CALCULATE,
+        SHOOT,
+    }
+
+    public ShooterControlMode shooterControlMode = ShooterControlMode.IDLE;
+
+    public synchronized ShooterControlMode getControlMode() {
+        return shooterControlMode;
+    }
+
+    public synchronized void setControlMode(ShooterControlMode controlMode) {
+        this.shooterControlMode = controlMode;
+      }
+
     public Shooter() {
 
         shooterA.configFactoryDefault();
@@ -40,8 +57,6 @@ public class Shooter extends SubsystemBase {
         shooterA.setNeutralMode(NeutralMode.Coast);
         shooterB.setNeutralMode(NeutralMode.Coast);
 
-//        shooterA.configClosedLoopPeakOutput(kControlSlot, Constants.kShooterMaxPrecentOutput);
-
         shooterA.config_kP(0, kP_SHOOTER);
         shooterA.config_kI(0, kI_SHOOTER);
         shooterA.config_kD(0, kD_SHOOTER);
@@ -56,6 +71,10 @@ public class Shooter extends SubsystemBase {
 
     public void setShooterSpeed(double speed) {
         shooterA.set(ControlMode.PercentOutput, speed);
+    }
+
+    public double calculateDesiredOutput() {
+        return 0;
     }
 
     public void resetShooterPosition() {
@@ -85,8 +104,17 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter Rotations", getShooterRotations());
         SmartDashboard.putNumber("Shooter RPM", getShooterRPM());
         SmartDashboard.putNumber("Shooter Output Percent", shooterA.getMotorOutputPercent());
-        // SmartDashboard.putNumber("Shooter Velocity Native", shooterA.getSelectedSensorVelocity());
-        // SmartDashboard.putNumber("Shooter Stator Current", shooterA.getStatorCurrent());
-        // SmartDashboard.putNumber("Shooter Supply Current", shooterA.getSupplyCurrent());
+
+         synchronized (Shooter.this) {
+            switch (getControlMode()) {
+                case IDLE:
+                    break;
+                case HOLD:
+                    shooterA.set(ControlMode.PercentOutput, 0);
+                    break;
+                case CALCULATE:
+                    calculateDesiredOutput();
+            }
+        }
      }
 }
