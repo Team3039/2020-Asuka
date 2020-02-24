@@ -9,8 +9,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.*;
@@ -23,7 +25,8 @@ import frc.robot.RobotMap;
  */
 public class Turret extends SubsystemBase {
   
-  public TalonSRX turret = new  TalonSRX(RobotMap.turret);
+  public TalonSRX turret = new TalonSRX(RobotMap.turret);
+  public DigitalInput turretSwitch = new DigitalInput(RobotMap.turretSwitch);
   
   public Turret() {
     turret.setSelectedSensorPosition(0);
@@ -34,10 +37,20 @@ public class Turret extends SubsystemBase {
     setCamMode(false);
   }
 
-  public enum turretMode {
-    IDLEMODE, //Resting Mode
-    TRACKINGWALL, //Point Toward Wall
-    TRACKINGTARGET //Active Track on Target
+  public enum TurretControlMode {
+    IDLE, 
+    TRACKING,
+    CONTROL, 
+  }
+
+  public TurretControlMode turretControlMode = TurretControlMode.IDLE;
+
+  public synchronized TurretControlMode getControlMode() {
+    return turretControlMode;
+  }
+
+  public synchronized void setControlMode(TurretControlMode controlMode) {
+    this.turretControlMode = controlMode;
   }
 
   public void setLed(boolean isOn) {
@@ -65,14 +78,16 @@ public class Turret extends SubsystemBase {
   public void aim() {
     double error = getTargetX() * kP_TURRET;
 
-    if(getCurrentPosition() <= -4000) {
-      turret.set(ControlMode.PercentOutput, .15);
-    }
-    else if(getCurrentPosition() >= 4000) {
-      turret.set(ControlMode.PercentOutput, -.15);
-    }
-    else {
-      turret.set(ControlMode.PercentOutput, error);
+    while (turretSwitch.get()) {
+      if (turret.getSelectedSensorPosition() <= 0) {
+        turret.set(ControlMode.PercentOutput, .15);
+      }
+      else if (turret.getSelectedSensorPosition() >= 0) {
+        turret.set(ControlMode.Position, -.15);
+      }
+      else {
+        turret.set(ControlMode.Position, error);
+      }
     }
   }
 
@@ -109,10 +124,26 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Turret Position", getCurrentPosition());
-    SmartDashboard.putNumber("target Y", getTargetY());
-    // double errorX = getTargetX() - getCurrentPosition();
-    // SmartDashboard.putNumber("Error", errorX);
-    // SmartDashboard.putNumber("TargetX", getTargetX());
-  }
+    // SmartDashboard.putNumber("target Y", getTargetY());
 
-}
+    synchronized (Turret.this) {
+      switch (getControlMode()) {
+        case IDLE:
+          turret.set(ControlMode.Position, 0);
+          break;
+        case TRACKING:
+          setLed(true);
+          setCamMode(true);
+          setPipeline(9);
+          aim();
+          break;
+        case CONTROL:
+          System.out.println("Set turret to specific angle");
+          break;
+        default:
+          System.out.println("Unknown turret control mode");
+          break;
+      }
+    }
+  }
+};

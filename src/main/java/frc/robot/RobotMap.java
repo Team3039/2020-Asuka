@@ -38,6 +38,7 @@ public class RobotMap {
 //PWM
 
 //DIO	
+  public final static int turretSwitch = 0;
 
 //AIO
 

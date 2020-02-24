@@ -8,7 +8,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Turret.TurretControlMode;
 
 public class Track extends CommandBase {
   /**
@@ -26,14 +28,13 @@ public class Track extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setLed(true);
-    RobotContainer.turret.setCamMode(true);
-    RobotContainer.turret.aim();
+    RobotContainer.turret.setControlMode(TurretControlMode.TRACKING);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
   }
 
   // Returns true when the command should end.
