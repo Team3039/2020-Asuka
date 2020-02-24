@@ -26,7 +26,7 @@ public class Test extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.drivetrain.driveToDistance(18);
+    RobotContainer.drivetrain.driveToDistanceRaw(18);
   }
 
   // Called once the command ends or is interrupted.

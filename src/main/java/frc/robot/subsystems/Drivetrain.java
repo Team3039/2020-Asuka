@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.DRIVER_ROT;
 import static frc.robot.Constants.DRIVER_Y;
 import static frc.robot.Constants.DRIVE_PPR_TO_INCHES;
+import static frc.robot.Constants.DRIVE_TRACKWIDTH;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -17,12 +18,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
 
-import edu.wpi.first.hal.HAL;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.controllers.PS4Gamepad;
@@ -33,15 +32,16 @@ import frc.robot.controllers.PS4Gamepad;
  */
 public class Drivetrain extends SubsystemBase {
 
-  private TalonFX leftFrontDrive = new TalonFX(RobotMap.leftFrontDrive);
-  private TalonFX leftRearDrive = new TalonFX(RobotMap.leftRearDrive);
-  private TalonFX rightFrontDrive = new TalonFX(RobotMap.rightFrontDrive);
-  private TalonFX rightRearDrive = new TalonFX(RobotMap.rightRearDrive);
+  public static TalonFX leftFrontDrive = new TalonFX(RobotMap.leftFrontDrive);
+  public static TalonFX leftRearDrive = new TalonFX(RobotMap.leftRearDrive);
+  public static TalonFX rightFrontDrive = new TalonFX(RobotMap.rightFrontDrive);
+  public static TalonFX rightRearDrive = new TalonFX(RobotMap.rightRearDrive);
+  public static PigeonIMU drivePigeon = new PigeonIMU(1);
 
-  private PigeonIMU drivePigeon = new PigeonIMU(1);
+  public DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(inchesToMeters(DRIVE_TRACKWIDTH));
 
-  // TODO: Add PigeonIMU Object
-
+  private PIDController driveCtrl = new PIDController(0,0,0);
+  
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
     rightRearDrive.follow(rightFrontDrive);
@@ -49,6 +49,11 @@ public class Drivetrain extends SubsystemBase {
     leftRearDrive.configSelectedFeedbackCoefficient(DRIVE_PPR_TO_INCHES);
     rightRearDrive.configSelectedFeedbackCoefficient(DRIVE_PPR_TO_INCHES);
     resetEncoders();
+  }
+
+  public enum DriveControl {
+      TELEOP,
+      AUTO
   }
 
   public void joystickControl(PS4Gamepad gp) {
@@ -119,24 +124,21 @@ public class Drivetrain extends SubsystemBase {
     return drivePigeon.getCompassHeading();
   }
   
-  public void driveToDistance(double inches) {
+  public void driveToDistanceRaw(double inches) {
     leftFrontDrive.set(ControlMode.Position,inches);
     rightFrontDrive.set(ControlMode.Position,inches);
   }
 
-  public void driveStraightToDistance(double inches) {
-    resetGyro();
-    double error = 0 - drivePigeon.getCompassHeading();
-    double leftOutput = inches + (error /* * \kP */);
-    double rightOutput = inches - (error /* * kp */);
+  public void pidDrive(double distance) {
+    double leftOutput = driveCtrl.calculate(getLeftPosition(), distance);
+    double rightOutput = driveCtrl.calculate(getRightPosition(), distance);
 
-    leftFrontDrive.set(ControlMode.Position, leftOutput);
-    rightFrontDrive.set(ControlMode.Position, rightOutput);
+    double gyroError = 0 - getAngle();
+    double kP = 0.05;
+    leftFrontDrive.set(ControlMode.PercentOutput, leftOutput + (gyroError * kP));
+    rightFrontDrive.set(ControlMode.PercentOutput, rightOutput - (gyroError * kP));
   }
 
-  public void turnToDegree(double degrees) {
-    //TODO: Rotate Drive Base
-  }
 
   public void configDrivePID() {
     leftFrontDrive.config_kP(0, 0);
@@ -167,7 +169,9 @@ public class Drivetrain extends SubsystemBase {
   
   @Override
   public void periodic() {
+
     joystickControl(RobotContainer.getDriver());
+
     SmartDashboard.putNumber("Left Position", getLeftPosition());
     SmartDashboard.putNumber("Right Position", getRightPosition());
     SmartDashboard.putNumber("Left Velocity", getLeftVelocity());

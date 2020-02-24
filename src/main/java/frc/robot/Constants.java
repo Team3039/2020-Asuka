@@ -25,6 +25,7 @@ public final class Constants {
     public static final double WHEEL_DIAMETER = 5.875; 
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI; // pi * diameter
     public static final double DRIVE_PPR_TO_INCHES = WHEEL_CIRCUMFERENCE / (DRIVETRAIN_ENCODER_PPR * DRIVE_GEAR_RATIO); //How many inches is one encoder tick
+    public static final double DRIVE_TRACKWIDTH = 26.5;
 
     //Turret
     public static final double kP_TURRET = 0.04;
