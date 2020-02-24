@@ -14,7 +14,6 @@ import static frc.robot.Constants.DRIVE_PPR_TO_INCHES;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,6 +31,8 @@ public class Drivetrain extends SubsystemBase {
   private TalonFX leftRearDrive = new TalonFX(RobotMap.leftRearDrive);
   private TalonFX rightFrontDrive = new TalonFX(RobotMap.rightFrontDrive);
   private TalonFX rightRearDrive = new TalonFX(RobotMap.rightRearDrive);
+
+  //TODO: Add PigeonIMU Object
 
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
@@ -101,17 +102,29 @@ public class Drivetrain extends SubsystemBase {
     return degrees * Math.PI/180;
   }
 
-  // public void calibrateGyro() {
-	// 	gyroPigeon.enterCalibrationMode(CalibrationMode.Temperature, TalonSRXEncoder.TIMEOUT_MS);
-  // }
+  public void resetGyro() {
+		// gyroPigeon.enterCalibrationMode(CalibrationMode.Temperature, TalonSRXEncoder.TIMEOUT_MS);
+  }
+
+  public double getAngle() {
+    //TODO: Return PigeonIMU current angle, and obviously not return 0
+    return 0;
+  }
   
   public void driveToDistance(double inches) {
     leftFrontDrive.set(ControlMode.Position,inches);
     rightFrontDrive.set(ControlMode.Position,inches);
   }
 
-  public void turnToDegree(double degrees) {}
+  public void driveStraightToDistance(double inches) {
+    //TODO: Use gyro feedback to drive straight
+  }
 
+  public void turnToDegree(double degrees) {
+    //TODO: Rotate Drive Base
+  }
+
+  //TODO: Use 2 PID SlotId's for Driving and Turning in Place and jsut use 1 method to set
   public void configDrivePID() {
     leftFrontDrive.config_kP(0, 0);
     rightFrontDrive.config_kP(0, 0);
@@ -121,13 +134,17 @@ public class Drivetrain extends SubsystemBase {
     rightFrontDrive.config_kD(0, 0);
   }
 
+  public void configTurnPID() {
+    //TODO: Add Drive PID Config preferable in slot ID 1 later
+  }
+  
   @Override
   public void periodic() {
     joystickControl(RobotContainer.getDriver());
-    // differentialDriveControl(RobotContainer.getDriver());
     SmartDashboard.putNumber("Left Position", getLeftPosition());
     SmartDashboard.putNumber("Right Position", getRightPosition());
     SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
     SmartDashboard.putNumber("Right Velocity", getRightVelocity());
+    SmartDashboard.putNumber("Gyro", getAngle());
   }
 }
