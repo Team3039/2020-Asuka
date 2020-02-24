@@ -10,16 +10,14 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.DRIVER_ROT;
 import static frc.robot.Constants.DRIVER_Y;
 import static frc.robot.Constants.DRIVE_PPR_TO_INCHES;
-import static frc.robot.Constants.DRIVE_TRACKWIDTH;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -36,11 +34,10 @@ public class Drivetrain extends SubsystemBase {
   public static TalonFX leftRearDrive = new TalonFX(RobotMap.leftRearDrive);
   public static TalonFX rightFrontDrive = new TalonFX(RobotMap.rightFrontDrive);
   public static TalonFX rightRearDrive = new TalonFX(RobotMap.rightRearDrive);
-  public static PigeonIMU drivePigeon = new PigeonIMU(1);
-
-  public DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(inchesToMeters(DRIVE_TRACKWIDTH));
-
-  private PIDController driveCtrl = new PIDController(0,0,0);
+  public static AHRS navX = new AHRS(SPI.Port.kMXP);
+  
+  public static PIDController driveCtrl = new PIDController(.003,0,0);
+  public double kPGyro = 0.000;
   
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
@@ -117,32 +114,32 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetGyro() {
-    drivePigeon.enterCalibrationMode(CalibrationMode.Temperature, 0);
+    navX.reset();
   }
 
   public double getAngle() {
-    return drivePigeon.getCompassHeading();
+    return navX.getAngle();
   }
-  
-  public void driveToDistanceRaw(double inches) {
-    leftFrontDrive.set(ControlMode.Position,inches);
-    rightFrontDrive.set(ControlMode.Position,inches);
+
+  public void printGyroOutputs() {
+    System.out.println("ANGLE :: " + getAngle());
   }
 
   public void pidDrive(double distance) {
-    double leftOutput = driveCtrl.calculate(getLeftPosition(), distance);
+
+    double leftOutput = - (driveCtrl.calculate(getLeftPosition(), distance));
     double rightOutput = driveCtrl.calculate(getRightPosition(), distance);
 
     double gyroError = 0 - getAngle();
-    double kP = 0.05;
-    leftFrontDrive.set(ControlMode.PercentOutput, leftOutput + (gyroError * kP));
-    rightFrontDrive.set(ControlMode.PercentOutput, rightOutput - (gyroError * kP));
+    double kP = kPGyro;
+    leftFrontDrive.set(ControlMode.PercentOutput, leftOutput);
+    rightFrontDrive.set(ControlMode.PercentOutput, rightOutput);
   }
 
 
   public void configDrivePID() {
-    leftFrontDrive.config_kP(0, 0);
-    rightFrontDrive.config_kP(0, 0);
+    leftFrontDrive.config_kP(0, .02);
+    rightFrontDrive.config_kP(0, .02);
     leftFrontDrive.config_kI(0, 0);
     rightFrontDrive.config_kI(0, 0);
     leftFrontDrive.config_kD(0, 0);
@@ -176,6 +173,6 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Right Position", getRightPosition());
     SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
     SmartDashboard.putNumber("Right Velocity", getRightVelocity());
-    SmartDashboard.putNumber("Gyro", getAngle());
+    printGyroOutputs();
   }
 }

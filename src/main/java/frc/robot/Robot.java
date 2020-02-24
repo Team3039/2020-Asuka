@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     RobotContainer.drivetrain.resetEncoders();
+    RobotContainer.turret.setLed(false);
   }
 
   @Override
@@ -112,9 +113,9 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
-    RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
-    RobotContainer.shooter.resetShooterPosition();
-
+    // RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
+    // RobotContainer.shooter.resetShooterPosition();
+    RobotContainer.turret.setLed(false);
     if (autoCommand != null) {
       autoCommand.cancel();
     }

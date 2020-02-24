@@ -21,12 +21,14 @@ public class Test extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.drivetrain.resetEncoders();
+    RobotContainer.drivetrain.resetGyro();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.drivetrain.driveToDistanceRaw(18);
+    RobotContainer.drivetrain.pidDrive(50);
   }
 
   // Called once the command ends or is interrupted.

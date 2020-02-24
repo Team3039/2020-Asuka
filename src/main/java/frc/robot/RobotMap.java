@@ -19,10 +19,10 @@ public class RobotMap {
   public static int intake = 0;
 
   //Indexer
-  public final static int feeder = 13;
+  public final static int feeder = 1;
 
   //Color Wheel
-  public final static int spinner = 14;
+  public final static int spinner = 9;
 
   //CLimber
   public final static int climberA = 3;
@@ -31,7 +31,7 @@ public class RobotMap {
 
 //SOLENOID
   public final static int intakeTilt = 0;
-  public final static int climbDeployer = 1;
+  public final static int climbDeployer = 4;
   public final static int buddyDeploy = 2;
   public final static int deployer = 3;
 
