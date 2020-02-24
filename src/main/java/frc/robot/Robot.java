@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.auto.AutoCommand;
 import frc.robot.commands.Test;
+import frc.robot.subsystems.Turret.TurretControlMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,8 +25,7 @@ import frc.robot.commands.Test;
  */
 public class Robot extends TimedRobot {
   
-  private Command autoCommand;
-  public Command test = new Test();
+  private Command autoCommand = new AutoCommand();
 
   private RobotContainer robotContainer;
 
@@ -37,6 +38,22 @@ public class Robot extends TimedRobot {
    
    SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+   private enum Auto {
+     DEFAULT,
+     TEST,
+   }
+
+  //  public Auto default = Auto.DEFAULT;
+  //  public Auto 
+
+  //  private synchronized Auto getControlMode() {
+  //    return auto;
+  //  }
+
+  //  private synchronized void setControlMode(Auto auto) {
+  //    this.auto = auto;
+  //  }
+
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -44,7 +61,7 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
     SmartDashboard.putData("Auto mode", autoChooser);
-    autoChooser.addOption("Test", test);
+    autoChooser.addOption("Test", autoCommand);
   }
 
   @Override
@@ -70,7 +87,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autoCommand = robotContainer.getAutonomousCommand();
-    test = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autoCommand != null) {
@@ -80,6 +96,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    // synchronized (Robot.this) {
+    //   switch (getControlMode()) {
+    //     case DEFAULT: 
+    //       break;
+    //     case TEST:
+    //   }
+    // }
   }
 
   @Override
@@ -89,6 +112,7 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
+    RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
     RobotContainer.shooter.resetShooterPosition();
 
     if (autoCommand != null) {

@@ -41,7 +41,7 @@ public class Turret extends SubsystemBase {
   public enum TurretControlMode {
     IDLE, 
     TRACKING,
-    CONTROL, 
+    WALL, 
   }
 
   public TurretControlMode turretControlMode = TurretControlMode.IDLE;
@@ -92,6 +92,10 @@ public class Turret extends SubsystemBase {
     }
   }
 
+  public void trackWall() {
+    setTurretPosition(getCurrentPosition()-90);
+  }
+
   public void setTurretPosition(double degrees) {
     double modDegrees = degrees % 360;
     turret.set(ControlMode.Position, modDegrees);
@@ -138,8 +142,9 @@ public class Turret extends SubsystemBase {
           setPipeline(9);
           aim();
           break;
-        case CONTROL:
-          System.out.println("Set turret to specific angle");
+        case WALL:
+          System.out.println("Set turret to track wall");
+          trackWall();
           break;
         default:
           System.out.println("Unknown turret control mode");
