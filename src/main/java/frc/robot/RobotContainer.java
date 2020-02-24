@@ -6,12 +6,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.auto.AutoCommand;
 import frc.robot.commands.ActuateIntake;
-import frc.robot.commands.DeployBuddyClimb;
-import frc.robot.commands.DeployClimb;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinWheel;
 import frc.robot.commands.Test;
+import frc.robot.commands.Track;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
@@ -78,8 +77,7 @@ public class RobotContainer {
 
     //Driver
     driverX.whenPressed(new Shoot(6450));
-    driverSquare.whenPressed(new DeployClimb());
-    driverTriangle.whenPressed(new DeployBuddyClimb());
+    driverSquare.toggleWhenPressed(new Track());
 
     //Operator
 	  operatorCircle.whenPressed(new ActuateIntake());

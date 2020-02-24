@@ -18,7 +18,6 @@ public class RobotMap {
   public static int turret = 2;
   public static int intake = 0;
 
-
   //Indexer
   public final static int feeder = 13;
 
