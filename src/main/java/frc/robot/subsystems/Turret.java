@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
+import frc.robot.controllers.PS4Gamepad;
 
 /**
  * This device is responisble for the rotational control of the "Shooter" and the tracking of the 
@@ -69,17 +71,22 @@ public class Turret extends SubsystemBase {
 
   public void setCamMode(boolean isTracking) {
     if(isTracking) {
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1); //Disable Vision Processing and Doubles Exposure
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
     }
     else {
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0); //Enables Vision Processing and Lowers Exposure
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
     }
   }
 
-  public void aim() {
-    double error = getTargetX() * kP_TURRET;
+  public void idle() {
+    setLed(false);
+    setCamMode(false);
+  }
 
-    while (turretSwitch.get()) {
+  public void aim() {
+    double errorX = (getTargetX() - getCurrentPosition()) * kP_TURRET;
+
+    while (turretSwitch.get() == true) {
       if (turret.getSelectedSensorPosition() <= 0) {
         turret.set(ControlMode.PercentOutput, .15);
       }
@@ -87,7 +94,7 @@ public class Turret extends SubsystemBase {
         turret.set(ControlMode.Position, -.15);
       }
       else {
-        turret.set(ControlMode.Position, error);
+        turret.set(ControlMode.Position, errorX);
       }
     }
   }
@@ -122,6 +129,12 @@ public class Turret extends SubsystemBase {
     }
   }
 
+  public void manualControl(PS4Gamepad gp) {
+    double rot = gp.getRightXAxis() * .2;
+
+    turret.set(ControlMode.PercentOutput, rot);
+  }
+
   public double getCurrentPosition() {
     return turret.getSelectedSensorPosition();        
   }
@@ -129,7 +142,6 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Turret Position", getCurrentPosition());
-    // SmartDashboard.putNumber("target Y", getTargetY());
 
     synchronized (Turret.this) {
       switch (getControlMode()) {

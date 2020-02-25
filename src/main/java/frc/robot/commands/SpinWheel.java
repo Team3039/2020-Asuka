@@ -28,13 +28,13 @@ public SpinWheel(int rotations) {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.colorWheel.spin(rotations);
+    // RobotContainer.colorWheel.spin(rotations);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.colorWheel.spinner.set(ControlMode.PercentOutput, 0);
+    // RobotContainer.colorWheel.spinner.set(ControlMode.PercentOutput, 0);
   }
 
   // Returns true when the command should end.

@@ -76,12 +76,18 @@ public class RobotContainer {
 
     //Driver
     driverX.whenPressed(new Shoot(6450));
+    driverTriangle.toggleWhenPressed(new Test());
     driverSquare.toggleWhenPressed(new Track());
 
     //Operator
 	  operatorCircle.whenPressed(new ActuateIntake());
     operatorR2.whileHeld(new RunIntake());
     operatorTriangle.whenPressed(new SpinWheel(2));
+
+    SmartDashboard.putData("Actuate Hood", new InstantCommand(()-> shooter.actuateHood()));
+    SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));
+    SmartDashboard.putData("Set LEDs (On)", new InstantCommand(()-> turret.setLed(true)));
+    SmartDashboard.putData("Set LEDs (Off)", new InstantCommand(()-> turret.setLed(false)));
 
     SmartDashboard.putData("Shooter 100%", new InstantCommand(()-> shooter.setShooterSpeed(1.0)));
     SmartDashboard.putData("Shooter 95%", new InstantCommand(()-> shooter.setShooterSpeed(.95)));

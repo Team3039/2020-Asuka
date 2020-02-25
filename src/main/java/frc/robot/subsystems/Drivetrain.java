@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.controllers.PS4Gamepad;
@@ -36,8 +37,10 @@ public class Drivetrain extends SubsystemBase {
   public static TalonFX rightRearDrive = new TalonFX(RobotMap.rightRearDrive);
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
   
-  public static PIDController driveCtrl = new PIDController(.003,0,0);
-  public double kPGyro = 0.000;
+  public static PIDController driveCtrl = new PIDController(.0185,0,0);
+  public static PIDController rotCtrl = new PIDController(.0195, 0, 0);
+
+  public double kPGyro = 0.02;
   
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
@@ -70,8 +73,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void stop() {
-    leftRearDrive.set(ControlMode.PercentOutput, 0);
-    rightRearDrive.set(ControlMode.PercentOutput, 0);
+    leftFrontDrive.set(ControlMode.PercentOutput, 0);
+    rightFrontDrive.set(ControlMode.PercentOutput, 0);
   }
 
   public void setNeutralMode(NeutralMode mode) {
@@ -121,21 +124,31 @@ public class Drivetrain extends SubsystemBase {
     return navX.getAngle();
   }
 
-  public void printGyroOutputs() {
-    System.out.println("ANGLE :: " + getAngle());
+  public void drivePID(double distance) {
+    double avgPosition = (getLeftPosition() + getRightPosition()) / 2;
+
+    double output = (driveCtrl.calculate(avgPosition, distance));
+    double clampedOutput = MathUtil.clamp(output, -.45, .45);
+    driveStraight(clampedOutput);
   }
 
-  public void pidDrive(double distance) {
-
-    double leftOutput = - (driveCtrl.calculate(getLeftPosition(), distance));
-    double rightOutput = driveCtrl.calculate(getRightPosition(), distance);
-
+  public void driveStraight(double power) {
     double gyroError = 0 - getAngle();
     double kP = kPGyro;
-    leftFrontDrive.set(ControlMode.PercentOutput, leftOutput);
-    rightFrontDrive.set(ControlMode.PercentOutput, rightOutput);
+    leftFrontDrive.set(ControlMode.PercentOutput, -power - (kP * gyroError) );
+    rightFrontDrive.set(ControlMode.PercentOutput, power - (kP * gyroError) );
   }
 
+  public void rotatePID(double angle) {
+    double output = (rotCtrl.calculate(getAngle(), angle));
+    double clampedOutput = MathUtil.clamp(output, -.45, .45);
+    rotate(-clampedOutput);
+  }
+
+  public void rotate(double power) {
+    leftFrontDrive.set(ControlMode.PercentOutput, power);
+    rightFrontDrive.set(ControlMode.PercentOutput, power);
+  }
 
   public void configDrivePID() {
     leftFrontDrive.config_kP(0, .02);
@@ -154,25 +167,13 @@ public class Drivetrain extends SubsystemBase {
     leftFrontDrive.config_kD(0, 0);
     rightFrontDrive.config_kD(0, 0);
   }
-
-  public void setPIDSlot(Boolean isTurning) {
-    if (!isTurning) {
-      configDrivePID();
-    }
-    else {
-      configTurnPID();
-    }
-  }
   
   @Override
   public void periodic() {
-
-    joystickControl(RobotContainer.getDriver());
-
     SmartDashboard.putNumber("Left Position", getLeftPosition());
     SmartDashboard.putNumber("Right Position", getRightPosition());
     SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
     SmartDashboard.putNumber("Right Velocity", getRightVelocity());
-    printGyroOutputs();
+    SmartDashboard.putNumber("Gyro", getAngle());
   }
 }

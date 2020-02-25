@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    //Gather Vision Information
+    //Gather Vision Info=\
     targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
     targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
@@ -123,6 +123,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    RobotContainer.drivetrain.joystickControl(RobotContainer.getDriver());
   }
 
   @Override

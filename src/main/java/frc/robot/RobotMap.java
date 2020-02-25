@@ -34,6 +34,7 @@ public class RobotMap {
   public final static int climbDeployer = 4;
   public final static int buddyDeploy = 2;
   public final static int deployer = 3;
+  public final static int hood = 3;
 
 //PWM
 

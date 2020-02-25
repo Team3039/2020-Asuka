@@ -28,7 +28,7 @@ public final class Constants {
     public static final double DRIVE_TRACKWIDTH = 26.5;
 
     //Turret
-    public static final double kP_TURRET = 0.04;
+    public static final double kP_TURRET = 0.2;
     public static final double TURRET_ENCODER_PPR = 1; //TODO: Get this Number
     public static final double TURRET_GEAR_RATIO = 1; //TODO: Get this Number
     public static final double TURRET_PPR_TO_DEGREES = 360 / (TURRET_GEAR_RATIO * TURRET_ENCODER_PPR); //How many degrees is one tick
