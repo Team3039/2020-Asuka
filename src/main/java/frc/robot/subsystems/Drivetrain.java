@@ -37,10 +37,10 @@ public class Drivetrain extends SubsystemBase {
   public static TalonFX rightRearDrive = new TalonFX(RobotMap.rightRearDrive);
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
   
-  public static PIDController driveCtrl = new PIDController(.0185,0,0);
-  public static PIDController rotCtrl = new PIDController(.0195, 0, 0);
+  public static PIDController driveCtrl = new PIDController(.012,0,0);
+  public static PIDController rotCtrl = new PIDController(.0165, 0, 0);
 
-  public double kPGyro = 0.02;
+  public double kPGyro = 0.03;
   
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
@@ -124,12 +124,20 @@ public class Drivetrain extends SubsystemBase {
     return navX.getAngle();
   }
 
-  public void drivePID(double distance) {
-    double avgPosition = (getLeftPosition() + getRightPosition()) / 2;
+  public double getAvgDistance() {
+    return (getLeftPosition() + getRightPosition()) / 2.0;
+  }
 
-    double output = (driveCtrl.calculate(avgPosition, distance));
-    double clampedOutput = MathUtil.clamp(output, -.45, .45);
-    driveStraight(clampedOutput);
+  public void drivePID(double distance) {
+    double output = (driveCtrl.calculate(getAvgDistance(), distance));
+    double clampedOutput = MathUtil.clamp(output, -.3, .3);
+
+    if (distance >= 0) {
+      driveStraight(clampedOutput);
+    }
+    else {
+      driveStraight(clampedOutput);
+    }
   }
 
   public void driveStraight(double power) {
@@ -139,10 +147,26 @@ public class Drivetrain extends SubsystemBase {
     rightFrontDrive.set(ControlMode.PercentOutput, power - (kP * gyroError) );
   }
 
+  public void reverseStraight(double power) {
+    double gyroError = 0 - getAngle();
+    double kP = 0;
+    leftFrontDrive.set(ControlMode.PercentOutput, power + (kP * gyroError) );
+    rightFrontDrive.set(ControlMode.PercentOutput, power + (kP * gyroError) );
+  }
+
   public void rotatePID(double angle) {
     double output = (rotCtrl.calculate(getAngle(), angle));
-    double clampedOutput = MathUtil.clamp(output, -.45, .45);
+    double clampedOutput = MathUtil.clamp(output, -.3, .3);
+    System.out.println(getRotError());
     rotate(-clampedOutput);
+  }
+
+  public double getDrvError() {
+    return driveCtrl.getPositionError();
+  }
+
+  public double getRotError() {
+    return rotCtrl.getPositionError();
   }
 
   public void rotate(double power) {

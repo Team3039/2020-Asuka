@@ -30,6 +30,8 @@ public class Turret extends SubsystemBase {
   
   public TalonSRX turret = new TalonSRX(RobotMap.turret);
   public DigitalInput turretSwitch = new DigitalInput(RobotMap.turretSwitch);
+
+  public static double startPos = -90;
   
   public Turret() {
     turret.setSelectedSensorPosition(0);
@@ -57,7 +59,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setLed(boolean isOn) {
-    if(isOn) {
+    if (isOn) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3); //Force LED on
     }
     else {
@@ -70,7 +72,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setCamMode(boolean isTracking) {
-    if(isTracking) {
+    if (isTracking) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
     }
     else {
@@ -86,7 +88,7 @@ public class Turret extends SubsystemBase {
   public void aim() {
     double errorX = (getTargetX() - getCurrentPosition()) * kP_TURRET;
 
-    while (turretSwitch.get() == true) {
+    if (turretSwitch.get()) {
       if (turret.getSelectedSensorPosition() <= 0) {
         turret.set(ControlMode.PercentOutput, .15);
       }
@@ -97,10 +99,26 @@ public class Turret extends SubsystemBase {
         turret.set(ControlMode.Position, errorX);
       }
     }
+
+  }
+
+  public void setTrackingModeNear() {
+    setPipeline(0);
+    setLed (true);
+    setCamMode(true);
+  }
+
+  public void setDriverCamMode() {
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1); //Turns LED off
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1); //Disable Vision Processing and Doubles Exposure
   }
 
   public void trackWall() {
-    setTurretPosition(getCurrentPosition()-90);
+    setTurretPosition(startPos - getCurrentPosition());
+  }
+
+  public void resetTurretPosition() {
+    turret.setSelectedSensorPosition(0);
   }
 
   public void setTurretPosition(double degrees) {
@@ -130,9 +148,19 @@ public class Turret extends SubsystemBase {
   }
 
   public void manualControl(PS4Gamepad gp) {
-    double rot = gp.getRightXAxis() * .2;
-
-    turret.set(ControlMode.PercentOutput, rot);
+    while (turretSwitch.get() == true) {
+      if (turret.getSelectedSensorPosition() <= 0) {
+        turret.set(ControlMode.PercentOutput, .15);
+      }
+      else if (turret.getSelectedSensorPosition() >= 0) {
+        turret.set(ControlMode.Position, -.15);
+      }
+      else {
+        double rot = gp.getRightXAxis() * .2;
+        turret.set(ControlMode.PercentOutput, rot);
+      }
+    }
+    
   }
 
   public double getCurrentPosition() {
@@ -143,25 +171,25 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Turret Position", getCurrentPosition());
 
-    synchronized (Turret.this) {
-      switch (getControlMode()) {
-        case IDLE:
-          turret.set(ControlMode.Position, 0);
-          break;
-        case TRACKING:
-          setLed(true);
-          setCamMode(true);
-          setPipeline(9);
-          aim();
-          break;
-        case WALL:
-          System.out.println("Set turret to track wall");
-          trackWall();
-          break;
-        default:
-          System.out.println("Unknown turret control mode");
-          break;
-      }
-    }
+  //   synchronized (Turret.this) {
+  //     switch (getControlMode()) {
+  //       case IDLE:
+  //         turret.set(ControlMode.Position, 0);
+  //         break;
+  //       case TRACKING:
+  //         setLed(true);
+  //         setCamMode(true);
+  //         setPipeline(9);
+  //         aim();
+  //         break;
+  //       case WALL:
+  //         System.out.println("Set turret to track wall");
+  //         trackWall();
+  //         break;
+  //       default:
+  //         System.out.println("Unknown turret control mode");
+  //         break;
+  //     }
+  //   }
   }
-};
+}

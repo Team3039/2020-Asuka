@@ -1,16 +1,16 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import frc.robot.auto.AutoCommand;
+// import frc.robot.auto.Auto6BallSideInit;
 import frc.robot.commands.ActuateIntake;
+import frc.robot.commands.Index;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinWheel;
-import frc.robot.commands.Test;
-import frc.robot.commands.Track;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
@@ -30,11 +30,12 @@ public class RobotContainer {
   public final static Climber climber = new Climber();
   public final static ColorWheel colorWheel = new ColorWheel();
 
-  public final static AutoCommand autoCommand = new AutoCommand();
-  public final static Test test = new Test();
+  // public final static Auto6BallSideInit autoCommand = new Auto6BallSideInit();
 
   public static PS4Gamepad driverPad = new PS4Gamepad(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
   public static PS4Gamepad operatorPad = new PS4Gamepad(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
+
+  public static Timer timer = new Timer();
 
   //Declare Button Objects here
   //Driver Buttons
@@ -75,19 +76,21 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Driver
-    driverX.whenPressed(new Shoot(6450));
-    driverTriangle.toggleWhenPressed(new Test());
-    driverSquare.toggleWhenPressed(new Track());
+    driverShare.toggleWhenPressed(new Shoot(6450));
+    driverX.toggleWhenPressed(new RunIntake());
+    driverCircle.toggleWhenPressed(new ActuateIntake());
+    driverTriangle.toggleWhenPressed(new Index());
 
     //Operator
-	  operatorCircle.whenPressed(new ActuateIntake());
-    operatorR2.whileHeld(new RunIntake());
+	  // operatorCircle.whenPressed(new ActuateIntake());
+    // operatorR2.whileHeld(new RunIntake());
     operatorTriangle.whenPressed(new SpinWheel(2));
 
     SmartDashboard.putData("Actuate Hood", new InstantCommand(()-> shooter.actuateHood()));
     SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));
     SmartDashboard.putData("Set LEDs (On)", new InstantCommand(()-> turret.setLed(true)));
     SmartDashboard.putData("Set LEDs (Off)", new InstantCommand(()-> turret.setLed(false)));
+    SmartDashboard.putData("Turret Manual", new InstantCommand(()-> turret.manualControl(RobotContainer.getOperator())));
 
     SmartDashboard.putData("Shooter 100%", new InstantCommand(()-> shooter.setShooterSpeed(1.0)));
     SmartDashboard.putData("Shooter 95%", new InstantCommand(()-> shooter.setShooterSpeed(.95)));
@@ -109,8 +112,8 @@ public class RobotContainer {
     return operatorPad;
   }
 
-  public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return autoCommand;
-  }
+  // public Command getAutonomousCommand() {
+  //   // An ExampleCommand will run in autonomous
+  //   // return autoCommand;
+  // }
 }

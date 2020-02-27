@@ -29,9 +29,8 @@ public final class Constants {
 
     //Turret
     public static final double kP_TURRET = 0.2;
-    public static final double TURRET_ENCODER_PPR = 1; //TODO: Get this Number
-    public static final double TURRET_GEAR_RATIO = 1; //TODO: Get this Number
-    public static final double TURRET_PPR_TO_DEGREES = 360 / (TURRET_GEAR_RATIO * TURRET_ENCODER_PPR); //How many degrees is one tick
+    public static final double TURRET_RATIO = 3.7;
+    public static final double TURRET_PPR_TO_DEGREES = 360 / TURRET_RATIO; //How many degrees is one tick
 
     //Shooter
     public static final double kP_SHOOTER = 0.085;

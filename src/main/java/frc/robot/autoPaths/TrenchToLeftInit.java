@@ -5,21 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto;
+package frc.robot.autoPaths;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Test;
+import frc.robot.commands.DriveLinear;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoCommand extends SequentialCommandGroup {
+public class TrenchToLeftInit extends SequentialCommandGroup {
   /**
-   * Creates a new AutoCommand.
+   * Creates a new TrenchToLeftInit.
    */
-  public AutoCommand() {
+  public TrenchToLeftInit() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new Test());
+    super(new DriveLinear(-200));
   }
 }

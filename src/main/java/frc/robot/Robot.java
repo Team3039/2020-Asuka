@@ -13,9 +13,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.auto.AutoCommand;
-import frc.robot.commands.Test;
-import frc.robot.subsystems.Turret.TurretControlMode;
+// import frc.robot.auto.Auto6BallSideInit;
+import frc.robot.auto.Auto8BallCenterInit;
+import frc.robot.auto.AutoTestA;
+import frc.robot.auto.AutoTestB;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -25,7 +26,11 @@ import frc.robot.subsystems.Turret.TurretControlMode;
  */
 public class Robot extends TimedRobot {
   
-  private Command autoCommand = new AutoCommand();
+  private Command autoCommand;
+  // public Auto6BallSideInit auto6BallInitSide = new Auto6BallSideInit();
+  public Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
+  public AutoTestA autoTestA = new AutoTestA();
+  public AutoTestB autoTestB = new AutoTestB();
 
   private RobotContainer robotContainer;
 
@@ -61,7 +66,10 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
     SmartDashboard.putData("Auto mode", autoChooser);
-    autoChooser.addOption("Test", autoCommand);
+    autoChooser.addOption("TestA", autoTestA);
+    autoChooser.addOption("TestB", autoTestB);
+    // autoChooser.addOption("Auto 6 Ball Side Init", auto6BallInitSide);
+    autoChooser.addOption("Auto 8 Ball Center Init", auto8BallCenterInit);
   }
 
   @Override
@@ -87,10 +95,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autoCommand = robotContainer.getAutonomousCommand();
+    autoCommand = autoChooser.getSelected();
 
     // schedule the autonomous command (example)
-    if (autoCommand != null) {
+    if (autoChooser != null) {
       autoCommand.schedule();
     }
   }

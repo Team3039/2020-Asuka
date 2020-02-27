@@ -7,35 +7,28 @@
 
 package frc.robot.commands;
 
-import com.fasterxml.jackson.databind.util.RootNameLookup;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-public class Track extends CommandBase {
+public class ResetPose extends CommandBase {
   /**
-   * Creates a new Track.
+   * Creates a new ResetPos.
    */
-  public Track() {
+  public ResetPose() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setTrackingModeNear();
-      if (RobotContainer.turret.onTarget() == false) {
-        RobotContainer.turret.trackWall();
-      }
-      else {
-        RobotContainer.turret.aim();
-      }
+    RobotContainer.drivetrain.resetEncoders();
+    RobotContainer.drivetrain.resetGyro();
   }
 
   // Called once the command ends or is interrupted.

@@ -18,8 +18,8 @@ import frc.robot.RobotMap;
 public class Climber extends SubsystemBase {
   
   public Solenoid climbDeployer = new Solenoid(RobotMap.climbDeployer);
-  public TalonSRX climberA = new TalonSRX(RobotMap.climberA);
-  public TalonSRX climberB = new TalonSRX(RobotMap.climberB);
+  // public TalonSRX climberA = new TalonSRX(RobotMap.climberA);
+  // public TalonSRX climberB = new TalonSRX(RobotMap.climberB);
   public Solenoid buddyDeploy = new Solenoid(RobotMap.buddyDeploy);
 
   public Climber() {
@@ -29,15 +29,15 @@ public class Climber extends SubsystemBase {
     climbDeployer.set(true);
   }
 
-  public void retract() {
-    climberA.set(ControlMode.PercentOutput, -.75);
-    climberB.follow(climberA);
-  }
+  // public void retract() {
+  //   climberA.set(ControlMode.PercentOutput, -.75);
+  //   climberB.follow(climberA);
+  // }
 
-  public void stop() {
-    climberA.set(ControlMode.PercentOutput, 0);
-    climberB.follow(climberA);
-  }
+  // public void stop() {
+  //   climberA.set(ControlMode.PercentOutput, 0);
+  //   climberB.follow(climberA);
+  // }
 
   public void extend(){
     buddyDeploy.set(true);

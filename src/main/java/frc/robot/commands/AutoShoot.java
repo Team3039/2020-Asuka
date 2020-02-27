@@ -7,17 +7,13 @@
 
 package frc.robot.commands;
 
-import com.fasterxml.jackson.databind.util.RootNameLookup;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 
-public class Track extends CommandBase {
+public class AutoShoot extends CommandBase {
   /**
-   * Creates a new Track.
+   * Creates a new AutoShoot.
    */
-  public Track() {
+  public AutoShoot() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -29,13 +25,6 @@ public class Track extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setTrackingModeNear();
-      if (RobotContainer.turret.onTarget() == false) {
-        RobotContainer.turret.trackWall();
-      }
-      else {
-        RobotContainer.turret.aim();
-      }
   }
 
   // Called once the command ends or is interrupted.

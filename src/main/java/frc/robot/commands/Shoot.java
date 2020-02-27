@@ -16,13 +16,13 @@ public class Shoot extends CommandBase {
    */
   double RPM;
   public Shoot(double RPM) {
-    addRequirements(RobotContainer.shooter);
     this.RPM = RPM;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.shooter.actuateHood();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

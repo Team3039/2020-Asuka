@@ -7,17 +7,14 @@
 
 package frc.robot.commands;
 
-import com.fasterxml.jackson.databind.util.RootNameLookup;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-public class Track extends CommandBase {
+public class Index extends CommandBase {
   /**
-   * Creates a new Track.
+   * Creates a new Index.
    */
-  public Track() {
+  public Index() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -29,18 +26,15 @@ public class Track extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setTrackingModeNear();
-      if (RobotContainer.turret.onTarget() == false) {
-        RobotContainer.turret.trackWall();
-      }
-      else {
-        RobotContainer.turret.aim();
-      }
+    RobotContainer.hopper.runBouncer();
+    RobotContainer.hopper.runBelts();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    RobotContainer.hopper.stopBouncer();
+    RobotContainer.hopper.stopBelts();
   }
 
   // Returns true when the command should end.

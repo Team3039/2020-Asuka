@@ -19,18 +19,32 @@ import frc.robot.RobotMap;
  */
 public class Hopper extends SubsystemBase {
 
-  public TalonSRX feeder = new TalonSRX(RobotMap.feeder);
+  public TalonSRX bouncer = new TalonSRX(RobotMap.bouncer);
+  public TalonSRX feederBeltsA = new TalonSRX(RobotMap.feederBeltsA);
+  public TalonSRX feederBeltsB = new TalonSRX(RobotMap.feederBeltsB);
 
   public Hopper() {
+    feederBeltsA.setInverted(true);
   }
 
-  public void runFeeder() {
-    feeder.set(ControlMode.PercentOutput, .40);
+  public void runBelts() {
+    feederBeltsA.set(ControlMode.PercentOutput, .40);
+    feederBeltsB.set(ControlMode.PercentOutput, .40);
   }
 
-  public void stopFeeder() {
-    feeder.set(ControlMode.PercentOutput, 0);
+  public void stopBelts() {
+    feederBeltsA.set(ControlMode.PercentOutput, 0);
+    feederBeltsB.set(ControlMode.PercentOutput, 0);
   }
+
+  public void runBouncer() {
+    bouncer.set(ControlMode.PercentOutput, .40);
+  }
+
+  public void stopBouncer() {
+    bouncer.set(ControlMode.PercentOutput, 0);
+  }
+
 
   @Override
   public void periodic() {

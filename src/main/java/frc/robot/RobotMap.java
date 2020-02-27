@@ -19,21 +19,22 @@ public class RobotMap {
   public static int intake = 0;
 
   //Indexer
-  public final static int feeder = 1;
+  public final static int bouncer = 8;
+  public final static int feederBeltsA = 9;
+  public final static int feederBeltsB = 10;
 
   //Color Wheel
   public final static int spinner = 9;
 
   //CLimber
-  public final static int climberA = 3;
-  public final static int climberB = 11;
+  // public final static int climberA = 3;
+  // public final static int climberB = 11;
 
 
 //SOLENOID
   public final static int intakeTilt = 0;
   public final static int climbDeployer = 4;
   public final static int buddyDeploy = 2;
-  public final static int deployer = 3;
   public final static int hood = 3;
 
 //PWM

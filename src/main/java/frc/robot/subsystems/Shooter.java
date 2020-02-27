@@ -53,7 +53,6 @@ public class Shooter extends SubsystemBase {
     }
 
     public Shooter() {
-
         shooterA.configFactoryDefault();
         shooterB.configFactoryDefault();
         shooterA.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
