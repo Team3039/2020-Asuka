@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-// import frc.robot.auto.Auto6BallSideInit;
+import frc.robot.auto.Auto6BallSideInit;
+import frc.robot.auto.Auto8BallCenterInit;
 import frc.robot.commands.ActuateIntake;
 import frc.robot.commands.Index;
 import frc.robot.commands.RunIntake;
@@ -30,7 +31,8 @@ public class RobotContainer {
   public final static Climber climber = new Climber();
   public final static ColorWheel colorWheel = new ColorWheel();
 
-  // public final static Auto6BallSideInit autoCommand = new Auto6BallSideInit();
+  public final static Auto6BallSideInit auto6BallSideInit = new Auto6BallSideInit();
+  public final static Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
 
   public static PS4Gamepad driverPad = new PS4Gamepad(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
   public static PS4Gamepad operatorPad = new PS4Gamepad(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);

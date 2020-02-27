@@ -83,6 +83,10 @@ public class Shooter extends SubsystemBase {
         shooterA.set(ControlMode.PercentOutput, speed);
     }
 
+    public void stop() {
+        shooterA.set(ControlMode.PercentOutput, 0);
+    }
+
     public double calculateDesiredOutput() {
         return 0;
     }

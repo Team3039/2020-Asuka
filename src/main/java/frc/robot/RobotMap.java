@@ -27,8 +27,8 @@ public class RobotMap {
   public final static int spinner = 9;
 
   //CLimber
-  // public final static int climberA = 3;
-  // public final static int climberB = 11;
+  public final static int climberA = 0;
+  public final static int climberB = 0;
 
 
 //SOLENOID
