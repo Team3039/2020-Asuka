@@ -24,7 +24,14 @@ public class AutoTestA extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
-      new Rotate(90), new WaitCommand(1), new DriveLinear(50)
+      new Rotate(45),
+      new WaitCommand(.3),
+      new DriveLinear(103)
+      // new WaitCommand(.2),
+      // new Rotate(37)
+      // new WaitCommand(.25),
+      // new DriveLinear(120),
+      // new DriveLinear(-90)
     );
   }
 }

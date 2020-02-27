@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import frc.robot.auto.Auto6BallSideInit;
+import frc.robot.auto.Auto6BallSideInit;
 import frc.robot.auto.Auto8BallCenterInit;
 import frc.robot.auto.AutoTestA;
 import frc.robot.auto.AutoTestB;
@@ -27,7 +27,7 @@ import frc.robot.auto.AutoTestB;
 public class Robot extends TimedRobot {
   
   private Command autoCommand;
-  // public Auto6BallSideInit auto6BallInitSide = new Auto6BallSideInit();
+  public Auto6BallSideInit auto6BallInitSide = new Auto6BallSideInit();
   public Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
   public AutoTestA autoTestA = new AutoTestA();
   public AutoTestB autoTestB = new AutoTestB();
@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto mode", autoChooser);
     autoChooser.addOption("TestA", autoTestA);
     autoChooser.addOption("TestB", autoTestB);
-    // autoChooser.addOption("Auto 6 Ball Side Init", auto6BallInitSide);
+    autoChooser.addOption("Auto 6 Ball Side Init", auto6BallInitSide);
     autoChooser.addOption("Auto 8 Ball Center Init", auto8BallCenterInit);
   }
 
@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
     targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
     targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
     targetSkew = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ts").getDouble(0);
+    System.out.println(NetworkTableInstance.getDefault().getTable("limelight").getEntry("<tx>").getDouble(0));
     CommandScheduler.getInstance().run();
   }
 

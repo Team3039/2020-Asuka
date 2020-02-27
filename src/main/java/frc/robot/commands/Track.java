@@ -29,13 +29,14 @@ public class Track extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setTrackingModeNear();
-      if (RobotContainer.turret.onTarget() == false) {
-        RobotContainer.turret.trackWall();
-      }
-      else {
-        RobotContainer.turret.aim();
-      }
+    System.out.println(Robot.targetX);
+    // RobotContainer.turret.setTrackingModeNear();
+      // if (RobotContainer.turret.onTarget() == false) {
+      //   RobotContainer.turret.trackWall();
+      // }
+      // else {
+      //   RobotContainer.turret.aim();
+      // }
   }
 
   // Called once the command ends or is interrupted.

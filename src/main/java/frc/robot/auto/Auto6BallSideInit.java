@@ -11,9 +11,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.autoPaths.InitLeftToTrench;
 import frc.robot.autoPaths.AutoShootSequence;
 import frc.robot.autoPaths.TrenchToLeftInit;
-import frc.robot.commands.Track;
+import frc.robot.commands.DriveLinear;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/laDriveLinear/docs/software/commandbased/convenience-features.html
 public class Auto6BallSideInit extends SequentialCommandGroup {
@@ -22,7 +21,14 @@ public class Auto6BallSideInit extends SequentialCommandGroup {
    */
   public Auto6BallSideInit() {
     super(
-      new Track(), new AutoShootSequence(2.5), new InitLeftToTrench(), new TrenchToLeftInit(), new Track(), new AutoShootSequence(4)
+    // new Track(),
+    // new AutoShootSequence(2.5),
+    // new InitLeftToTrench(),
+    // new TrenchToLeftInit(),
+    new DriveLinear(120),
+    new DriveLinear(-120)
+    // new Track(),
+    // new AutoShootSequence(4)
       );
   }
 }

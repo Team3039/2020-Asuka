@@ -40,7 +40,7 @@ public class Drivetrain extends SubsystemBase {
   public static PIDController driveCtrl = new PIDController(.012,0,0);
   public static PIDController rotCtrl = new PIDController(.0165, 0, 0);
 
-  public double kPGyro = 0.03;
+  public double kPGyro = 0.0287;
   
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
@@ -158,7 +158,9 @@ public class Drivetrain extends SubsystemBase {
     double output = (rotCtrl.calculate(getAngle(), angle));
     double clampedOutput = MathUtil.clamp(output, -.3, .3);
     System.out.println(getRotError());
+    if (getAngle() < angle) {
     rotate(-clampedOutput);
+    }
   }
 
   public double getDrvError() {

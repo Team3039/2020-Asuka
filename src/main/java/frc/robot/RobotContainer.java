@@ -12,6 +12,7 @@ import frc.robot.commands.Index;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinWheel;
+import frc.robot.commands.Track;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
@@ -78,15 +79,18 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Driver
-    driverShare.toggleWhenPressed(new Shoot(6450));
+    driverShare.toggleWhenPressed(new Shoot(3500));
     driverX.toggleWhenPressed(new RunIntake());
     driverCircle.toggleWhenPressed(new ActuateIntake());
     driverTriangle.toggleWhenPressed(new Index());
+    driverSquare.toggleWhenPressed(new Track());
 
     //Operator
 	  // operatorCircle.whenPressed(new ActuateIntake());
     // operatorR2.whileHeld(new RunIntake());
     operatorTriangle.whenPressed(new SpinWheel(2));
+
+    SmartDashboard.putNumber("Target X", turret.getTargetX());
 
     SmartDashboard.putData("Actuate Hood", new InstantCommand(()-> shooter.actuateHood()));
     SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));

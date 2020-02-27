@@ -22,7 +22,7 @@ public class AutoShoot extends CommandBase {
   @Override
   public void initialize() {   
     RobotContainer.timer.reset();
-    RobotContainer.timer.start();{
+    RobotContainer.timer.start();
     RobotContainer.shooter.resetShooterPosition();
   }
 
