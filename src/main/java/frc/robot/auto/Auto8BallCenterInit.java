@@ -25,13 +25,14 @@ public class Auto8BallCenterInit extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     super(
       new Rotate(45),
-      new WaitCommand(.3),
-      new DriveLinear(103),
-      new WaitCommand(.2),
+      new WaitCommand(.25),
+      new DriveLinear(103, 45),
+      new WaitCommand(.25),
       new Rotate(36.5),
-      // new WaitCommand(.25),
-      new DriveLinear(120),
-      new DriveLinear(-90)
+      new WaitCommand(.25),
+      new DriveLinear(120, 36.5),
+      new WaitCommand(.25),
+      new DriveLinear(-90, 36.5)
     );
   }
 }

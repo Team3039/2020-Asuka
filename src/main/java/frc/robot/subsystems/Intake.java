@@ -29,6 +29,21 @@ public class Intake extends SubsystemBase {
     intake.setNeutralMode(NeutralMode.Brake);
   }
 
+  public enum IntakeControlMode {
+    IDLE,
+    RUNNING
+  }
+
+  public IntakeControlMode intakeControlMode = IntakeControlMode.IDLE;
+
+  public synchronized IntakeControlMode getControlMode() {
+    return intakeControlMode;
+  }
+
+  public synchronized void setControlMode(IntakeControlMode controlMode) {
+    this.intakeControlMode = controlMode;
+  }
+
   public void deploy() {
     intakeTilt.set(true);
   }
@@ -37,8 +52,8 @@ public class Intake extends SubsystemBase {
     intakeTilt.set(false);
   }
 
-  public void start() {
-    intake.set(ControlMode.PercentOutput, .65);
+  public void run(double percentOutput) {
+    intake.set(ControlMode.PercentOutput, percentOutput);
   }
 
   public void stop() {
@@ -47,6 +62,15 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    synchronized (Intake.this) {
+      switch (getControlMode()) {
+        case IDLE:
+          stop();
+          break;
+        case RUNNING:
+          run(.85);
+          break;
+      }
+    }
   }
 }

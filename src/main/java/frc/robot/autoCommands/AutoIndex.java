@@ -5,17 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.autoCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Hopper.HopperControlMode;
 
 public class AutoIndex extends CommandBase {
   /**
    * Creates a new IndexTime.
    */
+  HopperControlMode controlMode;
   double seconds;
-  public AutoIndex(double seconds) {
+  public AutoIndex(HopperControlMode controlMode, double seconds) {
+    this.controlMode = controlMode;
     this.seconds = seconds;
   }
 
@@ -30,8 +33,12 @@ public class AutoIndex extends CommandBase {
       RobotContainer.timer.reset();
       RobotContainer.timer.start();
       if (RobotContainer.timer.get() <= seconds) {
-        RobotContainer.hopper.runBouncer();
-        RobotContainer.hopper.runBelts();
+        if (controlMode.equals(HopperControlMode.INTAKING)) {
+          RobotContainer.hopper.setControlMode(HopperControlMode.INTAKING);
+        }
+        else if (controlMode.equals(HopperControlMode.INDEXING)) {
+          RobotContainer.hopper.setControlMode(HopperControlMode.INDEXING);
+        }
       }
       else {
         end(false);
@@ -42,8 +49,7 @@ public class AutoIndex extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     RobotContainer.timer.stop();
-    RobotContainer.hopper.stopBouncer();
-    RobotContainer.hopper.stopBelts();
+    RobotContainer.hopper.stopSystems();
   }
 
   // Returns true when the command should end.

@@ -111,9 +111,9 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Shooter Rotations", getShooterRotations());
-        SmartDashboard.putNumber("Shooter RPM", getShooterRPM());
-        SmartDashboard.putNumber("Shooter Output Percent", shooterA.getMotorOutputPercent());
+        // SmartDashboard.putNumber("Shooter Rotations", getShooterRotations());
+        // SmartDashboard.putNumber("Shooter RPM", getShooterRPM());
+        // SmartDashboard.putNumber("Shooter Output Percent", shooterA.getMotorOutputPercent());
 
          synchronized (Shooter.this) {
             switch (getControlMode()) {

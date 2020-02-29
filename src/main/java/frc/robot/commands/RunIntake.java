@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.statemachines.Cycler.CycleMode;
 
 public class RunIntake extends CommandBase {
   /**
@@ -26,17 +27,13 @@ public class RunIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.intake.start();
-    RobotContainer.hopper.runBouncer();
-    RobotContainer.hopper.runBelts();
+    RobotContainer.cycler.setCycleMode(CycleMode.INTAKING);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.intake.stop();
-    RobotContainer.hopper.stopBouncer();
-    RobotContainer.hopper.stopBelts();
+    RobotContainer.cycler.setCycleMode(CycleMode.IDLE);
   }
 
   // Returns true when the command should end.

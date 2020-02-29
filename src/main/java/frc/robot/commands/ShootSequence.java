@@ -5,29 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autoPaths;
+package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.RobotContainer;
-import frc.robot.commands.Index;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.Track;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootSequence extends ParallelDeadlineGroup {
+public class ShootSequence extends SequentialCommandGroup {
   /**
-   * Creates a new PrepShooter.
+   * Creates a new Shoot.
    */
-  double seconds;
-  public AutoShootSequence(double seconds) {
+  double RPM;
+  public ShootSequence(double RPM) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
-      new Index(), new Shoot(6000)
+      new ActuateHood(), new WaitCommand(.10), new Shoot(RPM)
       );
-    this.seconds = seconds;
+      this.RPM = RPM;
   }
 }

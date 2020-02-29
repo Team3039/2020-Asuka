@@ -17,6 +17,7 @@ import frc.robot.auto.Auto6BallSideInit;
 import frc.robot.auto.Auto8BallCenterInit;
 import frc.robot.auto.AutoTestA;
 import frc.robot.auto.AutoTestB;
+import frc.robot.subsystems.Turret.TurretControlMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -91,7 +92,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     RobotContainer.drivetrain.resetEncoders();
-    RobotContainer.turret.setLed(false);
   }
 
   @Override
@@ -101,6 +101,7 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (autoChooser != null) {
       autoCommand.schedule();
+      
     }
   }
 
@@ -124,7 +125,6 @@ public class Robot extends TimedRobot {
 
     // RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
     // RobotContainer.shooter.resetShooterPosition();
-    RobotContainer.turret.setLed(false);
     if (autoCommand != null) {
       autoCommand.cancel();
     }

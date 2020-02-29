@@ -20,15 +20,15 @@ public class RobotMap {
 
   //Indexer
   public final static int bouncer = 8;
-  public final static int feederBeltsA = 9;
-  public final static int feederBeltsB = 10;
+  public final static int feederBelts = 9;
+  public final static int feederWheel = 10;
 
   //Color Wheel
   public final static int spinner = 9;
 
-  //CLimber
-  // public final static int climberA = 3;
-  // public final static int climberB = 11;
+  //Climber
+  public final static int climberA = 3;
+  public final static int climberB = 11;
 
 
 //SOLENOID
@@ -41,7 +41,8 @@ public class RobotMap {
 
 //DIO	
   public final static int turretSwitch = 0;
+  public final static int topBeam = 1;
+  public final static int lowBeam = 2;
 
 //AIO
-
 }

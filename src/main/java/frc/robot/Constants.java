@@ -28,8 +28,9 @@ public final class Constants {
     public static final double DRIVE_TRACKWIDTH = 26.5;
 
     //Turret
-    public static final double kP_TURRET = 0.2;
-    public static final double TURRET_RATIO = 3.7;
+    public static final double kP_TURRET = -0.02;
+    public static final double TURRET_RATIO = 15155.2;
+    public static final double PPR = 3.7;
     public static final double TURRET_PPR_TO_DEGREES = 360 / TURRET_RATIO; //How many degrees is one tick
 
     //Shooter
@@ -38,14 +39,12 @@ public final class Constants {
     public static final double kD_SHOOTER = 0.0;
     public static final double kF_SHOOTER = 0.0512;
     public static final int kIZone_SHOOTER = 200;
-    public static final double SHOOTER_OUTPUT_TO_ENCODER_RATIO = 0.77; //Previous 3.0 Because 3 revolutions of the encoder was one revolution of the wheels, 24.0/36.0
+    public static final double SHOOTER_OUTPUT_TO_ENCODER_RATIO = .44;
     public static final double TICKS_PER_ROTATION = 2048.0;
     public static final int kLongCANTimeOutMs = 100;
     public static final double kFlywheelTicksPerRevolution = 0;
     
     //Color Wheel
     public static final double COLOR_WHEEL_PPR = 0;
-    
- 
 }
 

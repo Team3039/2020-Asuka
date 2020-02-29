@@ -20,6 +20,6 @@ public class TrenchToLeftInit extends SequentialCommandGroup {
   public TrenchToLeftInit() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new DriveLinear(-200));
+    super(new DriveLinear(-200, 45));
   }
 }

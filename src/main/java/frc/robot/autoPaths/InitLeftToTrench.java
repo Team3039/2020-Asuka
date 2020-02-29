@@ -23,9 +23,9 @@ public class InitLeftToTrench extends ParallelDeadlineGroup {
   public InitLeftToTrench() {
     // Add your commands in the super() call.  Add the deadline first.
     super(
-        new DriveLinear(120)
-        // new ActuateIntake(),
-        // new RunIntake()
+        new DriveLinear(120, 45),
+        new ActuateIntake(),
+        new RunIntake()
     );
   }
 }

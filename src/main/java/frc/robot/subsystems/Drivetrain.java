@@ -121,27 +121,27 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getAngle() {
-    return navX.getAngle();
+    return navX.getAngle() % 360;
   }
 
   public double getAvgDistance() {
     return (getLeftPosition() + getRightPosition()) / 2.0;
   }
 
-  public void drivePID(double distance) {
+  public void drivePID(double distance, double angle) {
     double output = (driveCtrl.calculate(getAvgDistance(), distance));
     double clampedOutput = MathUtil.clamp(output, -.3, .3);
 
     if (distance >= 0) {
-      driveStraight(clampedOutput);
+      driveStraight(clampedOutput, angle);
     }
     else {
-      driveStraight(clampedOutput);
+      driveStraight(clampedOutput, angle);
     }
   }
 
-  public void driveStraight(double power) {
-    double gyroError = 0 - getAngle();
+  public void driveStraight(double power, double angle) {
+    double gyroError = angle - getAngle();
     double kP = kPGyro;
     leftFrontDrive.set(ControlMode.PercentOutput, -power - (kP * gyroError) );
     rightFrontDrive.set(ControlMode.PercentOutput, power - (kP * gyroError) );

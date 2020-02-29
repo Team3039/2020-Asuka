@@ -9,7 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-//import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,33 +18,56 @@ import frc.robot.RobotMap;
 public class Climber extends SubsystemBase {
   
   public Solenoid climbDeployer = new Solenoid(RobotMap.climbDeployer);
-  // public TalonSRX climberA = new TalonSRX(RobotMap.climberA);
-  // public TalonSRX climberB = new TalonSRX(RobotMap.climberB);
+  public TalonSRX climberA = new TalonSRX(RobotMap.climberA);
+  public TalonSRX climberB = new TalonSRX(RobotMap.climberB);
   public Solenoid buddyDeploy = new Solenoid(RobotMap.buddyDeploy);
 
   public Climber() {
+    climberA.setInverted(true);
+    climberB.setInverted(true);
+    climberB.follow(climberA);
+  }
+
+  public enum ClimberMode {
+    IDLE,
+    EXTENDING,
+    CLIMBING,
+  }
+
+  public ClimberMode climberMode = ClimberMode.IDLE;
+
+  public synchronized ClimberMode getClimberMode() {
+    return climberMode;
   }
 
   public void deploy() {
     climbDeployer.set(true);
   }
 
-  // public void retract() {
-  //   climberA.set(ControlMode.PercentOutput, -.75);
-  //   climberB.follow(climberA);
-  // }
+  public void retract(double power) {
+    climberA.set(ControlMode.PercentOutput, (power * -1));
+  }
 
-  // public void stop() {
-  //   climberA.set(ControlMode.PercentOutput, 0);
-  //   climberB.follow(climberA);
-  // }
+  public void extend(double power){
+    climberA.set(ControlMode.PercentOutput, Math.abs(power));;
+  }
 
-  public void extend(){
-    buddyDeploy.set(true);
+  public void stop() {
+    climberA.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    synchronized (Climber.this) {
+      switch(getClimberMode()) {
+        case IDLE:
+          break;
+        case EXTENDING:
+
+          break;
+        case CLIMBING:
+          break;
+      }
+    }
   }
 }

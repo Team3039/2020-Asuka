@@ -15,22 +15,23 @@ public class DriveLinear extends CommandBase {
    * Creates a new DriveLinear
    */
   double distance;
-  public DriveLinear(double distance) {
+  double angle;
+  public DriveLinear(double distance, double angle) {
     addRequirements(RobotContainer.drivetrain);
-    this.distance = distance;    
+    this.distance = distance;
+    this.angle = angle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.drivetrain.resetGyro();
     RobotContainer.drivetrain.resetEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.drivetrain.drivePID(distance);
+    RobotContainer.drivetrain.drivePID(distance, angle);
   }
 
   // Called once the command ends or is interrupted.

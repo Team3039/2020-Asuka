@@ -7,10 +7,18 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import javax.swing.text.StyleContext.SmallAttributeSet;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
 /**
@@ -19,34 +27,97 @@ import frc.robot.RobotMap;
  */
 public class Hopper extends SubsystemBase {
 
-  public TalonSRX bouncer = new TalonSRX(RobotMap.bouncer);
-  public TalonSRX feederBeltsA = new TalonSRX(RobotMap.feederBeltsA);
-  public TalonSRX feederBeltsB = new TalonSRX(RobotMap.feederBeltsB);
+  public VictorSPX bouncer = new VictorSPX(RobotMap.bouncer);
+  public TalonSRX feederBelts = new TalonSRX(RobotMap.feederBelts);
+  public TalonSRX feederWheel = new TalonSRX(RobotMap.feederWheel);
+
+  public DigitalInput topBeam = new DigitalInput(RobotMap.topBeam);
+  public DigitalInput lowBeam = new DigitalInput(RobotMap.lowBeam);
+
+  public enum HopperControlMode {
+    IDLE,
+    INTAKING,
+    INDEXING,
+    UNJAMMING
+  }
+
+  public HopperControlMode hopperControlMode = HopperControlMode.IDLE;
+
+  public synchronized HopperControlMode getControlMode() {
+    return hopperControlMode;
+}
+
+  public synchronized void setControlMode(HopperControlMode controlMode) {
+    this.hopperControlMode = controlMode;
+  }
+
+  public boolean getTopBeam() {
+    return topBeam.get() == false;
+  }
+
+  public boolean getLowBeam() {
+    return lowBeam.get() == false;
+  }
 
   public Hopper() {
-    feederBeltsA.setInverted(true);
+    feederBelts.setInverted(true);
+    feederWheel.setInverted(false);
+
+    feederBelts.setNeutralMode(NeutralMode.Coast);
+    feederWheel.setNeutralMode(NeutralMode.Coast);
   }
 
-  public void runBelts() {
-    feederBeltsA.set(ControlMode.PercentOutput, .40);
-    feederBeltsB.set(ControlMode.PercentOutput, .40);
+  public void runBelts(double percentOutput) {
+    feederBelts.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public void stopBelts() {
-    feederBeltsA.set(ControlMode.PercentOutput, 0);
-    feederBeltsB.set(ControlMode.PercentOutput, 0);
+  public void runBouncer(double percentOutput) {
+    bouncer.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public void runBouncer() {
-    bouncer.set(ControlMode.PercentOutput, .40);
+  public void runFeeder(double percentOutput) {
+    feederWheel.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public void stopBouncer() {
+  public void runSystems(double percentA, double percentB, double percentC) {
+    bouncer.set(ControlMode.PercentOutput, percentA);
+    feederBelts.set(ControlMode.PercentOutput, percentB);
+    feederWheel.set(ControlMode.PercentOutput, percentC);
+  }
+
+  public void stopSystems() {
     bouncer.set(ControlMode.PercentOutput, 0);
+    feederBelts.set(ControlMode.PercentOutput, 0);
+    feederWheel.set(ControlMode.PercentOutput, 0);
   }
-
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("Top Beam", getTopBeam());
+    SmartDashboard.putBoolean("Low Beam", getLowBeam());
+    synchronized (Hopper.this) {
+      switch (getControlMode()) {
+        case IDLE:
+          stopSystems();
+          break;
+        case INTAKING:
+          if (!getTopBeam() && !getLowBeam()) {
+            runSystems(-.9, .6, .6);
+          }
+          else if (getTopBeam() && !getLowBeam()) {
+            runSystems(-.9, 0, .6);
+          }
+          else {
+            runSystems(0, 0, 0);
+          }
+          break;
+        case INDEXING:
+          runSystems(.6, .6, .6);
+          break;
+        case UNJAMMING:
+          runSystems(.4, -.6, -.6);
+          break;
+      }
+    }
   }
 }

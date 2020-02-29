@@ -5,15 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.autoCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class TrackTime extends CommandBase {
+public class AutoTrack extends CommandBase {
   /**
    * Creates a new TrackTime.
    */
-  public TrackTime() {
+  public AutoTrack() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

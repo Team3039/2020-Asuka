@@ -2,17 +2,19 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-// import frc.robot.auto.Auto6BallSideInit;
+import frc.robot.commands.ActuateHood;
 import frc.robot.commands.ActuateIntake;
+import frc.robot.commands.Climb;
+import frc.robot.commands.DeployClimb;
 import frc.robot.commands.Index;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinWheel;
 import frc.robot.commands.Track;
 import frc.robot.controllers.PS4Gamepad;
+import frc.robot.statemachines.Cycler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
 import frc.robot.subsystems.Drivetrain;
@@ -30,6 +32,8 @@ public class RobotContainer {
   public final static Shooter shooter = new Shooter();
   public final static Climber climber = new Climber();
   public final static ColorWheel colorWheel = new ColorWheel();
+
+  public final static Cycler cycler = new Cycler();
 
   // public final static Auto6BallSideInit autoCommand = new Auto6BallSideInit();
 
@@ -77,24 +81,28 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Driver
-    driverShare.toggleWhenPressed(new Shoot(3500));
+    driverShare.toggleWhenPressed(new Shoot(4500));
     driverX.toggleWhenPressed(new RunIntake());
-    driverCircle.toggleWhenPressed(new ActuateIntake());
+    driverCircle.toggleWhenPressed(new ActuateHood());
+    driverOptions.toggleWhenPressed(new ActuateIntake());
     driverTriangle.toggleWhenPressed(new Index());
     driverSquare.toggleWhenPressed(new Track());
+    driverL1.whileHeld(new DeployClimb());
+    driverR1.whileHeld(new Climb());
 
     //Operator
-	  // operatorCircle.whenPressed(new ActuateIntake());
-    // operatorR2.whileHeld(new RunIntake());
     operatorTriangle.whenPressed(new SpinWheel(2));
 
     SmartDashboard.putNumber("Target X", turret.getTargetX());
 
     SmartDashboard.putData("Actuate Hood", new InstantCommand(()-> shooter.actuateHood()));
     SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));
-    SmartDashboard.putData("Set LEDs (On)", new InstantCommand(()-> turret.setLed(true)));
-    SmartDashboard.putData("Set LEDs (Off)", new InstantCommand(()-> turret.setLed(false)));
+    SmartDashboard.putData("Reset Turret Pose", new InstantCommand(()-> turret.resetTurretPosition()));
     SmartDashboard.putData("Turret Manual", new InstantCommand(()-> turret.manualControl(RobotContainer.getOperator())));
+    SmartDashboard.putData("LEDs On", new InstantCommand(()-> turret.setLed(true)));
+    SmartDashboard.putData("LEDs Off", new InstantCommand(()-> turret.setLed(false)));
+    SmartDashboard.putData("TrackMode", new InstantCommand(()-> turret.setCamMode(true)));
+    SmartDashboard.putData("DriveMode", new InstantCommand(()-> turret.setCamMode(false)));
 
     SmartDashboard.putData("Shooter 100%", new InstantCommand(()-> shooter.setShooterSpeed(1.0)));
     SmartDashboard.putData("Shooter 95%", new InstantCommand(()-> shooter.setShooterSpeed(.95)));
