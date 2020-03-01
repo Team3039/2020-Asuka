@@ -157,7 +157,6 @@ public class Drivetrain extends SubsystemBase {
   public void rotatePID(double angle) {
     double output = (rotCtrl.calculate(getAngle(), angle));
     double clampedOutput = MathUtil.clamp(output, -.3, .3);
-    System.out.println(getRotError());
     if (getAngle() < angle) {
     rotate(-clampedOutput);
     }

@@ -50,6 +50,7 @@ public class Cycler extends SubsystemBase {
           break;
         case INDEXING:        
           RobotContainer.hopper.setControlMode(HopperControlMode.INDEXING);  
+          RobotContainer.intake.setControlMode(IntakeControlMode.RUNNING);
           break;
         case UNJAMMING:
           RobotContainer.hopper.setControlMode(HopperControlMode.UNJAMMING);  

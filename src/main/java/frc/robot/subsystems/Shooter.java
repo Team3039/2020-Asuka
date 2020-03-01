@@ -14,6 +14,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import static frc.robot.Constants.*;
 
@@ -83,8 +85,13 @@ public class Shooter extends SubsystemBase {
         shooterA.set(ControlMode.PercentOutput, speed);
     }
 
-    public double calculateDesiredOutput() {
-        return 0;
+    public double calculateDesiredOutput(double x) {
+        double a = 36;
+        double b = -468.2;
+        double c = 6185;
+        double rpmGenerated = (a * (Math.pow(x,2))) + (b * x) + c; 
+        MathUtil.clamp(rpmGenerated, 4000, 8000);
+        return rpmGenerated;
     }
 
     public void resetShooterPosition() {
@@ -123,8 +130,9 @@ public class Shooter extends SubsystemBase {
                     shooterA.set(ControlMode.PercentOutput, 0);
                     break;
                 case CALCULATE:
-                    calculateDesiredOutput();
+                    shooterA.set(ControlMode.Velocity, calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
             }
         }
+        System.out.println(calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
      }
 }

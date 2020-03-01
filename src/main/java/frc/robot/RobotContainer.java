@@ -8,9 +8,12 @@ import frc.robot.commands.ActuateHood;
 import frc.robot.commands.ActuateIntake;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
+import frc.robot.commands.DeployClimbArms;
 import frc.robot.commands.Index;
+import frc.robot.commands.RetractClimbArms;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootSequence;
 import frc.robot.commands.SpinWheel;
 import frc.robot.commands.Track;
 import frc.robot.controllers.PS4Gamepad;
@@ -81,7 +84,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //Driver
-    driverShare.toggleWhenPressed(new Shoot(4500));
+    driverShare.toggleWhenPressed(new Shoot(5520));
     driverX.toggleWhenPressed(new RunIntake());
     driverCircle.toggleWhenPressed(new ActuateHood());
     driverOptions.toggleWhenPressed(new ActuateIntake());
@@ -89,13 +92,17 @@ public class RobotContainer {
     driverSquare.toggleWhenPressed(new Track());
     driverL1.whileHeld(new DeployClimb());
     driverR1.whileHeld(new Climb());
+    // driverShare.whileHeld(new DeployClimbArms());
+    // driverOptions.whileHeld(new RetractClimbArms());
 
     //Operator
-    operatorTriangle.whenPressed(new SpinWheel(2));
-
     SmartDashboard.putNumber("Target X", turret.getTargetX());
+    SmartDashboard.putNumber("Target AREA", turret.getTargetArea());
+    SmartDashboard.putNumber("getRPM", RobotContainer.shooter.getShooterRPM());
+    SmartDashboard.putNumber("Percent Output", RobotContainer.shooter.shooterA.getMotorOutputVoltage());
 
     SmartDashboard.putData("Actuate Hood", new InstantCommand(()-> shooter.actuateHood()));
+    SmartDashboard.putData("Actuate Climb", new InstantCommand(()-> climber.actuateClimb()));
     SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));
     SmartDashboard.putData("Reset Turret Pose", new InstantCommand(()-> turret.resetTurretPosition()));
     SmartDashboard.putData("Turret Manual", new InstantCommand(()-> turret.manualControl(RobotContainer.getOperator())));
@@ -104,12 +111,15 @@ public class RobotContainer {
     SmartDashboard.putData("TrackMode", new InstantCommand(()-> turret.setCamMode(true)));
     SmartDashboard.putData("DriveMode", new InstantCommand(()-> turret.setCamMode(false)));
 
-    SmartDashboard.putData("Shooter 100%", new InstantCommand(()-> shooter.setShooterSpeed(1.0)));
-    SmartDashboard.putData("Shooter 95%", new InstantCommand(()-> shooter.setShooterSpeed(.95)));
-    SmartDashboard.putData("Shooter 90%", new InstantCommand(()-> shooter.setShooterSpeed(.9)));
-    SmartDashboard.putData("Shooter 75%", new InstantCommand(()-> shooter.setShooterSpeed(.75)));
-    SmartDashboard.putData("Shooter 50%", new InstantCommand(()-> shooter.setShooterSpeed(.5)));
-    SmartDashboard.putData("Shooter 0%", new InstantCommand(()-> shooter.setShooterSpeed(0)));
+    SmartDashboard.putData("6000", new InstantCommand(()-> shooter.setShooterRPM(6000)));
+    SmartDashboard.putData("5000", new InstantCommand(()-> shooter.setShooterRPM(5000)));
+    // SmartDashboard.putData("Shooter 85%", new InstantCommand(()-> shooter.setShooterSpeed(.9)));
+    // SmartDashboard.putData("Shooter 80%", new InstantCommand(()-> shooter.setShooterSpeed(.8)));
+    // SmartDashboard.putData("Shooter 75%", new InstantCommand(()-> shooter.setShooterSpeed(.75)));
+    // SmartDashboard.putData("Shooter 70%", new InstantCommand(()-> shooter.setShooterSpeed(.7)));
+    // SmartDashboard.putData("Shooter 65%", new InstantCommand(()-> shooter.setShooterSpeed(.65))); 
+    // SmartDashboard.putData("Shooter 50%", new InstantCommand(()-> shooter.setShooterSpeed(.5)));
+    // SmartDashboard.putData("Shooter 0%", new InstantCommand(()-> shooter.setShooterSpeed(0)));
     SmartDashboard.putData("Specific Shooter Speed", new InstantCommand(()-> shooter.setShooterSpeed(.78)));
 
   //Put climb on toggle

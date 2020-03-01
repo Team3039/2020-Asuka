@@ -40,6 +40,7 @@ public class Turret extends SubsystemBase {
     setLed(false);
     setPipeline(0);
     setCamMode(false);
+    turret.config_kP(0, 0.05);
   }
 
   public enum TurretControlMode {
@@ -100,12 +101,12 @@ public class Turret extends SubsystemBase {
     }
     else if (controlMode.equals(TurretControlMode.TRACKING)) {
       setTrackingMode();
-      if (onTarget() == false) {
-        trackWall();
-      }
-      else {
+      // if (onTarget() == false) {
+      //   trackWall();
+      // }
+      // else {
         turret.set(ControlMode.PercentOutput, errorX);
-      }
+      // }
     }
     else if (controlMode.equals(TurretControlMode.POSITION)) {
       setDriverCamMode();
@@ -137,14 +138,30 @@ public class Turret extends SubsystemBase {
   public void trackTarget() {
     double errorX = (0 - getTargetX()) * kP_TURRET;
 
-    // if (onTarget() == false) {
-    //   trackWall();
-    // }
-    // else {
+    if (getTurretSwitch() && getTurretPosition() > 70) {
+      turret.set(ControlMode.PercentOutput, -.1);
+    }
+    else if (getTurretSwitch() && getTurretPosition() < -270) {
+      turret.set(ControlMode.PercentOutput, .1);
+    }
+    else {
       turret.set(ControlMode.PercentOutput, errorX);
-    // }
+    }
   }
   
+  public void resetPose() {
+    double errorX = (getTurretPosition()) * kP_TURRET;
+
+    if (getTurretSwitch() && getTurretPosition() > 70) {
+      turret.set(ControlMode.PercentOutput, -.1);
+    }
+    else if (getTurretSwitch() && getTurretPosition() < -270) {
+      turret.set(ControlMode.PercentOutput, .1);
+    }
+    else {
+      turret.set(ControlMode.PercentOutput, errorX);
+    }
+  }
 
   public double getTurretPosition() {
     return getCurrentPosition() % 360;
@@ -205,7 +222,7 @@ public class Turret extends SubsystemBase {
     return getTargetX() - getCurrentPosition();
   }
 
-  public boolean onTarget() {
+  public boolean hasTarget() {
     if(Robot.targetValid == 1) {
       return true;
     }
@@ -240,26 +257,29 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("Turret Position", getTurretPosition());
-    SmartDashboard.putBoolean("Turret Switch", turretSwitch.get());
+    // SmartDashboard.putBoolean("Turret Switch", turretSwitch.get());
     // SmartDashboard.putNumber("TargetX", getTargetX());
     // SmartDashboard.putNumber("ErrorX", getErrorX());
+    turret.selectProfileSlot(0, 0);
 
-    // synchronized (Turret.this) {
-    //   switch (getControlMode()) {
-    //     case IDLE:
-    //       aim(TurretControlMode.IDLE);
-    //       break;
-    //     case TRACKING:
-    //       aim(TurretControlMode.TRACKING);
-    //       break;
-    //     case WALL:
-    //       System.out.println("Set turret to track wall");
-    //       aim(TurretControlMode.WALL);
-    //       break;
-    //     default:
-    //       System.out.println("Unknown turret control mode");
-    //       break;
-    //   }
-    // }
+    synchronized (Turret.this) {
+      switch (getControlMode()) {
+        case IDLE:
+          setDriverCamMode();
+          resetPose();
+          break;
+        case TRACKING:
+          RobotContainer.turret.setTrackingMode();
+          RobotContainer.turret.trackTarget();
+          break;
+        case WALL:
+          System.out.println("Set turret to track wall");
+          aim(TurretControlMode.WALL);
+          break;
+        default:
+          System.out.println("Unknown turret control mode");
+          break;
+      }
+    }
   }
 }

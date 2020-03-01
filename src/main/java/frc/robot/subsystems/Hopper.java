@@ -102,20 +102,20 @@ public class Hopper extends SubsystemBase {
           break;
         case INTAKING:
           if (!getTopBeam() && !getLowBeam()) {
-            runSystems(-.9, .6, .6);
+            runSystems(.2, .6, .6);
           }
           else if (getTopBeam() && !getLowBeam()) {
-            runSystems(-.9, 0, .6);
+            runSystems(.2, 0, .6);
           }
           else {
             runSystems(0, 0, 0);
           }
           break;
         case INDEXING:
-          runSystems(.6, .6, .6);
+          runSystems(.2, .6, .6);
           break;
         case UNJAMMING:
-          runSystems(.4, -.6, -.6);
+          runSystems(-.4, -.6, -.6);
           break;
       }
     }

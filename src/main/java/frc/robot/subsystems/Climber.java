@@ -8,24 +8,29 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
 public class Climber extends SubsystemBase {
   
-  public Solenoid climbDeployer = new Solenoid(RobotMap.climbDeployer);
   public TalonSRX climberA = new TalonSRX(RobotMap.climberA);
   public TalonSRX climberB = new TalonSRX(RobotMap.climberB);
-  public Solenoid buddyDeploy = new Solenoid(RobotMap.buddyDeploy);
+  public TalonSRX climberC = new TalonSRX(RobotMap.climberC);
+
+  public Solenoid climbRelease = new Solenoid(RobotMap.climbRelease);
 
   public Climber() {
+    climberC.setSelectedSensorPosition(0);
     climberA.setInverted(true);
     climberB.setInverted(true);
     climberB.follow(climberA);
+    climberC.setNeutralMode(NeutralMode.Brake);
   }
 
   public enum ClimberMode {
@@ -40,8 +45,16 @@ public class Climber extends SubsystemBase {
     return climberMode;
   }
 
-  public void deploy() {
-    climbDeployer.set(true);
+  public void actuateClimb() {
+    climbRelease.set(true);
+  }
+
+  public void deploy(double percentOutput) {
+    climberC.set(ControlMode.PercentOutput, Math.abs(percentOutput));
+  }
+
+  public void release(double percentOutput) {
+    climberC.set(ControlMode.PercentOutput, percentOutput * -1);
   }
 
   public void retract(double power) {
@@ -58,6 +71,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // if (climberC.getSelectedSensorPosition())
     synchronized (Climber.this) {
       switch(getClimberMode()) {
         case IDLE:

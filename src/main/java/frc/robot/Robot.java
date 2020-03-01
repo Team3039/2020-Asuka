@@ -81,7 +81,6 @@ public class Robot extends TimedRobot {
     targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
     targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
     targetSkew = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ts").getDouble(0);
-    System.out.println(NetworkTableInstance.getDefault().getTable("limelight").getEntry("<tx>").getDouble(0));
     CommandScheduler.getInstance().run();
   }
 
@@ -91,6 +90,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // RobotContainer.climber.release(0.45);
     RobotContainer.drivetrain.resetEncoders();
   }
 

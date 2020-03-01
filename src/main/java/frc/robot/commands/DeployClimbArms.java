@@ -7,36 +7,33 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Turret.TurretControlMode;
-
-public class Track extends CommandBase {
+public class DeployClimbArms extends CommandBase {
   /**
-   * Creates a new Track.
+   * Creates a new DeployClimbArms.
    */
-  public Track() {
-    addRequirements(RobotContainer.turret);
+  public DeployClimbArms() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.turret.setTrackingMode();
+    RobotContainer.climber.actuateClimb();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // double errorX = (RobotContainer.turret.getTargetX() - RobotContainer.turret.getCurrentPosition()) * Constants.kP_TURRET;
-
-    RobotContainer.turret.setControlMode(TurretControlMode.TRACKING);
+    RobotContainer.climber.deploy(.7);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
+    RobotContainer.climber.release(0);
   }
 
   // Returns true when the command should end.
