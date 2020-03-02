@@ -9,48 +9,47 @@ package frc.robot.autoCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.commands.ActuateHood;
-import frc.robot.commands.Track;
-import frc.robot.subsystems.Hopper.HopperControlMode;
+import frc.robot.commands.ActuateIntake;
+import frc.robot.commands.RunIntake;
 
-public class AutoShoot extends CommandBase {
+public class DriveWithIntake extends CommandBase {
   /**
-   * Creates a new IndexTime.
+   * Creates a new DriveWithIntake.
    */
+  double distance;
+  double angle;
   double seconds;
-  public AutoShoot(double seconds) {
+  public DriveWithIntake(double distance, double angle) {
+    this.distance = distance;
+    this.angle = angle;
     this.seconds = seconds;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.timer.reset();
-    RobotContainer.timer.start();
+    RobotContainer.timer.reset();    
+    RobotContainer.timer.start();    
+    new ActuateIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    new Track();
-      if (RobotContainer.timer.get() <= seconds) {
-        if (RobotContainer.turret.hasTarget()) {
-          RobotContainer.shooter.setShooterRPM(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
-        }
-        else {
-          RobotContainer.shooter.setShooterRPM(5000);
-        }
-      }
-      else {
-        end(false);
-      }
+    if (RobotContainer.timer.get() <= seconds) {
+      new DriveLinear(distance, angle);
+      new RunIntake();
+    }
+    else {
+      RobotContainer.drivetrain.stop();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.timer.stop();
-    RobotContainer.hopper.stopSystems();
+    RobotContainer.timer.stop();    
+
   }
 
   // Returns true when the command should end.

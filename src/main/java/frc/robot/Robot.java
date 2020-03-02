@@ -15,9 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.auto.Auto6BallSideInit;
 import frc.robot.auto.Auto8BallCenterInit;
-import frc.robot.auto.AutoTestA;
-import frc.robot.auto.AutoTestB;
-import frc.robot.subsystems.Turret.TurretControlMode;
+import frc.robot.auto.AutoSafe;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,8 +28,7 @@ public class Robot extends TimedRobot {
   private Command autoCommand;
   public Auto6BallSideInit auto6BallInitSide = new Auto6BallSideInit();
   public Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
-  public AutoTestA autoTestA = new AutoTestA();
-  public AutoTestB autoTestB = new AutoTestB();
+  public AutoSafe autoSafe = new AutoSafe();
 
   private RobotContainer robotContainer;
 
@@ -40,25 +37,8 @@ public class Robot extends TimedRobot {
    public static double targetX; //Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
    public static double targetY; //Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
    public static double targetArea; //Target Area (0% of image to 100% of image)
-   public static double targetSkew; //Skew or rotation (-90 degrees to 0 degrees)
    
    SendableChooser<Command> autoChooser = new SendableChooser<>();
-
-   private enum Auto {
-     DEFAULT,
-     TEST,
-   }
-
-  //  public Auto default = Auto.DEFAULT;
-  //  public Auto 
-
-  //  private synchronized Auto getControlMode() {
-  //    return auto;
-  //  }
-
-  //  private synchronized void setControlMode(Auto auto) {
-  //    this.auto = auto;
-  //  }
 
   @Override
   public void robotInit() {
@@ -67,10 +47,9 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
     SmartDashboard.putData("Auto mode", autoChooser);
-    autoChooser.addOption("TestA", autoTestA);
-    autoChooser.addOption("TestB", autoTestB);
     autoChooser.addOption("Auto 6 Ball Side Init", auto6BallInitSide);
     autoChooser.addOption("Auto 8 Ball Center Init", auto8BallCenterInit);
+    autoChooser.addOption("Auto Safe", autoSafe);
   }
 
   @Override
@@ -80,7 +59,6 @@ public class Robot extends TimedRobot {
     targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
     targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
     targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-    targetSkew = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ts").getDouble(0);
     CommandScheduler.getInstance().run();
   }
 
@@ -90,7 +68,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // RobotContainer.climber.release(0.45);
     RobotContainer.drivetrain.resetEncoders();
   }
 
@@ -101,30 +78,15 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (autoChooser != null) {
       autoCommand.schedule();
-      
     }
   }
 
   @Override
   public void autonomousPeriodic() {
-    // synchronized (Robot.this) {
-    //   switch (getControlMode()) {
-    //     case DEFAULT: 
-    //       break;
-    //     case TEST:
-    //   }
-    // }
   }
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-
-    // RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
-    // RobotContainer.shooter.resetShooterPosition();
     if (autoCommand != null) {
       autoCommand.cancel();
     }

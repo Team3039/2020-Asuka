@@ -5,34 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autoCommands;
+package frc.robot.auto;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.RobotContainer;
-import frc.robot.commands.ActuateHood;
-import frc.robot.commands.Index;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.ShootSequence;
-import frc.robot.commands.Track;
+import frc.robot.autoSequences.*;
+import frc.robot.autoCommands.DriveLinear;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootSequence extends ParallelDeadlineGroup {
+public class AutoSafe extends SequentialCommandGroup {
   /**
-   * Creates a new PrepShooter.
+   * Creates a new AutoSafe.
    */
-  double RPM;
-  double seconds;
-  public AutoShootSequence(double seconds, double RPM) {
+  public AutoSafe() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
-      new ActuateHood(), new WaitCommand(.10), new Shoot(RPM)
-      );
-    this.seconds = seconds;
-    this.RPM = RPM;
+      new AutoShootSequence(5),
+      new DriveLinear(-30, 0)
+    );
   }
 }

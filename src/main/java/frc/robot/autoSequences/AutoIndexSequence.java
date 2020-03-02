@@ -5,37 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto;
+package frc.robot.autoSequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.autoCommands.DriveLinear;
-import frc.robot.autoCommands.DriveWithIntake;
-import frc.robot.autoCommands.Rotate;
-import frc.robot.autoSequences.AutoShootSequence;
+import frc.robot.autoCommands.AutoIndex;
+import frc.robot.subsystems.Hopper.HopperControlMode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class Auto8BallCenterInit extends SequentialCommandGroup {
+public class AutoIndexSequence extends SequentialCommandGroup {
   /**
-   * Creates a new Auto8BallCenterInit.
+   * Creates a new AutoIndexSequence.
    */
-  public Auto8BallCenterInit() {
-    // Add your commands in the super() call, e.g.
-    // super(new FooCommand(), new BarCommand());
+  double seconds;
+  public AutoIndexSequence(double seconds) {
     super(
-      new AutoShootSequence(2.5),
-      new Rotate(45),
-      new WaitCommand(.25),
-      new DriveWithIntake(103, 45),
-      new WaitCommand(.25),
-      new Rotate(36.5),
-      new WaitCommand(.25),
-      new DriveWithIntake(120, 36.5),
-      new WaitCommand(.25),
-      new DriveLinear(-90, 36.5),
-      new AutoShootSequence(5)
+      new WaitCommand(2), new AutoIndex(HopperControlMode.INDEXING, seconds)
     );
+    this.seconds = seconds;
   }
 }

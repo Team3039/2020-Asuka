@@ -8,10 +8,11 @@
 package frc.robot.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.autoPaths.InitLeftToTrench;
 import frc.robot.autoCommands.*;
 import frc.robot.autoPaths.TrenchToLeftInit;
-import frc.robot.autoCommands.DriveLinear;
+import frc.robot.autoSequences.AutoShootSequence;
 
 // information, see:
 // https://docs.wpilib.org/en/laDriveLinear/docs/software/commandbased/convenience-features.html
@@ -21,14 +22,11 @@ public class Auto6BallSideInit extends SequentialCommandGroup {
    */
   public Auto6BallSideInit() {
     super(
-    // new Track(),
-    // new AutoShootSequence(2.5),
-    // new InitLeftToTrench(),
-    // new TrenchToLeftInit(),
-    new DriveLinear(120, 45),
-    new DriveLinear(-120, 45)
-    // new Track(),
-    // new AutoShootSequence(4)
+      new AutoShootSequence(2.5),
+      new DriveWithIntake(120, 36.5),
+      new WaitCommand(.25),
+      new DriveLinear(-90, 36.5),
+      new AutoShootSequence(5)
       );
   }
 }
