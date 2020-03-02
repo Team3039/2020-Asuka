@@ -195,10 +195,5 @@ public class Drivetrain extends SubsystemBase {
   
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left Position", getLeftPosition());
-    SmartDashboard.putNumber("Right Position", getRightPosition());
-    SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
-    SmartDashboard.putNumber("Right Velocity", getRightVelocity());
-    SmartDashboard.putNumber("Gyro", getAngle());
   }
 }

@@ -9,9 +9,9 @@ package frc.robot.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.DriveLinear;
-import frc.robot.commands.ResetPose;
-import frc.robot.commands.Rotate;
+import frc.robot.autoCommands.DriveLinear;
+import frc.robot.autoCommands.ResetPose;
+import frc.robot.autoCommands.Rotate;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:

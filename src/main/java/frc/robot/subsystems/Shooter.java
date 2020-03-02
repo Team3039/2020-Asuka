@@ -118,21 +118,5 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Shooter Rotations", getShooterRotations());
-        // SmartDashboard.putNumber("Shooter RPM", getShooterRPM());
-        // SmartDashboard.putNumber("Shooter Output Percent", shooterA.getMotorOutputPercent());
-
-         synchronized (Shooter.this) {
-            switch (getControlMode()) {
-                case IDLE:
-                    break;
-                case HOLD:
-                    shooterA.set(ControlMode.PercentOutput, 0);
-                    break;
-                case CALCULATE:
-                    shooterA.set(ControlMode.Velocity, calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
-            }
-        }
-        System.out.println(calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
-     }
+    }
 }

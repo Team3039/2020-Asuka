@@ -71,17 +71,5 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (climberC.getSelectedSensorPosition())
-    synchronized (Climber.this) {
-      switch(getClimberMode()) {
-        case IDLE:
-          break;
-        case EXTENDING:
-
-          break;
-        case CLIMBING:
-          break;
-      }
-    }
   }
 }

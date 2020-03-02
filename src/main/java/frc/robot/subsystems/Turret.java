@@ -256,10 +256,6 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Turret Position", getTurretPosition());
-    // SmartDashboard.putBoolean("Turret Switch", turretSwitch.get());
-    // SmartDashboard.putNumber("TargetX", getTargetX());
-    // SmartDashboard.putNumber("ErrorX", getErrorX());
     turret.selectProfileSlot(0, 0);
 
     synchronized (Turret.this) {
