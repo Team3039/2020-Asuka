@@ -9,9 +9,7 @@ package frc.robot.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.autoPaths.InitLeftToTrench;
 import frc.robot.autoCommands.*;
-import frc.robot.autoPaths.TrenchToLeftInit;
 import frc.robot.autoSequences.AutoShootSequence;
 
 // information, see:

@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.auto.Auto6BallSideInit;
 import frc.robot.auto.Auto8BallCenterInit;
 import frc.robot.auto.AutoSafe;
+import frc.robot.auto.AutoTestA;
+import frc.robot.auto.AutoTestB;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,6 +31,8 @@ public class Robot extends TimedRobot {
   public Auto6BallSideInit auto6BallInitSide = new Auto6BallSideInit();
   public Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
   public AutoSafe autoSafe = new AutoSafe();
+  public AutoTestA autoTestA = new AutoTestA();
+  public AutoTestB autoTestB = new AutoTestB();
 
   private RobotContainer robotContainer;
 
@@ -50,6 +54,8 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Auto 6 Ball Side Init", auto6BallInitSide);
     autoChooser.addOption("Auto 8 Ball Center Init", auto8BallCenterInit);
     autoChooser.addOption("Auto Safe", autoSafe);
+    autoChooser.addOption("Auto TestA", autoTestA);
+    autoChooser.addOption("Auto TestB", autoTestB);
   }
 
   @Override

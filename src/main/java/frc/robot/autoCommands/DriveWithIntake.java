@@ -22,7 +22,6 @@ public class DriveWithIntake extends CommandBase {
   public DriveWithIntake(double distance, double angle) {
     this.distance = distance;
     this.angle = angle;
-    this.seconds = seconds;
   }
 
   // Called when the command is initially scheduled.

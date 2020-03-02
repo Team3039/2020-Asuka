@@ -9,7 +9,6 @@ package frc.robot.autoPaths;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.autoCommands.DriveLinear;
-import frc.robot.commands.Index;
 import frc.robot.commands.ActuateIntake;
 import frc.robot.commands.RunIntake;
 

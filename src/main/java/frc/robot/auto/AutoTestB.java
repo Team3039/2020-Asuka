@@ -10,7 +10,6 @@ package frc.robot.auto;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.autoCommands.DriveLinear;
-import frc.robot.autoCommands.ResetPose;
 import frc.robot.autoCommands.Rotate;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -24,7 +23,9 @@ public class AutoTestB extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
-      new Rotate(-90), new WaitCommand(1), new DriveLinear(-50, -90)
+      new Rotate(-90),
+      new WaitCommand(.25), 
+      new DriveLinear(-50, -90)
     );
   }
 }
