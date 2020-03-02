@@ -9,7 +9,6 @@ package frc.robot.autoSequences;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.autoCommands.AutoShoot;
-import frc.robot.subsystems.Hopper.HopperControlMode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
