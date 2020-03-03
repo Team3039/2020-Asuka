@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
   public static PIDController driveCtrl = new PIDController(.012,0,0);
   public static PIDController rotCtrl = new PIDController(.0165, 0, 0);
 
-  public double kPGyro = 0.0287;
+  public double kPGyro = 0.025;
   
   public Drivetrain() {
     setNeutralMode(NeutralMode.Brake);
@@ -128,7 +128,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void drivePID(double distance, double angle) {
     double output = (driveCtrl.calculate(getAvgDistance(), distance));
-    double clampedOutput = MathUtil.clamp(output, -.3, .3);
+    double clampedOutput = MathUtil.clamp(output, -.45, .45);
 
     if (distance >= 0) {
       driveStraight(clampedOutput, angle);
@@ -154,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void rotatePID(double angle) {
     double output = (rotCtrl.calculate(getAngle(), angle));
-    double clampedOutput = MathUtil.clamp(output, -.3, .3);
+    double clampedOutput = MathUtil.clamp(output, -.45, .45);
     if (getAngle() < angle) {
     rotate(-clampedOutput);
     }

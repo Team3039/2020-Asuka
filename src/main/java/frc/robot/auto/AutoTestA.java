@@ -25,7 +25,7 @@ public class AutoTestA extends SequentialCommandGroup {
     super(
       new Rotate(90),
       new WaitCommand(.25),
-      new DriveLinear(50, 45)
+      new DriveLinear(50, 0)
     );
   }
 }
