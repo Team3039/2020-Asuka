@@ -1,8 +1,11 @@
 package frc.robot.controllers;
 
+import javax.crypto.Mac;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants;
 
 /**
  * Contains functions for use with the Playstation 4 controller.
@@ -281,9 +284,6 @@ public class PS4Gamepad extends Joystick {
 	 * Gets the state of the left trigger
 	 * @return the state of the left trigger
 	 */
-	public JoystickButton getL2() {
-		return new JoystickButton(this, BUTTON_L2);
-	}
 
 	/**
 	 * Gets the state of the right trigger
@@ -304,20 +304,22 @@ public class PS4Gamepad extends Joystick {
 	public JoystickButton getR2() {
 		return new JoystickButton(this, BUTTON_R2);
 	}
-	
-	public JoystickButton getLT() {
-		return new JoystickButton(this,BUTTON_LT);
-	}
-	
-	public JoystickButton getRT() {
-		return new JoystickButton(this,BUTTON_RT);
-	}
 
 	public int getDpadAngle() {
 		return this.getPOV();
 	}
-	
+
+	// public Button getRightTrigger() {
+	// 	return new AxisTriggerButton(this, Mac.AXIS_RIGHT_TRIGGER, Constants.TRIGGER_TOLERANCE);
+	// }
+	// public Button getLeftTrigger() {
+	// 	return new AxisTriggerButton(this, map.AXIS_LEFT_TRIGGER, Constant..TRIGGER_TOLERANCE);
+	// }
 }
+
+// public double getTriggerAxis(int axis){         
+// 	return getAxisWithDeadZoneCheck(this.getRawAxis(axis)); 
+// }
 
 class DPadTriggerButton extends Button {
 
@@ -333,4 +335,20 @@ class DPadTriggerButton extends Button {
 	public boolean get() {
 		return controller.getDpadAngle() == buttonAngle;
 	}
+
+	// private class AxisTriggerButton extends Button {
+	// 	private PS4Gamepad m_controller;
+	// 	private int m_axis;
+	// 	private double m_tolerance;
+
+	// 	public AxisTriggerButton(PS4Gamepad controller, int axis, double tolerance) {
+	// 		m_axis = axis;
+	// 		m_tolerance = tolerance;
+	// 	}
+
+	// 	public boolean get() {
+	// 		return (m_controller.getTriggerAxis(m_axis) > m_tolerance);
+	// 	}
+	// }
+
 }

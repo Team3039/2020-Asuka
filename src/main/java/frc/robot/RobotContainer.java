@@ -1,6 +1,5 @@
 package frc.robot;
 
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -8,7 +7,10 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
+import frc.robot.commands.Feed;
 import frc.robot.commands.RetractClimbArms;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.Shoot;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.statemachines.Cycler;
 import frc.robot.subsystems.Climber;
@@ -46,10 +48,10 @@ public class RobotContainer {
 		Button driverOptions = driverPad.getOptionsButton();
 		Button driverPadButton = driverPad.getButtonPad();
 		Button driverL1 = driverPad.getL1();
-		Button driverL2 = driverPad.getL2();
+		// Button driverL2 = driverPad.getL2();
 		Button driverL3 = driverPad.getL3();
 		Button driverR1 = driverPad.getR1();
-		Button driverR2 = driverPad.getR2();
+		// Button driverR2 = driverPad.getR2();
 		Button driverR3 = driverPad.getR3();
 
 		//Operator Buttons
@@ -61,10 +63,10 @@ public class RobotContainer {
 		Button operatorOptions = operatorPad.getOptionsButton();
 		Button operatorPadButton = operatorPad.getButtonPad();
 		Button operatorL1 = operatorPad.getL1();
-		Button operatorL2 = operatorPad.getL2();
+		// Button operatorL2 = operatorPad.getL2();
 		Button operatorL3 = operatorPad.getL3();
 		Button operatorR1 = operatorPad.getR1();
-		Button operatorR2 = operatorPad.getR2();
+		// Button operatorR2 = operatorPad.getR2();
     Button operatorR3 = operatorPad.getR3();
     Button operatorDpadUp = operatorPad.getDPadUp();
     Button operatorDpadLeft = operatorPad.getDPadLeft();
@@ -86,17 +88,16 @@ public class RobotContainer {
 
     //Operator
     //When X is pressed it turns on the shooter to a set RPM (6350) raises the hood and starts tracking
+    operatorX.toggleWhenPressed(new Shoot(6350));
     //When Circle is pressed it turns on the shooter to a set RPM (5250) raises the hood and starts tracking
-    //When Triangles is pressed it turns on the shooter to a set RPM(4800) raises the hood and starts tracking
-    
+    operatorCircle.toggleWhenPressed(new Shoot(5250));
+    //When Triangle is pressed it turns on the shooter to a set RPM(4800) raises the hood and starts tracking
+    operatorTriangle.toggleWhenPressed(new Shoot(4800));
     //When Right Bumper is held the intake comes down and the intaking sequence runs 
-    //When Right Bumper is relased the intake comes up and the intaking sequence runs
-
+    operatorR1.whileHeld(new RunIntake());
     //When Right Trigger is held the feeding sequence runs 
-    //When Right Trigger is relased the shooter stop, the feeding sequence stops, the intake stops, a waitcommand is started for .25 
-    //second and then the hood comes down
-
-
+    operatorSquare.whileHeld(new Feed());
+    
     SmartDashboard.putNumber("RPM", shooter.getShooterRPM());
     SmartDashboard.putNumber("Gyro", drive.getGyroFusedHeadingAngleDeg());
     

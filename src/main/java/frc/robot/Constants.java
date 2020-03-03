@@ -80,5 +80,7 @@ public final class Constants {
     
     //Color Wheel
     public static final double COLOR_WHEEL_PPR = 0;
+
+    public static final double TRIGGER_TOLERANCE = .1;
 }
 

@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.statemachines.Cycler.CycleMode;
@@ -34,6 +36,8 @@ public class Feed extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     RobotContainer.cycler.setCycleMode(CycleMode.IDLE);
+    RobotContainer.shooter.lowerHood();
+    RobotContainer.shooter.shooterA.set(ControlMode.PercentOutput, 0);
   }
 
   // Returns true when the command should end.

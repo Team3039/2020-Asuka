@@ -48,11 +48,11 @@ public class Hopper extends SubsystemBase {
   }
 
   public boolean getTopBeam() {
-    return topBeam.get();
+    return !topBeam.get();
   }
 
   public boolean getLowBeam() {
-    return lowBeam.get();
+    return !lowBeam.get();
   }
 
   public Hopper() {
