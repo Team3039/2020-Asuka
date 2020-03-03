@@ -98,14 +98,13 @@ public class RobotContainer {
 
 
     SmartDashboard.putNumber("RPM", shooter.getShooterRPM());
-    SmartDashboard.putNumber("Gyro", drivetrain.getAngle());
-    SmartDashboard.putNumber("Encoders", drivetrain.getAvgDistance());
+    SmartDashboard.putNumber("Gyro", drive.getGyroFusedHeadingAngleDeg());
     
     // SmartDashboard.putNumber("Target AREA", turret.getTargetArea());
     // SmartDashboard.putNumber("getRPM", RobotContainer.shooter.getShooterRPM());
     // SmartDashboard.putNumber("Percent Output", RobotContainer.shooter.shooterA.getMotorOutputVoltage());
 
-    SmartDashboard.putData("ResetPose", new InstantCommand(()-> drivetrain.resetGyro()));
+    SmartDashboard.putData("ResetPose", new InstantCommand(()-> drive.resetGyroYawAngle(0)));
     // SmartDashboard.putData("Actuate Climb", new InstantCommand(()-> climber.actuateClimb()));
     // SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));
     // SmartDashboard.putData("Reset Turret Pose", new InstantCommand(()-> turret.resetTurretPosition()));
