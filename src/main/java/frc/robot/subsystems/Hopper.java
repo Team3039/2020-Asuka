@@ -101,7 +101,9 @@ public class Hopper extends SubsystemBase {
             runSystems(.2, .5, .5);
           }
           else if (!getTopBeam() && getLowBeam()) {
-            runSystems(.2, 0, .5);
+            runBouncer(.2);
+            runBelts(0);
+            feederWheel.set(ControlMode.PercentOutput, .5);
           }
           else {
             runSystems(0, 0, 0);

@@ -5,39 +5,45 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.autoCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class Climb extends CommandBase {
-  /**
-   * Creates a new Climb.
-   */
-  public Climb() {
-    // Use addRequirements() here to declare subsystem dependencies.
+public class Rotate extends CommandBase {
+
+  double degrees;
+  public Rotate(double degrees) {
+    addRequirements(RobotContainer.drivetrain);
+    this.degrees = degrees;
   }
- 
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.drivetrain.resetEncoders();
+    RobotContainer.drivetrain.resetGyro();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.climber.retract(.65);
+    RobotContainer.drivetrain.rotatePID(degrees);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.climber.stop();
+    RobotContainer.drivetrain.stop();
+    RobotContainer.drivetrain.resetGyro();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (Math.abs(RobotContainer.drivetrain.getRotError()) < 2) {
+      return true;
+    }
+      return false;
   }
 }
