@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -52,6 +53,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
+    usbCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 320, 180, 30);
+
     robotContainer = new RobotContainer();
     SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
     SmartDashboard.putData("Auto mode", autoChooser);
@@ -100,13 +104,11 @@ public class Robot extends TimedRobot {
     if (autoCommand != null) {
       autoCommand.cancel();
     }
-    usbCamera.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 180, 60);
-    
   }
 
   @Override
   public void teleopPeriodic() {
-    RobotContainer.drivetrain.joystickControl(RobotContainer.getDriver());
+    RobotContainer.drivetrain.joystickControl(RobotContainer.getOperator());
   }
 
   @Override

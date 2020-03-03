@@ -98,17 +98,17 @@ public class Hopper extends SubsystemBase {
           break;
         case INTAKING:
           if (getTopBeam() && getLowBeam()) {
-            runSystems(.2, .6, .6);
+            runSystems(.2, .5, .5);
           }
           else if (!getTopBeam() && getLowBeam()) {
-            runSystems(.2, 0, .6);
+            runSystems(.2, 0, .5);
           }
           else {
             runSystems(0, 0, 0);
           }
           break;
         case FEEDING:
-          runSystems(.2, .6, .6);
+          runSystems(.2, .5, .5);
           break;
         case UNJAMMING:
           runSystems(-.4, -.6, -.6);

@@ -1,20 +1,19 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.auto.Auto6BallSideInit;
 import frc.robot.auto.Auto8BallCenterInit;
-import frc.robot.commands.ActuateHood;
-import frc.robot.commands.ActuateIntake;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
 import frc.robot.commands.Feed;
 import frc.robot.commands.RetractClimbArms;
+import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.Track;
-import frc.robot.commands.TurretManualSwitch;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.statemachines.Cycler;
 import frc.robot.subsystems.Climber;
@@ -95,15 +94,16 @@ public class RobotContainer {
 
     //Operator
     //TODO: Put SHoot manual on
-    operatorDpadUp.toggleWhenPressed(new Shoot(5000));
-    operatorDpadRight.whileHeld(new Shoot(6000));
-    operatorDpadDown.whileHeld(new Shoot(7000));
+    operatorDpadUp.toggleWhenPressed(new Shoot(4800));
+    operatorDpadRight.toggleWhenPressed(new Shoot(5100));
+    operatorDpadDown.toggleWhenPressed(new Shoot(6300));
     operatorR1.whileHeld(new RunIntake());
+    operatorL1.whileHeld(new ReverseIntake());
     operatorCircle.whileHeld(new Feed());
     operatorX.toggleWhenPressed(new Shoot(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea())));
     operatorSquare.toggleWhenPressed(new Track());
 
-    // SmartDashboard.putNumber("Target X", turret.getTargetX());
+    SmartDashboard.putNumber("RPM", shooter.getShooterRPM());
     // SmartDashboard.putNumber("Target AREA", turret.getTargetArea());
     // SmartDashboard.putNumber("getRPM", RobotContainer.shooter.getShooterRPM());
     // SmartDashboard.putNumber("Percent Output", RobotContainer.shooter.shooterA.getMotorOutputVoltage());

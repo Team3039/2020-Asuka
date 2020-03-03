@@ -7,45 +7,35 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.statemachines.Cycler.CycleMode;
 
-public class Shoot extends CommandBase {
+public class ReverseIntake extends CommandBase {
   /**
-   * Creates a new Shoot.
+   * Creates a new GrabCell.
    */
-  double RPM;
-  public Shoot(double RPM) {
-    this.RPM = RPM;
+  public ReverseIntake() {
+    addRequirements(RobotContainer.intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.shooter.actuateHood();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setTrackingMode();
-    RobotContainer.turret.trackTarget();
-    RobotContainer.shooter.setShooterRPM(RPM);
-    // if (RobotContainer.turret.hasTarget()) {
-    //   RobotContainer.shooter.setShooterRPM(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
-    // }
-    // else {
-    //   RobotContainer.shooter.setShooterRPM(5000);
-    // }
+    RobotContainer.cycler.setCycleMode(CycleMode.UNJAMMING);
+    RobotContainer.intake.run(-.8);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.shooter.lowerHood();
-    RobotContainer.shooter.shooterA.set(ControlMode.PercentOutput, 0);
+    RobotContainer.cycler.setCycleMode(CycleMode.IDLE);
+    RobotContainer.intake.run(0);
   }
 
   // Returns true when the command should end.
