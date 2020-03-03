@@ -22,7 +22,7 @@ public class Cycler extends SubsystemBase {
   public enum CycleMode {
     IDLE,
     INTAKING,
-    INDEXING,
+    FEEDING,
     UNJAMMING
   }
 
@@ -45,11 +45,12 @@ public class Cycler extends SubsystemBase {
           RobotContainer.hopper.setControlMode(HopperControlMode.IDLE);    
           break;
         case INTAKING:
+          RobotContainer.intake.deploy();
           RobotContainer.intake.setControlMode(IntakeControlMode.RUNNING);
-          RobotContainer.hopper.setControlMode(HopperControlMode.INTAKING);    
+          RobotContainer.hopper.setControlMode(HopperControlMode.INTAKING);
           break;
-        case INDEXING:        
-          RobotContainer.hopper.setControlMode(HopperControlMode.INDEXING);  
+        case FEEDING:        
+          RobotContainer.hopper.setControlMode(HopperControlMode.FEEDING);
           RobotContainer.intake.setControlMode(IntakeControlMode.RUNNING);
           break;
         case UNJAMMING:

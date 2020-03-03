@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -43,6 +45,8 @@ public class Robot extends TimedRobot {
    public static double targetArea; //Target Area (0% of image to 100% of image)
    
    SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+   UsbCamera usbCamera = new UsbCamera("DriveCam", 0);
 
   @Override
   public void robotInit() {
@@ -96,6 +100,8 @@ public class Robot extends TimedRobot {
     if (autoCommand != null) {
       autoCommand.cancel();
     }
+    usbCamera.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 180, 60);
+    
   }
 
   @Override

@@ -9,13 +9,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.statemachines.Cycler.CycleMode;
 
-public class Index extends CommandBase {
+public class LowerHood extends CommandBase {
   /**
-   * Creates a new Index.
+   * Creates a new LowerHood.
    */
-  public Index() {
+  public LowerHood() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -27,13 +26,12 @@ public class Index extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.cycler.setCycleMode(CycleMode.INDEXING);
+    RobotContainer.shooter.lowerHood();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.cycler.setCycleMode(CycleMode.IDLE);
   }
 
   // Returns true when the command should end.

@@ -22,7 +22,8 @@ public class AutoIndexSequence extends SequentialCommandGroup {
   double seconds;
   public AutoIndexSequence(double seconds) {
     super(
-      new WaitCommand(2), new AutoIndex(HopperControlMode.INDEXING, seconds)
+      new WaitCommand(1.5), 
+      new AutoIndex(HopperControlMode.FEEDING, seconds)
     );
     this.seconds = seconds;
   }

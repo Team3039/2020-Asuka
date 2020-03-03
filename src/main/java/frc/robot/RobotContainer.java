@@ -9,11 +9,12 @@ import frc.robot.commands.ActuateIntake;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
-import frc.robot.commands.Index;
+import frc.robot.commands.Feed;
 import frc.robot.commands.RetractClimbArms;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.Track;
+import frc.robot.commands.TurretManualSwitch;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.statemachines.Cycler;
 import frc.robot.subsystems.Climber;
@@ -73,7 +74,11 @@ public class RobotContainer {
 		Button operatorL3 = operatorPad.getL3();
 		Button operatorR1 = operatorPad.getR1();
 		Button operatorR2 = operatorPad.getR2();
-		Button operatorR3 = operatorPad.getR3();
+    Button operatorR3 = operatorPad.getR3();
+    Button operatorDpadUp = operatorPad.getDPadUp();
+    Button operatorDpadLeft = operatorPad.getDPadLeft();
+    Button operatorDpadRight = operatorPad.getDPadRight();
+    Button operatorDpadDown = operatorPad.getDPadDown();
   
   public RobotContainer() {
     configureButtonBindings();
@@ -89,12 +94,14 @@ public class RobotContainer {
     driverOptions.whileHeld(new RetractClimbArms());
 
     //Operator
-    operatorShare.toggleWhenPressed(new ActuateIntake());
-    operatorOptions.toggleWhenPressed(new Shoot(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea())));
-    operatorX.toggleWhenPressed(new RunIntake());
-    operatorPadButton.toggleWhenPressed(new ActuateHood());
+    //TODO: Put SHoot manual on
+    operatorDpadUp.toggleWhenPressed(new Shoot(5000));
+    operatorDpadRight.whileHeld(new Shoot(6000));
+    operatorDpadDown.whileHeld(new Shoot(7000));
+    operatorR1.whileHeld(new RunIntake());
+    operatorCircle.whileHeld(new Feed());
+    operatorX.toggleWhenPressed(new Shoot(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea())));
     operatorSquare.toggleWhenPressed(new Track());
-    operatorTriangle.toggleWhenPressed(new Index());
 
     // SmartDashboard.putNumber("Target X", turret.getTargetX());
     // SmartDashboard.putNumber("Target AREA", turret.getTargetArea());

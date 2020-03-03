@@ -85,8 +85,8 @@ public class Shooter extends SubsystemBase {
 
     public double calculateDesiredOutput(double x) {
         double a = 36;
-        double b = -468.2;
-        double c = 6185;
+        double b = -485.8;
+        double c = 6436;
         double rpmGenerated = (a * (Math.pow(x,2))) + (b * x) + c; 
         MathUtil.clamp(rpmGenerated, 4000, 8000);
         return rpmGenerated;

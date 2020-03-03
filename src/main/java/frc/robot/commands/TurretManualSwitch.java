@@ -5,51 +5,35 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autoCommands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Hopper.HopperControlMode;
+import frc.robot.subsystems.Turret.TurretControlMode;
 
-public class AutoIndex extends CommandBase {
+public class TurretManualSwitch extends CommandBase {
   /**
-   * Creates a new IndexTime.
+   * Creates a new TurretManualSwitch.
    */
-  HopperControlMode controlMode;
-  double seconds;
-  public AutoIndex(HopperControlMode controlMode, double seconds) {
-    this.controlMode = controlMode;
-    this.seconds = seconds;
+  public TurretManualSwitch() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.timer.reset();
-    RobotContainer.timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      if (RobotContainer.timer.get() <= seconds) {
-        if (controlMode.equals(HopperControlMode.INTAKING)) {
-          RobotContainer.hopper.setControlMode(HopperControlMode.INTAKING);
-        }
-        else if (controlMode.equals(HopperControlMode.FEEDING)) {
-          RobotContainer.hopper.setControlMode(HopperControlMode.FEEDING);
-        }
-      }
-      else {
-        end(false);
-      }
+    RobotContainer.turret.manualControl(RobotContainer.getOperator());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.timer.stop();
-    RobotContainer.hopper.stopSystems();
+    RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
   }
 
   // Returns true when the command should end.

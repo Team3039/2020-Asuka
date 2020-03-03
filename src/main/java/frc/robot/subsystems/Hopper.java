@@ -33,7 +33,7 @@ public class Hopper extends SubsystemBase {
   public enum HopperControlMode {
     IDLE,
     INTAKING,
-    INDEXING,
+    FEEDING,
     UNJAMMING
   }
 
@@ -48,11 +48,11 @@ public class Hopper extends SubsystemBase {
   }
 
   public boolean getTopBeam() {
-    return topBeam.get() == false;
+    return topBeam.get();
   }
 
   public boolean getLowBeam() {
-    return lowBeam.get() == false;
+    return lowBeam.get();
   }
 
   public Hopper() {
@@ -97,17 +97,17 @@ public class Hopper extends SubsystemBase {
           stopSystems();
           break;
         case INTAKING:
-          if (!getTopBeam() && !getLowBeam()) {
+          if (getTopBeam() && getLowBeam()) {
             runSystems(.2, .6, .6);
           }
-          else if (getTopBeam() && !getLowBeam()) {
+          else if (!getTopBeam() && getLowBeam()) {
             runSystems(.2, 0, .6);
           }
           else {
             runSystems(0, 0, 0);
           }
           break;
-        case INDEXING:
+        case FEEDING:
           runSystems(.2, .6, .6);
           break;
         case UNJAMMING:

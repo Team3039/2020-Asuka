@@ -20,7 +20,8 @@ public class AutoShootSequence extends ParallelRaceGroup {
   double seconds;
   public AutoShootSequence(double seconds) {
     super(
-      new AutoShoot(seconds), new AutoIndexSequence(seconds)
+      new AutoShoot(seconds), 
+      new AutoIndexSequence(seconds)
     );
     this.seconds = seconds;
   }

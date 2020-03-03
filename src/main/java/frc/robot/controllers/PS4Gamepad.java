@@ -1,6 +1,7 @@
 package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -42,6 +43,15 @@ public class PS4Gamepad extends Joystick {
 	public static final int BUTTON_RB = 6;
 	private static final int BUTTON_LT = 00;
 	private static final int BUTTON_RT = 00;
+
+	public int DPAD_UP 			= 0;
+	public int DPAD_UP_RIGHT 	= 45;
+	public int DPAD_RIGHT 		= 90;
+	public int DPAD_DOWN_RIGHT = 135;
+	public int DPAD_DOWN 		= 180;
+	public int DPAD_DOWN_LEFT 	= 225;
+	public int DPAD_LEFT 		= 270;
+	public int DPAD_UP_LEFT		= 315;
 	
 	//private static final int BUTTON_MODE = -1;
 	//private static final int BUTTON_LOGITECH = -1;
@@ -205,15 +215,19 @@ public class PS4Gamepad extends Joystick {
 	 * WPILIB cannot access the vertical axis of the Playstation 4
 	 */
 
-	public boolean getDPadLeft() {
-		double x = getDPadX();
-		return (x < -0.5);
+	public Button getDPadUp() {
+		return new DPadTriggerButton(this, DPAD_UP);
 	}
-
-	public boolean getDPadRight() {
-		double x = getDPadX();
-		return (x > 0.5);
+	public Button getDPadDown() {
+		return new DPadTriggerButton(this, DPAD_DOWN);
 	}
+	public Button getDPadLeft() {
+		return new DPadTriggerButton(this, DPAD_LEFT);
+	}
+	public Button getDPadRight() {
+		return new DPadTriggerButton(this, DPAD_RIGHT);
+	}
+	/**
 
 	/**
 	 * Gets the state of the Start button
@@ -298,6 +312,25 @@ public class PS4Gamepad extends Joystick {
 	public JoystickButton getRT() {
 		return new JoystickButton(this,BUTTON_RT);
 	}
+
+	public int getDpadAngle() {
+		return this.getPOV();
+	}
 	
+}
+
+class DPadTriggerButton extends Button {
+
+	private int buttonAngle;
+	private PS4Gamepad  controller;
+
+	public DPadTriggerButton(PS4Gamepad controller, int dPadButtonAngle) {
+		this.buttonAngle = dPadButtonAngle;
+		this.controller = controller;
+	}
 	
+	@Override
+	public boolean get() {
+		return controller.getDpadAngle() == buttonAngle;
+	}
 }

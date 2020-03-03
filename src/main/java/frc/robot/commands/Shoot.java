@@ -24,11 +24,14 @@ public class Shoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.shooter.actuateHood();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    RobotContainer.turret.setTrackingMode();
+    RobotContainer.turret.trackTarget();
     if (RobotContainer.turret.hasTarget()) {
       RobotContainer.shooter.setShooterRPM(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea()));
     }
@@ -40,6 +43,7 @@ public class Shoot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    RobotContainer.shooter.lowerHood();
     RobotContainer.shooter.shooterA.set(ControlMode.PercentOutput, 0);
   }
 
