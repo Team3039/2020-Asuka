@@ -193,7 +193,7 @@ public class Turret extends SubsystemBase {
 }
 
   public void trackWall() {
-      setTurretPosition(getTargetX() - RobotContainer.drivetrain.getAngle());
+      setTurretPosition(getTargetX() - RobotContainer.drive.getGyroFusedHeadingAngleDeg());
     }
 
   public void resetTurretPosition() {

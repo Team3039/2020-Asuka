@@ -7,20 +7,21 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.auto.Auto6BallSideInit;
-import frc.robot.auto.Auto8BallCenterInit;
-import frc.robot.auto.AutoSafe;
-import frc.robot.auto.AutoTestA;
-import frc.robot.auto.AutoTestB;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.auto.routines.AutoDoNothing;
+import frc.robot.auto.routines.AutoRendezvousTrench10Ball;
+import frc.robot.auto.routines.AutoSafe;
+import frc.robot.auto.routines.AutoTest;
+import frc.robot.auto.routines.AutoTrench8Ball;
+import frc.robot.auto.routines.AutoTrenchSteal;
+import frc.robot.subsystems.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,86 +30,130 @@ import frc.robot.auto.AutoTestB;
  * project.
  */
 public class Robot extends TimedRobot {
-  
-  private Command autoCommand;
-  public Auto6BallSideInit auto6BallInitSide = new Auto6BallSideInit();
-  public Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
-  public AutoSafe autoSafe = new AutoSafe();
-  public AutoTestA autoTestA = new AutoTestA();
-  public AutoTestB autoTestB = new AutoTestB();
+  private Command m_autonomousCommand;
+  private SendableChooser<ParallelCommandGroup> autonTaskChooser;
 
-  private RobotContainer robotContainer;
 
-   //Vision Information
-   public static double targetValid; //Whether the limelight has any valid targets (0 or 1)
-   public static double targetX; //Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
-   public static double targetY; //Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
-   public static double targetArea; //Target Area (0% of image to 100% of image)
-   
-   SendableChooser<Command> autoChooser = new SendableChooser<>();
+  RobotContainer m_robotContainer;
+  private Drive drive = Drive.getInstance();
 
-   UsbCamera usbCamera = new UsbCamera("DriveCam", 0);
+     //Vision Information
+     public static double targetValid; //Whether the limelight has any valid targets (0 or 1)
+     public static double targetX; //Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+     public static double targetY; //Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
+     public static double targetArea; //Target Area (0% of image to 100% of image)
 
+  /**
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
+   */
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
-    usbCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 320, 180, 30);
+    m_robotContainer = new RobotContainer();
+    drive.resetOdometry(new Pose2d());
 
-    robotContainer = new RobotContainer();
-    SmartDashboard.putNumber("Target AREA", RobotContainer.turret.getTargetArea());
-    SmartDashboard.putData("Auto mode", autoChooser);
-    autoChooser.addOption("Auto 6 Ball Side Init", auto6BallInitSide);
-    autoChooser.addOption("Auto 8 Ball Center Init", auto8BallCenterInit);
-    autoChooser.addOption("Auto Safe", autoSafe);
-    autoChooser.addOption("Auto TestA", autoTestA);
-    autoChooser.addOption("Auto TestB", autoTestB);
+    autonTaskChooser = new SendableChooser<>();
+
+    autonTaskChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
+
+    autonTaskChooser.addOption("Trench 8 Ball Auto", new AutoTrench8Ball());
+    autonTaskChooser.addOption("Trench Steal 5 Ball Auto", new AutoTrenchSteal());
+
+    autonTaskChooser.addOption("Rendezvous/Trench 10 Ball Auto", new AutoRendezvousTrench10Ball());
+    autonTaskChooser.addOption("Safe 3 Ball Auto", new AutoSafe());
+
+    autonTaskChooser.addOption("Test", new AutoTest());
+
+    SmartDashboard.putData("Autonomous", autonTaskChooser);
   }
 
+  /**
+   * This function is called every robot packet, no matter the mode. Use this for items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before
+   * LiveWindow and SmartDashboard integrated updating.
+   */
   @Override
   public void robotPeriodic() {
-    //Gather Vision Info=\
-    targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-    targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-    targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+        //Gather Vision Info=\
+        targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+        targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+        targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+        targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+        CommandScheduler.getInstance().run();
   }
 
+  /**
+   * This function is called once each time the robot enters Disabled mode.
+   */
   @Override
   public void disabledInit() {
+    drive.resetOdometry(new Pose2d());
+
   }
 
   @Override
   public void disabledPeriodic() {
-    RobotContainer.drivetrain.resetEncoders();
+    SmartDashboard.putString("Selected Auto: ", autonTaskChooser.getSelected().toString());
   }
 
+  /**
+   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+   */
   @Override
   public void autonomousInit() {
-    autoCommand = autoChooser.getSelected();
+    drive.setControlMode(Drive.DriveControlMode.PATH_FOLLOWING);
+    drive.resetOdometry(new Pose2d());
+
+    m_autonomousCommand = autonTaskChooser.getSelected();
+
+
+    /*
+     * String autoSelected = SmartDashboard.getString("Auto Selector",
+     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+     * = new MyAutoCommand(); break; case "Default Auto": default:
+     * autonomousCommand = new ExampleCommand(); break; }
+     */
 
     // schedule the autonomous command (example)
-    if (autoChooser != null) {
-      autoCommand.schedule();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
     }
   }
 
+  /**
+   * This function is called periodically during autonomous.
+   */
   @Override
   public void autonomousPeriodic() {
   }
 
   @Override
   public void teleopInit() {
-    if (autoCommand != null) {
-      autoCommand.cancel();
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
     }
+    drive.setControlMode(Drive.DriveControlMode.JOYSTICK);
   }
 
+  /**
+   * This function is called periodically during operator control.
+   */
   @Override
   public void teleopPeriodic() {
-    RobotContainer.drivetrain.joystickControl(RobotContainer.getOperator());
+
   }
 
   @Override
@@ -117,6 +162,9 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
+  /**
+   * This function is called periodically during test mode.
+   */
   @Override
   public void testPeriodic() {
   }

@@ -1,32 +1,25 @@
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import frc.robot.auto.Auto6BallSideInit;
-import frc.robot.auto.Auto8BallCenterInit;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
-import frc.robot.commands.Feed;
 import frc.robot.commands.RetractClimbArms;
-import frc.robot.commands.ReverseIntake;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.Track;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.statemachines.Cycler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
-
 public class RobotContainer {
  
-  public final static Drivetrain drivetrain = new Drivetrain();
+  public final static Drive drive = Drive.getInstance();
   public final static Intake intake = new Intake();
   public final static Turret turret = new Turret();
   public final static Hopper hopper = new Hopper();
@@ -36,8 +29,6 @@ public class RobotContainer {
 
   public final static Cycler cycler = new Cycler();
 
-  public final static Auto6BallSideInit auto6BallSideInit = new Auto6BallSideInit();
-  public final static Auto8BallCenterInit auto8BallCenterInit = new Auto8BallCenterInit();
 
   public static PS4Gamepad driverPad = new PS4Gamepad(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
   public static PS4Gamepad operatorPad = new PS4Gamepad(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
@@ -93,15 +84,17 @@ public class RobotContainer {
     driverOptions.whileHeld(new RetractClimbArms());
 
     //Operator
-    //TODO: Put SHoot manual on
-    operatorDpadUp.toggleWhenPressed(new Shoot(4800));
-    operatorDpadRight.toggleWhenPressed(new Shoot(5100));
-    operatorDpadDown.toggleWhenPressed(new Shoot(6300));
-    operatorR1.whileHeld(new RunIntake());
-    operatorL1.whileHeld(new ReverseIntake());
-    operatorCircle.whileHeld(new Feed());
-    operatorX.toggleWhenPressed(new Shoot(RobotContainer.shooter.calculateDesiredOutput(RobotContainer.turret.getTargetArea())));
-    operatorSquare.toggleWhenPressed(new Track());
+    //When X is pressed it turns on the shooter to a set RPM (6350) raises the hood and starts tracking
+    //When Circle is pressed it turns on the shooter to a set RPM (5250) raises the hood and starts tracking
+    //When Triangles is pressed it turns on the shooter to a set RPM(4800) raises the hood and starts tracking
+    
+    //When Right Bumper is held the intake comes down and the intaking sequence runs 
+    //When Right Bumper is relased the intake comes up and the intaking sequence runs
+
+    //When Right Trigger is held the feeding sequence runs 
+    //When Right Trigger is relased the shooter stop, the feeding sequence stops, the intake stops, a waitcommand is started for .25 
+    //second and then the hood comes down
+
 
     SmartDashboard.putNumber("RPM", shooter.getShooterRPM());
     // SmartDashboard.putNumber("Target AREA", turret.getTargetArea());

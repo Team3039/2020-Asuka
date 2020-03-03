@@ -5,45 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autoCommands;
+package frc.robot.auto.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 
-public class Rotate extends CommandBase {
-
-  double degrees;
-  public Rotate(double degrees) {
-    addRequirements(RobotContainer.drivetrain);
-    this.degrees = degrees;
+public class AutoTrack extends CommandBase {
+  /**
+   * Creates a new TrackTime.
+   */
+  public AutoTrack() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.drivetrain.resetEncoders();
-    RobotContainer.drivetrain.resetGyro();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.drivetrain.rotatePID(degrees);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.drivetrain.stop();
-    RobotContainer.drivetrain.resetGyro();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // if (Math.abs(RobotContainer.drivetrain.getRotError()) < .5) {
-    //   return true;
-    // }
-      return false;
+    return false;
   }
 }

@@ -6,7 +6,7 @@ public class RobotMap {
   public final static int OPERATOR_JOYSTICK_1_USB_ID = 1;
 
 //CAN
-  //Drivetrain
+  //Drive
   public static int leftFrontDrive = 4;
   public static int rightFrontDrive = 12; 
   public static int leftRearDrive = 5;

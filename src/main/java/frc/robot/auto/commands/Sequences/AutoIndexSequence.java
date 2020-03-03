@@ -5,23 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autoSequences;
+package frc.robot.auto.commands.Sequences;
 
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.autoCommands.AutoShoot;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.auto.commands.AutoIndex;
+import frc.robot.subsystems.Hopper.HopperControlMode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootSequence extends ParallelRaceGroup {
+public class AutoIndexSequence extends SequentialCommandGroup {
   /**
-   * Creates a new AutoShootSequence.
+   * Creates a new AutoIndexSequence.
    */
   double seconds;
-  public AutoShootSequence(double seconds) {
+  public AutoIndexSequence(double seconds) {
     super(
-      new AutoShoot(seconds), 
-      new AutoIndexSequence(seconds)
+      new WaitCommand(1.5), 
+      new AutoIndex(HopperControlMode.FEEDING, seconds)
     );
     this.seconds = seconds;
   }
