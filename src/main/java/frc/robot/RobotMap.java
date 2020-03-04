@@ -19,9 +19,9 @@ public class RobotMap {
   public static int intake = 0;
 
   //Indexer
-  public final static int bouncer = 8;
-  public final static int feederBelts = 9;
-  public final static int feederWheel = 10;
+  public final static int kickerWheel = 8;
+  public final static int backFeederBelt = 9;
+  public final static int fronFeederBeltWheel = 10;
 
   //Color Wheel
   public final static int spinner = 9;

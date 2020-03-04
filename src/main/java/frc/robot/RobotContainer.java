@@ -2,17 +2,21 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
-import frc.robot.commands.Feed;
 import frc.robot.commands.RetractClimbArms;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.SetIntakeSpeed;
+import frc.robot.commands.sequences.FeedCells;
+import frc.robot.commands.sequences.IndexCells;
+import frc.robot.commands.sequences.IntakeCells;
+import frc.robot.commands.sequences.ResetHopper;
+import frc.robot.commands.sequences.ResetShooter;
+import frc.robot.commands.sequences.ShootFarShot;
+import frc.robot.commands.sequences.ShootMidShot;
+import frc.robot.commands.sequences.ShootNearShot;
 import frc.robot.controllers.PS4Gamepad;
-import frc.robot.statemachines.Cycler;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
 import frc.robot.subsystems.Drive;
@@ -29,9 +33,6 @@ public class RobotContainer {
   public final static Shooter shooter = new Shooter();
   public final static Climber climber = new Climber();
   public final static ColorWheel colorWheel = new ColorWheel();
-
-  public final static Cycler cycler = new Cycler();
-
 
   public static PS4Gamepad driverPad = new PS4Gamepad(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
   public static PS4Gamepad operatorPad = new PS4Gamepad(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
@@ -86,45 +87,29 @@ public class RobotContainer {
     driverShare.whileHeld(new DeployClimbArms());
     driverOptions.whileHeld(new RetractClimbArms());
 
+
     //Operator
     //When X is pressed it turns on the shooter to a set RPM (6350) raises the hood and starts tracking
-    operatorX.toggleWhenPressed(new Shoot(6350));
+    operatorX.whenPressed(new ShootFarShot());
     //When Circle is pressed it turns on the shooter to a set RPM (5250) raises the hood and starts tracking
-    operatorCircle.toggleWhenPressed(new Shoot(5250));
+    operatorCircle.whenPressed(new ShootMidShot());
     //When Triangle is pressed it turns on the shooter to a set RPM(4800) raises the hood and starts tracking
-    operatorTriangle.toggleWhenPressed(new Shoot(4800));
+    operatorTriangle.whenPressed(new ShootNearShot());
     //When Right Bumper is held the intake comes down and the intaking sequence runs 
-    operatorR1.whileHeld(new RunIntake());
+    operatorR1.whileHeld(new IntakeCells());
+    operatorR1.whenReleased(new IndexCells());
     //When Right Trigger is held the feeding sequence runs 
-    operatorSquare.whileHeld(new Feed());
+    operatorSquare.whileHeld(new FeedCells());
+    // When the feed command ends, the systems are all reset
+    operatorSquare.whenReleased(new ResetHopper());
+    operatorSquare.whenReleased(new ResetShooter());
+
+    operatorL1.whileHeld(new SetIntakeSpeed(-.5));
+    operatorL1.whenReleased(new SetIntakeSpeed(0));
     
     SmartDashboard.putNumber("RPM", shooter.getShooterRPM());
     SmartDashboard.putNumber("Gyro", drive.getGyroFusedHeadingAngleDeg());
     
-    // SmartDashboard.putNumber("Target AREA", turret.getTargetArea());
-    // SmartDashboard.putNumber("getRPM", RobotContainer.shooter.getShooterRPM());
-    // SmartDashboard.putNumber("Percent Output", RobotContainer.shooter.shooterA.getMotorOutputVoltage());
-
-    SmartDashboard.putData("ResetPose", new InstantCommand(()-> drive.resetGyroYawAngle(0)));
-    // SmartDashboard.putData("Actuate Climb", new InstantCommand(()-> climber.actuateClimb()));
-    // SmartDashboard.putData("Lower Hood", new InstantCommand(()-> shooter.lowerHood()));
-    // SmartDashboard.putData("Reset Turret Pose", new InstantCommand(()-> turret.resetTurretPosition()));
-    // SmartDashboard.putData("Turret Manual", new InstantCommand(()-> turret.manualControl(RobotContainer.getOperator())));
-    // SmartDashboard.putData("LEDs On", new InstantCommand(()-> turret.setLed(true)));
-    // SmartDashboard.putData("LEDs Off", new InstantCommand(()-> turret.setLed(false)));
-    // SmartDashboard.putData("TrackMode", new InstantCommand(()-> turret.setCamMode(true)));
-    // SmartDashboard.putData("DriveMode", new InstantCommand(()-> turret.setCamMode(false)));
-
-    // SmartDashboard.putData("6000", new InstantCommand(()-> shooter.setShooterRPM(6000)));
-    // SmartDashboard.putData("5000", new InstantCommand(()-> shooter.setShooterRPM(5000)));
-    // SmartDashboard.putData("Shooter 85%", new InstantCommand(()-> shooter.setShooterSpeed(.9)));
-    // SmartDashboard.putData("Shooter 80%", new InstantCommand(()-> shooter.setShooterSpeed(.8)));
-    // SmartDashboard.putData("Shooter 75%", new InstantCommand(()-> shooter.setShooterSpeed(.75)));
-    // SmartDashboard.putData("Shooter 70%", new InstantCommand(()-> shooter.setShooterSpeed(.7)));
-    // SmartDashboard.putData("Shooter 65%", new InstantCommand(()-> shooter.setShooterSpeed(.65))); 
-    // SmartDashboard.putData("Shooter 50%", new InstantCommand(()-> shooter.setShooterSpeed(.5)));
-    // SmartDashboard.putData("Shooter 0%", new InstantCommand(()-> shooter.setShooterSpeed(0)));
-    // SmartDashboard.putData("Specific Shooter Speed", new InstantCommand(()-> shooter.setShooterSpeed(.78)));
   }
 
   //Get Controller Objects

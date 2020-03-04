@@ -26,7 +26,7 @@ public class RetractClimbArms extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.climber.release(.9);
+    RobotContainer.climber.release(.40);
   }
 
   // Called once the command ends or is interrupted.

@@ -23,9 +23,9 @@ import frc.robot.RobotMap;
  */
 public class Hopper extends SubsystemBase {
 
-  public VictorSPX bouncer = new VictorSPX(RobotMap.bouncer);
-  public TalonSRX feederBelts = new TalonSRX(RobotMap.feederBelts);
-  public TalonSRX feederWheel = new TalonSRX(RobotMap.feederWheel);
+  public VictorSPX kickerWheel = new VictorSPX(RobotMap.kickerWheel);
+  public TalonSRX backFeederBelt = new TalonSRX(RobotMap.backFeederBelt);
+  public TalonSRX frontFeederBeltWheel = new TalonSRX(RobotMap.fronFeederBeltWheel);
 
   public DigitalInput topBeam = new DigitalInput(RobotMap.topBeam);
   public DigitalInput lowBeam = new DigitalInput(RobotMap.lowBeam);
@@ -56,35 +56,36 @@ public class Hopper extends SubsystemBase {
   }
 
   public Hopper() {
-    feederBelts.setInverted(true);
-    feederWheel.setInverted(false);
+    backFeederBelt.setInverted(true);
+    frontFeederBeltWheel.setInverted(false);
 
-    feederBelts.setNeutralMode(NeutralMode.Coast);
-    feederWheel.setNeutralMode(NeutralMode.Coast);
+    backFeederBelt.setNeutralMode(NeutralMode.Coast);
+    frontFeederBeltWheel.setNeutralMode(NeutralMode.Coast);
+    kickerWheel.setNeutralMode(NeutralMode.Brake);
   }
 
-  public void runBelts(double percentOutput) {
-    feederBelts.set(ControlMode.PercentOutput, percentOutput);
+  public void setBackBeltSpeed(double percentOutput) {
+    backFeederBelt.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public void runBouncer(double percentOutput) {
-    bouncer.set(ControlMode.PercentOutput, percentOutput);
+  public void setKickerSpeed(double percentOutput) {
+    kickerWheel.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public void runFeeder(double percentOutput) {
-    feederWheel.set(ControlMode.PercentOutput, percentOutput);
+  public void setFeederWheelFrontBeltSpeed(double percentOutput) {
+    frontFeederBeltWheel.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public void runSystems(double percentA, double percentB, double percentC) {
-    bouncer.set(ControlMode.PercentOutput, percentA);
-    feederBelts.set(ControlMode.PercentOutput, percentB);
-    feederWheel.set(ControlMode.PercentOutput, percentC);
+  public void setHopperSpeed(double kickerSpeed, double backBeltSpeed, double frontBeltWheelSpeed) {
+    kickerWheel.set(ControlMode.PercentOutput, kickerSpeed);
+    backFeederBelt.set(ControlMode.PercentOutput, backBeltSpeed);
+    frontFeederBeltWheel.set(ControlMode.PercentOutput, frontBeltWheelSpeed);
   }
 
   public void stopSystems() {
-    bouncer.set(ControlMode.PercentOutput, 0);
-    feederBelts.set(ControlMode.PercentOutput, 0);
-    feederWheel.set(ControlMode.PercentOutput, 0);
+    kickerWheel.set(ControlMode.PercentOutput, 0);
+    backFeederBelt.set(ControlMode.PercentOutput, 0);
+    frontFeederBeltWheel.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
@@ -97,23 +98,23 @@ public class Hopper extends SubsystemBase {
           stopSystems();
           break;
         case INTAKING:
-          if (getTopBeam() && getLowBeam()) {
-            runSystems(.2, .5, .5);
+          if (!getTopBeam() && !getLowBeam()) {
+            setHopperSpeed(.2, .5, .5);
           }
-          else if (!getTopBeam() && getLowBeam()) {
-            runBouncer(.2);
-            runBelts(0);
-            feederWheel.set(ControlMode.PercentOutput, .5);
+          else if (getTopBeam() && !getLowBeam()) {
+            setKickerSpeed(.2);
+            setBackBeltSpeed(0);
+            setFeederWheelFrontBeltSpeed(.5);
           }
-          else {
-            runSystems(0, 0, 0);
+          else if (getTopBeam() && getLowBeam()){
+            setHopperSpeed(0, 0, 0);
           }
           break;
         case FEEDING:
-          runSystems(.2, .5, .5);
+          setHopperSpeed(.2, .5, .5);
           break;
         case UNJAMMING:
-          runSystems(-.4, -.6, -.6);
+          setHopperSpeed(-.4, -.6, -.6);
           break;
       }
     }

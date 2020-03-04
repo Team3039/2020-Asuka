@@ -7,42 +7,38 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.statemachines.Cycler.CycleMode;
+import frc.robot.subsystems.Turret.TurretControlMode;
 
-public class Feed extends CommandBase {
+public class SetTurretJoystickMode extends CommandBase {
   /**
-   * Creates a new Index.
+   * Creates a new SetTurretJoystickMode.
    */
-  public Feed() {
+  public SetTurretJoystickMode() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.turret);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.turret.setControlMode(TurretControlMode.JOYSTICK);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.cycler.setCycleMode(CycleMode.FEEDING);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.cycler.setCycleMode(CycleMode.IDLE);
-    RobotContainer.shooter.lowerHood();
-    RobotContainer.shooter.shooterA.set(ControlMode.PercentOutput, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

@@ -5,21 +5,26 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto.commands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 
-public class AutoTrack extends CommandBase {
+public class SetShooterSpeed extends CommandBase {
   /**
-   * Creates a new TrackTime.
+   * Creates a new SetShooterSpeed.
    */
-  public AutoTrack() {
+  double speed;
+  public SetShooterSpeed(double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.shooter);
+    this.speed = speed;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.shooter.setShooterSpeed(speed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -27,7 +32,7 @@ public class AutoTrack extends CommandBase {
   public void execute() {
   }
 
-  // Called once the command ends or is interrupted.
+  // Called once the command ends or i s interrupted.
   @Override
   public void end(boolean interrupted) {
   }
@@ -35,6 +40,6 @@ public class AutoTrack extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

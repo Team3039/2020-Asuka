@@ -10,27 +10,31 @@ package frc.robot.auto.routines;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.auto.TrajectoryGenerator;
+import frc.robot.auto.commands.AutoShootNear;
 import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
+import frc.robot.commands.sequences.IndexCells;
+import frc.robot.commands.sequences.IntakeCells;
 import frc.robot.subsystems.Drive;
 
-public class AutoTrenchSteal extends ParallelCommandGroup {
+public class AutoTrenchSteal extends SequentialCommandGroup {
     TrajectoryGenerator mTrajectories = TrajectoryGenerator.getInstance();
     Drive mDrive = Drive.getInstance();
     /**
      * Add your docs here.
      */
     public AutoTrenchSteal() {
-        addCommands(new SequentialCommandGroup(
+        addCommands(
                 new ResetOdometryAuto(),
                 //Intake in Parallel
-                new RamseteCommand(
+                new ParallelDeadlineGroup(
+                        new RamseteCommand(
                         mTrajectories.getStealStartToStealBall(),
                         mDrive::getPose,
                         new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
@@ -43,10 +47,10 @@ public class AutoTrenchSteal extends ParallelCommandGroup {
                         new PIDController(Constants.kPDriveVel, 0, Constants.kDDriveVel),
                         // RamseteCommand passes volts to the callback
                         mDrive::tankDriveVolts,
-                        mDrive),
-
+                        mDrive), 
+                        new IntakeCells()),
                 new StopTrajectory(),
-                new WaitCommand(.25),
+                new IndexCells(),
                 new RamseteCommand(
                         mTrajectories.getStealBallToCenterShot(),
                         mDrive::getPose,
@@ -61,9 +65,10 @@ public class AutoTrenchSteal extends ParallelCommandGroup {
                         // RamseteCommand passes volts to the callback
                         mDrive::tankDriveVolts,
                         mDrive),
-
-                new StopTrajectory()
-                //Shoot
-        ));
+                new StopTrajectory(),
+                new ParallelDeadlineGroup(
+                        new WaitCommand(5), 
+                        new AutoShootNear())
+        );
     }
 }

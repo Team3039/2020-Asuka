@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
-import frc.robot.controllers.PS4Gamepad;
 
 /**
  * This device is responisble for the rotational control of the "Shooter" and the tracking of the 
@@ -40,16 +39,17 @@ public class Turret extends SubsystemBase {
     setPipeline(0);
     setCamMode(false);
     turret.config_kP(0, 0.05);
+    turret.selectProfileSlot(0, 0);
+
   }
 
   public enum TurretControlMode {
-    IDLE, 
+    DRIVER, 
     TRACKING,
-    WALL, 
-    POSITION
+    JOYSTICK
   }
 
-  public TurretControlMode turretControlMode = TurretControlMode.IDLE;
+  public TurretControlMode turretControlMode = TurretControlMode.DRIVER;
 
   public synchronized TurretControlMode getControlMode() {
     return turretControlMode;
@@ -78,59 +78,6 @@ public class Turret extends SubsystemBase {
     }
     else {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
-    }
-  }
-
-  public void idle() {
-    setLed(false);
-    setCamMode(false);
-  }
-
-  public void aim(TurretControlMode controlMode, double position) {
-    double errorX = (getTargetX() - getCurrentPosition()) * kP_TURRET;
-
-    if (getTurretPosition() <= -45 || turretSwitch.get()) {
-      turret.set(ControlMode.PercentOutput, .15);
-    }
-    else if (getTurretPosition() >= 315 || turretSwitch.get()) {
-      turret.set(ControlMode.PercentOutput, -.15);
-    }
-    else if (controlMode.equals(TurretControlMode.WALL)) {
-      trackWall();
-    }
-    else if (controlMode.equals(TurretControlMode.TRACKING)) {
-      setTrackingMode();
-      // if (onTarget() == false) {
-      //   trackWall();
-      // }
-      // else {
-        turret.set(ControlMode.PercentOutput, errorX);
-      // }
-    }
-    else if (controlMode.equals(TurretControlMode.POSITION)) {
-      setDriverCamMode();
-      setTurretPosition(position);
-    }
-    else if (controlMode.equals(TurretControlMode.IDLE)) {
-      setDriverCamMode();
-      turret.set(ControlMode.Position, 0);
-    }
-  }
-
-  public void aim(TurretControlMode controlMode) {
-
-    if (getTurretSwitch()) {
-      turret.set(ControlMode.PercentOutput, 0);
-    }
-    if (controlMode.equals(TurretControlMode.WALL)) {
-      trackWall();
-    }
-    else if (controlMode.equals(TurretControlMode.TRACKING)) {
-      trackTarget();
-    }
-    else if (controlMode.equals(TurretControlMode.IDLE)) {
-      setDriverCamMode();
-      turret.set(ControlMode.Position, 0);
     }
   }
 
@@ -172,12 +119,6 @@ public class Turret extends SubsystemBase {
     setCamMode(true);
   }
 
-  public void setCamMode() {
-    setPipeline(0);
-    setLed(false);
-    setCamMode(false);
-  }
-
   public void setDriverCamMode() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1); //Turns LED off
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1); //Disable Vision Processing and Doubles Exposure
@@ -191,10 +132,6 @@ public class Turret extends SubsystemBase {
         return angle + 360;
     }
 }
-
-  public void trackWall() {
-      setTurretPosition(getTargetX() - RobotContainer.drive.getGyroFusedHeadingAngleDeg());
-    }
 
   public void resetTurretPosition() {
     turret.setSelectedSensorPosition(0);
@@ -230,20 +167,18 @@ public class Turret extends SubsystemBase {
     }
   }
 
-  public void manualControl(PS4Gamepad gp) {
-    while (getTurretSwitch()) {
-      if (turret.getSelectedSensorPosition() <= 0) {
-        turret.set(ControlMode.PercentOutput, .15);
-      }
-      else if (turret.getSelectedSensorPosition() >= 0) {
-        turret.set(ControlMode.Position, -.15);
-      }
-      else {
-        double rot = gp.getRightXAxis() * .2;
-        turret.set(ControlMode.PercentOutput, rot);
-      }
+  public void manualControl() {
+    if (getTurretSwitch() && getTurretPosition() > 245) {
+      turret.set(ControlMode.PercentOutput, -.1);
+    }
+    else if (getTurretSwitch() && getTurretPosition() < -110) {
+      turret.set(ControlMode.PercentOutput, .1);
+    }
+    else {
+      turret.set(ControlMode.PercentOutput, RobotContainer.getOperator().getLeftXAxis());
     }
   }
+  
 
   public Boolean getTurretSwitch() {
     return !turretSwitch.get();
@@ -255,26 +190,24 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    turret.selectProfileSlot(0, 0);
-
     synchronized (Turret.this) {
       switch (getControlMode()) {
-        case IDLE:
+        case DRIVER:
           setDriverCamMode();
           resetPose();
           break;
         case TRACKING:
-          RobotContainer.turret.setTrackingMode();
-          RobotContainer.turret.trackTarget();
+          setTrackingMode();
+          trackTarget();
           break;
-        case WALL:
-          System.out.println("Set turret to track wall");
-          aim(TurretControlMode.WALL);
-          break;
+        case JOYSTICK:
+          manualControl();
         default:
           System.out.println("Unknown turret control mode");
           break;
       }
     }
+
+    // System.out.println(getTurretPosition());
   }
 }

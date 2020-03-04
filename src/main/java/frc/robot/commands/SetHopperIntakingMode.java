@@ -9,36 +9,36 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Turret.TurretControlMode;
+import frc.robot.subsystems.Hopper.HopperControlMode;
 
-public class TurretManualSwitch extends CommandBase {
+public class SetHopperIntakingMode extends CommandBase {
   /**
-   * Creates a new TurretManualSwitch.
+   * Creates a new SetHopperIntakingControlMode.
    */
-  public TurretManualSwitch() {
+  public SetHopperIntakingMode() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.hopper);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.hopper.setControlMode(HopperControlMode.INTAKING);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.manualControl(RobotContainer.getOperator());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.turret.setControlMode(TurretControlMode.IDLE);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

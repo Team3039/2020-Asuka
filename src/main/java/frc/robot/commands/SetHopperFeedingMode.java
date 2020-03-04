@@ -9,24 +9,26 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Hopper.HopperControlMode;
 
-public class LowerHood extends CommandBase {
+public class SetHopperFeedingMode extends CommandBase {
   /**
-   * Creates a new LowerHood.
+   * Creates a new SetHopperFeedingControlMode.
    */
-  public LowerHood() {
+  public SetHopperFeedingMode() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.hopper);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+      RobotContainer.hopper.setControlMode(HopperControlMode.FEEDING);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.shooter.lowerHood();
   }
 
   // Called once the command ends or is interrupted.
@@ -37,6 +39,6 @@ public class LowerHood extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

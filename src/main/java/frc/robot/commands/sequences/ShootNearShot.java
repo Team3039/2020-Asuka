@@ -5,26 +5,27 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
+import frc.robot.Constants;
+import frc.robot.commands.ActuateHood;
+import frc.robot.commands.SetShooterSpeedRPM;
+import frc.robot.commands.SetTurretTrackMode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class ShootSequence extends SequentialCommandGroup {
+public class ShootNearShot extends SequentialCommandGroup {
   /**
-   * Creates a new Shoot.
+   * Creates a new ShootNearShot.
    */
-  double RPM;
-  public ShootSequence(double RPM) {
+  public ShootNearShot() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(
-      new ActuateHood(), 
-      new Shoot(RPM)
-      );
-      this.RPM = RPM;
+    super(new ActuateHood(false),
+          new SetTurretTrackMode(),
+          new SetShooterSpeedRPM(Constants.SHOOT_NEAR_SHOT_RPM)
+          );
   }
 }

@@ -14,30 +14,32 @@ public class ActuateIntake extends CommandBase {
   /**
    * Creates a new ExtendIntake.
    */
-  public ActuateIntake() {
+  boolean lowerIntake;
+  public ActuateIntake(boolean lowerIntake) {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.intake);
+    this.lowerIntake = lowerIntake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.intake.acuateIntake(lowerIntake);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.intake.deploy();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.intake.retract();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

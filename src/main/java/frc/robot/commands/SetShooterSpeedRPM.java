@@ -5,56 +5,42 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto.commands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Hopper.HopperControlMode;
 
-public class AutoIndex extends CommandBase {
+public class SetShooterSpeedRPM extends CommandBase {
   /**
-   * Creates a new IndexTime.
+   * Creates a new SetShooterSpeedRPM.
    */
-  HopperControlMode controlMode;
-  double seconds;
-  public AutoIndex(HopperControlMode controlMode, double seconds) {
-    this.controlMode = controlMode;
-    this.seconds = seconds;
+  double RPM;
+  int tolerance = 25;
+  public SetShooterSpeedRPM(double RPM) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.shooter);
+    this.RPM = RPM;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.timer.reset();
-    RobotContainer.timer.start();
+    RobotContainer.shooter.setShooterRPM(RPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      if (RobotContainer.timer.get() <= seconds) {
-        if (controlMode.equals(HopperControlMode.INTAKING)) {
-          RobotContainer.hopper.setControlMode(HopperControlMode.INTAKING);
-        }
-        else if (controlMode.equals(HopperControlMode.FEEDING)) {
-          RobotContainer.hopper.setControlMode(HopperControlMode.FEEDING);
-        }
-      }
-      else {
-        end(false);
-      }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.timer.stop();
-    RobotContainer.hopper.stopSystems();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

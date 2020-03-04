@@ -27,29 +27,12 @@ public class Shooter extends SubsystemBase {
 
     public Solenoid hood = new Solenoid(RobotMap.hood);
 
-    private enum ShooterControlMode {
-        IDLE,
-        HOLD,
-        CALCULATE,
-        SHOOT,
-    }
-
-    public ShooterControlMode shooterControlMode = ShooterControlMode.IDLE;
-
-    public synchronized ShooterControlMode getControlMode() {
-        return shooterControlMode;
-    }
-
-    public synchronized void setControlMode(ShooterControlMode controlMode) {
-        this.shooterControlMode = controlMode;
-      }
-
-    public void actuateHood() {
-        hood.set(true);
-    }
-
-    public void lowerHood() {
-        hood.set(false);
+    public void actuateHood(boolean lowerHood) {
+        if(lowerHood){
+            hood.set(false);
+        }else{
+            hood.set(true);
+        }
     }
 
     public Shooter() {

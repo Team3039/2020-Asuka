@@ -9,7 +9,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -29,49 +28,19 @@ public class Intake extends SubsystemBase {
     intake.setNeutralMode(NeutralMode.Brake);
   }
 
-  public enum IntakeControlMode {
-    IDLE,
-    RUNNING
+  public void acuateIntake(boolean lowerIntake){
+    if(lowerIntake){
+      intakeTilt.set(true);
+    }else {
+      intakeTilt.set(false);
+    }
   }
 
-  public IntakeControlMode intakeControlMode = IntakeControlMode.IDLE;
-
-  public synchronized IntakeControlMode getControlMode() {
-    return intakeControlMode;
-  }
-
-  public synchronized void setControlMode(IntakeControlMode controlMode) {
-    this.intakeControlMode = controlMode;
-  }
-
-  public void deploy() {
-    intakeTilt.set(true);
-  }
-
-  public void retract() {
-    intakeTilt.set(false);
-  }
-
-  public void run(double percentOutput) {
+  public void setIntakeSpeed(double percentOutput) {
     intake.set(ControlMode.PercentOutput, percentOutput);
-  }
-
-  public void stop() {
-    intake.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
   public void periodic() {
-    synchronized (Intake.this) {
-      switch (getControlMode()) {
-        case IDLE:
-          retract();
-          stop();
-          break;
-        case RUNNING:
-          run(.85);
-          break;
-      }
     }
-  }
 }

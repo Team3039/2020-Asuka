@@ -10,28 +10,41 @@ package frc.robot.auto.routines;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.auto.TrajectoryGenerator;
+import frc.robot.auto.commands.AutoShootMid;
+import frc.robot.auto.commands.AutoShootNear;
 import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
+import frc.robot.commands.sequences.FeedCells;
+import frc.robot.commands.sequences.IndexCells;
+import frc.robot.commands.sequences.IntakeCells;
+import frc.robot.commands.sequences.ResetHopper;
+import frc.robot.commands.sequences.ResetShooter;
+import frc.robot.commands.sequences.ShootMidShot;
 import frc.robot.subsystems.Drive;
 
-public class AutoTrench8Ball extends ParallelCommandGroup {
+public class AutoTrench8Ball extends SequentialCommandGroup {
     TrajectoryGenerator mTrajectories = TrajectoryGenerator.getInstance();
     Drive mDrive = Drive.getInstance();
     /**
      * Add your docs here.
      */
     public AutoTrench8Ball() {
-        addCommands(new SequentialCommandGroup(
+        addCommands(
                 new ResetOdometryAuto(),
-                //Shoot
+                new ParallelDeadlineGroup(
+                new WaitCommand(3.5), 
+                new AutoShootNear()),
+                new ResetShooter(),
+                new ResetHopper(),
                 //Intake in Parallel
-                new RamseteCommand(
+                new ParallelDeadlineGroup(
+                        new RamseteCommand(
                         mTrajectories.getCenterStartToEndOfTrench(),
                         mDrive::getPose,
                         new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
@@ -44,10 +57,12 @@ public class AutoTrench8Ball extends ParallelCommandGroup {
                         new PIDController(Constants.kPDriveVel, 0, Constants.kDDriveVel),
                         // RamseteCommand passes volts to the callback
                         mDrive::tankDriveVolts,
-                        mDrive),
-
+                        mDrive), 
+                        new IntakeCells()),
                 new StopTrajectory(),
-                new WaitCommand(.25),
+                new WaitCommand(.5),
+                new IndexCells(),
+                new ShootMidShot(),
                 new RamseteCommand(
                         mTrajectories.getEndOfTrenchToStartOfTrench(),
                         mDrive::getPose,
@@ -62,9 +77,8 @@ public class AutoTrench8Ball extends ParallelCommandGroup {
                         // RamseteCommand passes volts to the callback
                         mDrive::tankDriveVolts,
                         mDrive),
-
-                new StopTrajectory()
-                //Shoot
-        ));
+                new StopTrajectory(),
+                new FeedCells()
+        );
     }
 }

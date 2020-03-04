@@ -26,7 +26,7 @@ public class DeployClimbArms extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.climber.deploy(.7);
+    // RobotContainer.climber.deploy(.7);
   }
 
   // Called once the command ends or is interrupted.

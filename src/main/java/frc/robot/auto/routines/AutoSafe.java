@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.auto.TrajectoryGenerator;
+import frc.robot.auto.commands.AutoShootNear;
 import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
 import frc.robot.subsystems.Drive;
@@ -26,8 +28,12 @@ public class AutoSafe extends ParallelCommandGroup {
    * Add your docs here.
    */
   public AutoSafe() {
-    addCommands(new SequentialCommandGroup(
+    addCommands(
             new ResetOdometryAuto(),
+            new ParallelDeadlineGroup(
+                new WaitCommand(3), 
+                new AutoShootNear()),
+            new WaitCommand(3),
             new RamseteCommand(
                     mTrajectories.getLeftStartToSafe(),
                     mDrive::getPose,
@@ -45,6 +51,6 @@ public class AutoSafe extends ParallelCommandGroup {
 
             new StopTrajectory()
 
-    ));
+    );
   }
 }

@@ -5,26 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto.commands.Sequences;
+package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.auto.commands.AutoIndex;
-import frc.robot.subsystems.Hopper.HopperControlMode;
+import frc.robot.commands.ActuateIntake;
+import frc.robot.commands.SetHopperFeedingMode;
+import frc.robot.commands.SetIntakeSpeed;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoIndexSequence extends SequentialCommandGroup {
+public class FeedCells extends SequentialCommandGroup {
   /**
-   * Creates a new AutoIndexSequence.
+   * Creates a new FeedCells.
    */
-  double seconds;
-  public AutoIndexSequence(double seconds) {
-    super(
-      new WaitCommand(1.5), 
-      new AutoIndex(HopperControlMode.FEEDING, seconds)
-    );
-    this.seconds = seconds;
+  public FeedCells() {
+    // Add your commands in the super() call, e.g.
+    // super(new FooCommand(), new BarCommand());
+    super(new ActuateIntake(false),
+          new SetIntakeSpeed(.4),
+          new SetHopperFeedingMode());
   }
 }

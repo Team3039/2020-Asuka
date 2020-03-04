@@ -14,30 +14,31 @@ public class ActuateHood extends CommandBase {
   /**
    * Creates a new ActuateHood.
    */
-  public ActuateHood() {
+  boolean lowerHood;
+  public ActuateHood(boolean lowerHood) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.lowerHood = lowerHood;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.shooter.actuateHood(lowerHood);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.shooter.actuateHood();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.shooter.lowerHood();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

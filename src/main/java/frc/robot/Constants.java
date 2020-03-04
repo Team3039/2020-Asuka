@@ -20,10 +20,9 @@ import edu.wpi.first.wpilibj.util.Units;
  * wherever the constants are needed, to reduce verbosity.
  */
 
- //TODO Add shooter speed constants 
 public final class Constants {
     //Drive 
-    public static final double DRIVER_Y = .85;
+    public static final double DRIVER_Y = .9;
     public static final double DRIVER_ROT = .35;
 
     // 2020 Drive Constants
@@ -77,6 +76,9 @@ public final class Constants {
     public static final double TICKS_PER_ROTATION = 2048.0;
     public static final int kLongCANTimeOutMs = 100;
     public static final double kFlywheelTicksPerRevolution = 0;
+    public static final double SHOOT_NEAR_SHOT_RPM = 4825;
+    public static final double SHOOT_MID_SHOT_RPM = 5350;
+    public static final double SHOOT_FAR_SHOT_RPM = 6425;
     
     //Color Wheel
     public static final double COLOR_WHEEL_PPR = 0;

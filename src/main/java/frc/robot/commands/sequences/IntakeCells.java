@@ -5,24 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto.commands.Sequences;
+package frc.robot.commands.sequences;
 
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.auto.commands.AutoShoot;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.ActuateIntake;
+import frc.robot.commands.SetHopperIntakingMode;
+import frc.robot.commands.SetIntakeSpeed;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootSequence extends ParallelRaceGroup {
+public class IntakeCells extends SequentialCommandGroup {
   /**
-   * Creates a new AutoShootSequence.
+   * Creates a new IntakeCells.
    */
-  double seconds;
-  public AutoShootSequence(double seconds) {
-    super(
-      new AutoShoot(seconds), 
-      new AutoIndexSequence(seconds)
-    );
-    this.seconds = seconds;
+  public IntakeCells() {
+    // Add your commands in the super() call, e.g.
+    // super(new FooCommand(), new BarCommand());
+    super(new ActuateIntake(true),
+          new SetIntakeSpeed(.85),
+          new SetHopperIntakingMode());
   }
 }

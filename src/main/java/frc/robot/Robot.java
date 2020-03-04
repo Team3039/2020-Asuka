@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.auto.routines.AutoDoNothing;
 import frc.robot.auto.routines.AutoRendezvousTrench10Ball;
 import frc.robot.auto.routines.AutoSafe;
@@ -31,7 +30,7 @@ import frc.robot.subsystems.Drive;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private SendableChooser<ParallelCommandGroup> autonTaskChooser;
+  private SendableChooser<Command> autonTaskChooser;
 
 
   RobotContainer m_robotContainer;
@@ -82,13 +81,12 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    //Gather Vision Info=\
+    targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+    targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+    targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
     CommandScheduler.getInstance().run();
-        //Gather Vision Info=\
-        targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-        targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-        targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-        targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-        CommandScheduler.getInstance().run();
   }
 
   /**
