@@ -21,6 +21,7 @@ import frc.robot.auto.routines.AutoTest;
 import frc.robot.auto.routines.AutoTrench8Ball;
 import frc.robot.auto.routines.AutoTrenchSteal;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Turret.TurretControlMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -95,6 +96,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drive.resetOdometry(new Pose2d());
+    RobotContainer.turret.setControlMode(TurretControlMode.TRACKING);
+
 
   }
 
@@ -144,6 +147,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     drive.setControlMode(Drive.DriveControlMode.JOYSTICK);
+    RobotContainer.turret.setControlMode(TurretControlMode.DRIVER);
+
   }
 
   /**

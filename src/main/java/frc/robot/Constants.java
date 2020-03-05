@@ -78,9 +78,9 @@ public final class Constants {
     public static final int kLongCANTimeOutMs = 100;
     public static final double kFlywheelTicksPerRevolution = 0;
 
-    public static final double SHOOT_NEAR_SHOT_RPM = 4825;
-    public static final double SHOOT_MID_SHOT_RPM = 5350;
-    public static final double SHOOT_FAR_SHOT_RPM = 6425;
+    public static final double SHOOT_NEAR_SHOT_RPM = 4875;
+    public static final double SHOOT_MID_SHOT_RPM = 5375;
+    public static final double SHOOT_FAR_SHOT_RPM = 6475;
 
     public static final double AUTO_SHOOT_NEAR_SHOT_RPM = 4975;
     public static final double AUTO_SHOOT_MID_SHOT_RPM =  5500;
