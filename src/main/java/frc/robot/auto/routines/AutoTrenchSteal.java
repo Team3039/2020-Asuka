@@ -21,6 +21,8 @@ import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
 import frc.robot.commands.sequences.IndexCells;
 import frc.robot.commands.sequences.IntakeCells;
+import frc.robot.commands.sequences.ResetHopper;
+import frc.robot.commands.sequences.ResetShooter;
 import frc.robot.subsystems.Drive;
 
 public class AutoTrenchSteal extends SequentialCommandGroup {
@@ -68,7 +70,10 @@ public class AutoTrenchSteal extends SequentialCommandGroup {
                 new StopTrajectory(),
                 new ParallelDeadlineGroup(
                         new WaitCommand(5), 
-                        new AutoShootNear())
+                        new AutoShootNear()),
+                new ResetShooter(),
+                new ResetHopper()
+        
         );
     }
 }

@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.auto.TrajectoryGenerator;
-import frc.robot.auto.commands.AutoShootMid;
 import frc.robot.auto.commands.AutoShootNear;
 import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
@@ -60,7 +59,7 @@ public class AutoTrench8Ball extends SequentialCommandGroup {
                         mDrive), 
                         new IntakeCells()),
                 new StopTrajectory(),
-                new WaitCommand(.5),
+                new WaitCommand(.25),
                 new IndexCells(),
                 new ShootMidShot(),
                 new RamseteCommand(
@@ -78,7 +77,11 @@ public class AutoTrench8Ball extends SequentialCommandGroup {
                         mDrive::tankDriveVolts,
                         mDrive),
                 new StopTrajectory(),
-                new FeedCells()
+                new ParallelDeadlineGroup(
+                        new WaitCommand(2.5), 
+                        new FeedCells()),
+                new ResetShooter(),
+                new ResetHopper()
         );
     }
 }

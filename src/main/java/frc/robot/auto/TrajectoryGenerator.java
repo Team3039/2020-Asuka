@@ -29,7 +29,7 @@ public class TrajectoryGenerator {
                     10);
 
     // Create config for trajectory
-    TrajectoryConfig forwardConfig =
+    TrajectoryConfig forwardConfigFast =
             new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
                     Constants.kMaxAccelerationMetersPerSecondSquared)
                     // Add kinematics to ensure max speed is actually obeyed
@@ -38,14 +38,23 @@ public class TrajectoryGenerator {
                     .addConstraint(autoVoltageConstraint);
 
     TrajectoryConfig forwardConfigSlow =
-            new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
-                    Constants.kMaxAccelerationMetersPerSecondSquared)
+            new TrajectoryConfig(Constants.kMinSpeedMetersPerSecond,
+                    Constants.kMinAcclerationMetersPerSecondSquared)
                     // Add kinematics to ensure max speed is actually obeyed
                     .setKinematics(Constants.kDriveKinematics)
                     // Apply the voltage constraint
                     .addConstraint(autoVoltageConstraint);
 
-    TrajectoryConfig reverseConfig =
+    TrajectoryConfig reverseConfigSlow =
+            new TrajectoryConfig(Constants.kMinSpeedMetersPerSecond,
+                    Constants.kMinAcclerationMetersPerSecondSquared)
+                    // Add kinematics to ensure max speed is actually obeyed
+                    .setKinematics(Constants.kDriveKinematics)
+                    // Apply the voltage constraint
+                    .addConstraint(autoVoltageConstraint)
+                    .setReversed(true);
+
+    TrajectoryConfig reverseConfigFast =
             new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
                     Constants.kMaxAccelerationMetersPerSecondSquared)
                     // Add kinematics to ensure max speed is actually obeyed
@@ -64,7 +73,7 @@ public class TrajectoryGenerator {
                     new Pose2d(Units.inchesToMeters(120), Units.inchesToMeters(0),
                             new Rotation2d(Units.radiansToDegrees(0))),
                     // Pass config
-                    forwardConfig
+                    forwardConfigFast
             );
         }
 
@@ -78,7 +87,7 @@ public class TrajectoryGenerator {
                     new Pose2d(Units.inchesToMeters(0), Units.inchesToMeters(0),
                             new Rotation2d(Units.radiansToDegrees(0))),
                     // Pass config
-                    reverseConfig
+                    reverseConfigFast
             );
         }
 
@@ -94,7 +103,7 @@ public class TrajectoryGenerator {
                 ),
                 new Pose2d(Units.inchesToMeters(200), Units.inchesToMeters(65.66), new Rotation2d(0)),
                 // Pass config
-                forwardConfig
+                forwardConfigSlow
         );
         return centerStartToEndOfTrench;
 
@@ -109,7 +118,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(70), Units.inchesToMeters(50), new Rotation2d(0)),
                     // Pass config
-                    reverseConfig
+                    reverseConfigFast
             );
             return endOfTrenchToStartOfTrench;
         }
@@ -125,7 +134,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(130), Units.inchesToMeters(0), new Rotation2d(0)),
                     // Pass config
-                    forwardConfig
+                    forwardConfigSlow
             );
             return stealStartToStealSpot;
         }
@@ -167,7 +176,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(-20), Units.inchesToMeters(190), new Rotation2d(0)),
                     // Pass config
-                    reverseConfig
+                    reverseConfigFast
             );
             return stealSpotToCenterShot;
         }
@@ -181,7 +190,7 @@ public class TrajectoryGenerator {
                 ),
                 new Pose2d(Units.inchesToMeters(56), Units.inchesToMeters(125), new Rotation2d(-70)),
                 // Pass config
-                reverseConfig
+                reverseConfigFast
         );
         return stealSpotToCenterShot;
     }
@@ -197,7 +206,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(155), Units.inchesToMeters(-10), new Rotation2d(Units.degreesToRadians(-60))),
                     // Pass config
-                    forwardConfig
+                    forwardConfigSlow
             );
             return centerStartToRendezvous2Ball;
         }
@@ -211,7 +220,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(70), Units.inchesToMeters(65), new Rotation2d(Units.degreesToRadians(0))),
                     // Pass config
-                    reverseConfig
+                    reverseConfigSlow
             );
             return rendezvous2BallToStartOfTrench;
         }
@@ -225,7 +234,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(300), Units.inchesToMeters(65.66), new Rotation2d(Units.degreesToRadians(0))),
                     // Pass config
-                    forwardConfig
+                    forwardConfigSlow
             );
             return startOfTrenchToEndOfTrench;
         }
@@ -240,7 +249,7 @@ public class TrajectoryGenerator {
                     ),
                     new Pose2d(Units.inchesToMeters(-60), Units.inchesToMeters(0), new Rotation2d(Units.degreesToRadians(0))),
                     // Pass config
-                    reverseConfig
+                    reverseConfigFast
             );
             return leftStartToSafe;
         }
@@ -254,7 +263,7 @@ public class TrajectoryGenerator {
                 ),
                 new Pose2d(Units.inchesToMeters(60), Units.inchesToMeters(0), new Rotation2d(Units.degreesToRadians(0))),
                 // Pass config
-                forwardConfig
+                forwardConfigFast
         );
         return leftStartToSafe;
     }

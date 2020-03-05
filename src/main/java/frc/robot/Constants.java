@@ -51,11 +51,12 @@ public final class Constants {
     public static final double kDDriveVel = 0;
 
 
-    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(5.0); //Find good value
-    public static final double kMaxAccelerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(5.0), 2);
+    public static final double kMinSpeedMetersPerSecond = Units.feetToMeters(6.0); //Find good value
+    public static final double kMinAcclerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(6.0), 2);
 
-    public static final double kMinSpeedMetersPerSecond = Units.feetToMeters(5.0); //Find good value
-    public static final double kMinAccelerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(5.0), 2);
+    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(9.0); //Find good value
+    public static final double kMaxAccelerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(9.0), 2);
+
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2.0;
     public static final double kRamseteZeta = 0.7;
@@ -76,9 +77,16 @@ public final class Constants {
     public static final double TICKS_PER_ROTATION = 2048.0;
     public static final int kLongCANTimeOutMs = 100;
     public static final double kFlywheelTicksPerRevolution = 0;
+
     public static final double SHOOT_NEAR_SHOT_RPM = 4825;
     public static final double SHOOT_MID_SHOT_RPM = 5350;
     public static final double SHOOT_FAR_SHOT_RPM = 6425;
+
+    public static final double AUTO_SHOOT_NEAR_SHOT_RPM = 4975;
+    public static final double AUTO_SHOOT_MID_SHOT_RPM =  5500;
+    public static final double AUTO_SHOOT_FAR_SHOT_RPM = 6575;
+
+
     
     //Color Wheel
     public static final double COLOR_WHEEL_PPR = 0;
