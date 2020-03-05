@@ -10,6 +10,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
@@ -18,7 +20,7 @@ public class Climber extends SubsystemBase {
   
   public TalonSRX climberA = new TalonSRX(RobotMap.climberA);
   public TalonSRX climberB = new TalonSRX(RobotMap.climberB);
-  public TalonSRX climberC = new TalonSRX(RobotMap.climberC);
+  public VictorSPX climberC = new VictorSPX(RobotMap.climberC);
 
   public Solenoid climbRelease = new Solenoid(RobotMap.climbRelease);
 
@@ -28,18 +30,6 @@ public class Climber extends SubsystemBase {
     climberB.setInverted(true);
     climberB.follow(climberA);
     climberC.setNeutralMode(NeutralMode.Brake);
-  }
-
-  public enum ClimberMode {
-    IDLE,
-    EXTENDING,
-    CLIMBING,
-  }
-
-  public ClimberMode climberMode = ClimberMode.IDLE;
-
-  public synchronized ClimberMode getClimberMode() {
-    return climberMode;
   }
 
   public void actuateClimb() {

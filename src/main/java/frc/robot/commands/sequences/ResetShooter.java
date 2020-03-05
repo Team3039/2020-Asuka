@@ -8,9 +8,11 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.ActuateHood;
 import frc.robot.commands.SetShooterSpeed;
 import frc.robot.commands.SetTurretDriverMode;
+import frc.robot.commands.SetTurretJoystickMode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -24,6 +26,9 @@ public class ResetShooter extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     super(new ActuateHood(true),
           new SetTurretDriverMode(),
-          new SetShooterSpeed(0));
+          new SetShooterSpeed(0),
+          new WaitCommand(1),
+          new SetTurretJoystickMode()
+          );
   }
 }

@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -203,11 +204,9 @@ public class Turret extends SubsystemBase {
         case JOYSTICK:
           manualControl();
         default:
-          System.out.println("Unknown turret control mode");
           break;
       }
     }
-
-    // System.out.println(getTurretPosition());
+    SmartDashboard.putBoolean("Has Target", hasTarget());
   }
 }

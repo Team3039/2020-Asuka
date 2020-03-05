@@ -6,6 +6,15 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
+
+import static frc.robot.Constants.SHOOTER_OUTPUT_TO_ENCODER_RATIO;
+import static frc.robot.Constants.TICKS_PER_ROTATION;
+import static frc.robot.Constants.kD_SHOOTER;
+import static frc.robot.Constants.kF_SHOOTER;
+import static frc.robot.Constants.kIZone_SHOOTER;
+import static frc.robot.Constants.kI_SHOOTER;
+import static frc.robot.Constants.kP_SHOOTER;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -15,7 +24,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.RobotMap;
-import static frc.robot.Constants.*;
 
 /**
  * The Shooter launches "Power Cells" from the robot to the "Power Port"

@@ -16,7 +16,7 @@ public class RobotMap {
   public static int shooterA = 6;
   public static int shooterB = 7;
   public static int turret = 2;
-  public static int intake = 0;
+  public static int intake = 1;
 
   //Indexer
   public final static int kickerWheel = 8;
@@ -29,7 +29,7 @@ public class RobotMap {
   //Climber
   public final static int climberA = 3;
   public final static int climberB = 11;
-  public final static int climberC = 1;
+  public final static int climberC = 0;
 
 
 //SOLENOID

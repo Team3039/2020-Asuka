@@ -1,13 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
 import frc.robot.commands.RetractClimbArms;
-import frc.robot.commands.SetIntakeSpeed;
+import frc.robot.commands.SetHopperIdleMode;
+import frc.robot.commands.SetHopperUnjamMode;
 import frc.robot.commands.sequences.FeedCells;
 import frc.robot.commands.sequences.IndexCells;
 import frc.robot.commands.sequences.IntakeCells;
@@ -64,15 +64,10 @@ public class RobotContainer {
 		Button operatorOptions = operatorPad.getOptionsButton();
 		Button operatorPadButton = operatorPad.getButtonPad();
 		Button operatorL1 = operatorPad.getL1();
-		// Button operatorL2 = operatorPad.getL2();
-		Button operatorL3 = operatorPad.getL3();
+		Button operatorL2 = operatorPad.getL2();
 		Button operatorR1 = operatorPad.getR1();
-		// Button operatorR2 = operatorPad.getR2();
-    Button operatorR3 = operatorPad.getR3();
-    Button operatorDpadUp = operatorPad.getDPadUp();
-    Button operatorDpadLeft = operatorPad.getDPadLeft();
-    Button operatorDpadRight = operatorPad.getDPadRight();
-    Button operatorDpadDown = operatorPad.getDPadDown();
+		Button operatorR2 = operatorPad.getR2();
+
   
   public RobotContainer() {
     configureButtonBindings();
@@ -99,16 +94,13 @@ public class RobotContainer {
     operatorR1.whileHeld(new IntakeCells());
     operatorR1.whenReleased(new IndexCells());
     //When Right Trigger is held the feeding sequence runs 
-    operatorSquare.whileHeld(new FeedCells());
+    operatorR2.whileHeld(new FeedCells());
     // When the feed command ends, the systems are all reset
-    operatorSquare.whenReleased(new ResetHopper());
-    operatorSquare.whenReleased(new ResetShooter());
+    operatorR2.whenReleased(new ResetHopper());
+    operatorR2.whenReleased(new ResetShooter());
 
-    operatorL1.whileHeld(new SetIntakeSpeed(-.5));
-    operatorL1.whenReleased(new SetIntakeSpeed(0));
-    
-    SmartDashboard.putNumber("RPM", shooter.getShooterRPM());
-    SmartDashboard.putNumber("Gyro", drive.getGyroFusedHeadingAngleDeg());
+    operatorL1.whileHeld(new SetHopperUnjamMode());
+    operatorL1.whenReleased(new SetHopperIdleMode());
     
   }
 
