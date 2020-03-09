@@ -19,6 +19,7 @@ import frc.robot.auto.TrajectoryGenerator;
 import frc.robot.auto.commands.AutoShootNear;
 import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
+import frc.robot.commands.SetTurretDriverMode;
 import frc.robot.commands.sequences.IndexCells;
 import frc.robot.commands.sequences.IntakeCells;
 import frc.robot.commands.sequences.ResetHopper;
@@ -34,6 +35,7 @@ public class AutoTrenchSteal extends SequentialCommandGroup {
     public AutoTrenchSteal() {
         addCommands(
                 new ResetOdometryAuto(),
+                new SetTurretDriverMode(),
                 //Intake in Parallel
                 new ParallelDeadlineGroup(
                         new RamseteCommand(
@@ -53,7 +55,8 @@ public class AutoTrenchSteal extends SequentialCommandGroup {
                         new IntakeCells()),
                 new StopTrajectory(),
                 new IndexCells(),
-                new RamseteCommand(
+                new ParallelDeadlineGroup(                
+                        new RamseteCommand(
                         mTrajectories.getStealBallToCenterShot(),
                         mDrive::getPose,
                         new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
@@ -66,10 +69,11 @@ public class AutoTrenchSteal extends SequentialCommandGroup {
                         new PIDController(Constants.kPDriveVel, 0, Constants.kDDriveVel),
                         // RamseteCommand passes volts to the callback
                         mDrive::tankDriveVolts,
-                        mDrive),
+                        mDrive), 
+                        new SetTurretDriverMode()),
                 new StopTrajectory(),
                 new ParallelDeadlineGroup(
-                        new WaitCommand(5), 
+                        new WaitCommand(3), 
                         new AutoShootNear()),
                 new ResetShooter(),
                 new ResetHopper()

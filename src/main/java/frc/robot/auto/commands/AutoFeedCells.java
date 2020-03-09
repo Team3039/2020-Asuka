@@ -8,22 +8,21 @@
 package frc.robot.auto.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.sequences.ShootNearShot;
+import frc.robot.commands.ActuateIntake;
+import frc.robot.commands.SetHopperFeedingMode;
+import frc.robot.commands.SetIntakeSpeed;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootNear extends SequentialCommandGroup {
+public class AutoFeedCells extends SequentialCommandGroup {
   /**
-   * Creates a new AutoShootRPM.
+   * Creates a new AutoFeedCells.
    */
-  public AutoShootNear() {
+  public AutoFeedCells() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new ShootNearShot(),
-          new WaitCommand(2),
-          new AutoFeedCells()
-          );
-  }
+    super(new ActuateIntake(false),
+          new SetIntakeSpeed(-.4),
+          new SetHopperFeedingMode());  }
 }

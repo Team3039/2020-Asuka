@@ -15,7 +15,7 @@ public class Climb extends CommandBase {
    * Creates a new Climb.
    */
   public Climb() {
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.climber);
   }
  
   // Called when the command is initially scheduled.

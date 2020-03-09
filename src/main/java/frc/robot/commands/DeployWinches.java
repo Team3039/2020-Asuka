@@ -10,31 +10,30 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class DeployClimb extends CommandBase {
+public class DeployWinches extends CommandBase {
   /**
-   * Creates a new Climb.
+   * Creates a new DeployWinches.
    */
-  public DeployClimb() {
-    
+  public DeployWinches() {
+    addRequirements(RobotContainer.climber);
     // Use addRequirements() here to declare subsystem dependencies.
   }
-  
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.climber.extend(.4);
   }
-
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.climber.extend(.6);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.climber.extend(0);
+    RobotContainer.climber.stop();
   }
 
   // Returns true when the command should end.

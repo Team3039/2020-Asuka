@@ -10,37 +10,35 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class RetractClimbArms extends CommandBase {
+public class SetIsFar extends CommandBase {
   /**
-   * Creates a new RetractClimbArms.
+   * Creates a new SetIsFar.
    */
-  double speed;
-  public RetractClimbArms(double speed) {
-    addRequirements(RobotContainer.climber);
+  boolean farShoot;
+  public SetIsFar(boolean farShoot) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.speed = speed;
+    this.farShoot = farShoot;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.shooter.setIsFar(farShoot);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.climber.release(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.climber.deploy(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

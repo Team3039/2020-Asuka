@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.util.Units;
 
 public final class Constants {
     //Drive 
-    public static final double DRIVER_Y = .9;
+    public static final double DRIVER_Y = .85;
     public static final double DRIVER_ROT = .35;
 
     // 2020 Drive Constants
@@ -36,26 +36,19 @@ public final class Constants {
     public static final DifferentialDriveKinematics kDriveKinematics =
             new DifferentialDriveKinematics(kTrackWidthMeters);
 
-
-    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or theoretically
-    // for *your* robot's drive.
-    // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
-    // values for your robot.
     public static final double ksVolts = .535732026886109;
     public static final double kvVoltSecondsPerMeter = .036345975446567435;
     public static final double kaVoltSecondsSquaredPerMeter = .002053036858073132;
 
-    // Example value only - as above, this must be tuned for your drive!
     public static final double kPDriveVel = 1.5; //8.5
     public static final double kDDriveVel = 0;
 
+    public static final double kMinSpeedMetersPerSecond = Units.feetToMeters(4.5); //Find good value
+    public static final double kMinAcclerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(4.5), 2);
 
-    public static final double kMinSpeedMetersPerSecond = Units.feetToMeters(6.0); //Find good value
-    public static final double kMinAcclerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(6.0), 2);
 
-    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(9.0); //Find good value
-    public static final double kMaxAccelerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(9.0), 2);
+    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(8.0); //Find good value
+    public static final double kMaxAccelerationMetersPerSecondSquared = Math.pow(Units.feetToMeters(8.0), 2);
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2.0;
@@ -78,16 +71,14 @@ public final class Constants {
     public static final int kLongCANTimeOutMs = 100;
     public static final double kFlywheelTicksPerRevolution = 0;
 
-    public static final double SHOOT_NEAR_SHOT_RPM = 4875;
-    public static final double SHOOT_MID_SHOT_RPM = 5375;
+    public static final double SHOOT_NEAR_SHOT_RPM = 4975;
+    public static final double SHOOT_MID_SHOT_RPM = 5750;
     public static final double SHOOT_FAR_SHOT_RPM = 6475;
 
-    public static final double AUTO_SHOOT_NEAR_SHOT_RPM = 4975;
-    public static final double AUTO_SHOOT_MID_SHOT_RPM =  5500;
+    public static final double AUTO_SHOOT_NEAR_SHOT_RPM = 5000;
+    public static final double AUTO_SHOOT_MID_SHOT_RPM =  5600;
     public static final double AUTO_SHOOT_FAR_SHOT_RPM = 6575;
 
-
-    
     //Color Wheel
     public static final double COLOR_WHEEL_PPR = 0;
 

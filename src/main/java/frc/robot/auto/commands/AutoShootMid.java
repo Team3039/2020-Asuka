@@ -9,8 +9,7 @@ package frc.robot.auto.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.sequences.FeedCells;
-import frc.robot.commands.sequences.ShootMidShot;
+import frc.robot.commands.sequences.AutoShootMidShot;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -22,9 +21,9 @@ public class AutoShootMid extends SequentialCommandGroup {
   public AutoShootMid() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new ShootMidShot(),
+    super(new AutoShootMidShot(),
           new WaitCommand(.75),
-          new FeedCells()
+          new AutoFeedCells()
           );
   }
 }

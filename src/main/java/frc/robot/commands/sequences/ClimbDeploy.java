@@ -5,25 +5,27 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.auto.commands;
+package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.sequences.ShootNearShot;
+import frc.robot.commands.DeployClimbArms;
+import frc.robot.commands.SetTurretClimbMode;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootNear extends SequentialCommandGroup {
+public class ClimbDeploy extends SequentialCommandGroup {
   /**
-   * Creates a new AutoShootRPM.
+   * Creates a new ClimbDeploy.
    */
-  public AutoShootNear() {
+  public ClimbDeploy() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new ShootNearShot(),
-          new WaitCommand(2),
-          new AutoFeedCells()
-          );
+    super(
+      new SetTurretClimbMode(),
+      new WaitCommand(1),
+      new DeployClimbArms()
+    );
   }
 }

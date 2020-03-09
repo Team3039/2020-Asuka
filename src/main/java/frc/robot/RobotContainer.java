@@ -3,11 +3,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.Climb;
-import frc.robot.commands.DeployClimb;
 import frc.robot.commands.DeployClimbArms;
+import frc.robot.commands.DeployWinches;
 import frc.robot.commands.RetractClimbArms;
+import frc.robot.commands.SetClimbArmSpeed;
 import frc.robot.commands.SetHopperIdleMode;
 import frc.robot.commands.SetHopperUnjamMode;
+import frc.robot.commands.SetIntakeSpeed;
+import frc.robot.commands.SetShooterSpeed;
+import frc.robot.commands.SetTurretClimbMode;
+import frc.robot.commands.sequences.ClimbDeploy;
 import frc.robot.commands.sequences.FeedCells;
 import frc.robot.commands.sequences.IndexCells;
 import frc.robot.commands.sequences.IntakeCells;
@@ -53,7 +58,9 @@ public class RobotContainer {
 		Button driverL3 = driverPad.getL3();
 		Button driverR1 = driverPad.getR1();
 		// Button driverR2 = driverPad.getR2();
-		Button driverR3 = driverPad.getR3();
+    Button driverR3 = driverPad.getR3();
+    Button downDpad =  driverPad.getDPadDown();
+    Button startButton = driverPad.getStartButton();
 
 		//Operator Buttons
 		Button operatorTriangle = operatorPad.getButtonTriangle();
@@ -67,7 +74,6 @@ public class RobotContainer {
 		Button operatorL2 = operatorPad.getL2();
 		Button operatorR1 = operatorPad.getR1();
 		Button operatorR2 = operatorPad.getR2();
-
   
   public RobotContainer() {
     configureButtonBindings();
@@ -76,12 +82,18 @@ public class RobotContainer {
   //Put Button Bindings Here
   private void configureButtonBindings() {
 
+    
     //Driver
-    driverL1.whileHeld(new DeployClimb());
+    driverL1.whileHeld(new DeployWinches());
     driverR1.whileHeld(new Climb());
-    driverShare.whileHeld(new DeployClimbArms());
-    driverOptions.whileHeld(new RetractClimbArms());
-
+    driverOptions.whileHeld(new RetractClimbArms(.50));
+    driverOptions.whenReleased(new RetractClimbArms(0));
+    downDpad.whileHeld(new RetractClimbArms(.70));
+    driverTriangle.whenPressed(new SetTurretClimbMode());
+    downDpad.whenReleased(new RetractClimbArms(0));
+    driverShare.whenPressed(new ClimbDeploy());
+    startButton.whileHeld(new SetClimbArmSpeed(.4));
+    startButton.whenReleased(new SetClimbArmSpeed(0));
 
     //Operator
     //When X is pressed it turns on the shooter to a set RPM (6350) raises the hood and starts tracking
@@ -99,9 +111,15 @@ public class RobotContainer {
     operatorR2.whenReleased(new ResetHopper());
     operatorR2.whenReleased(new ResetShooter());
 
+    operatorL1.whileHeld(new SetIntakeSpeed(.6));
+    operatorL1.whileHeld(new SetShooterSpeed(-.8));
     operatorL1.whileHeld(new SetHopperUnjamMode());
+    operatorL1.whenReleased(new SetIntakeSpeed(0));
     operatorL1.whenReleased(new SetHopperIdleMode());
-    
+    operatorL1.whenReleased(new SetShooterSpeed(0));
+
+    operatorL2.whenPressed(new ResetHopper());
+    operatorL2.whenPressed(new ResetShooter()); 
   }
 
   //Get Controller Objects

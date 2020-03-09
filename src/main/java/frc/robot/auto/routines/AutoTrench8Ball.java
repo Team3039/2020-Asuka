@@ -16,15 +16,15 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.auto.TrajectoryGenerator;
+import frc.robot.auto.commands.AutoFeedCells;
 import frc.robot.auto.commands.AutoShootNear;
 import frc.robot.auto.commands.ResetOdometryAuto;
 import frc.robot.auto.commands.StopTrajectory;
-import frc.robot.commands.sequences.FeedCells;
+import frc.robot.commands.sequences.AutoShootMidShot;
 import frc.robot.commands.sequences.IndexCells;
 import frc.robot.commands.sequences.IntakeCells;
 import frc.robot.commands.sequences.ResetHopper;
 import frc.robot.commands.sequences.ResetShooter;
-import frc.robot.commands.sequences.ShootMidShot;
 import frc.robot.subsystems.Drive;
 
 public class AutoTrench8Ball extends SequentialCommandGroup {
@@ -37,7 +37,7 @@ public class AutoTrench8Ball extends SequentialCommandGroup {
         addCommands(
                 new ResetOdometryAuto(),
                 new ParallelDeadlineGroup(
-                new WaitCommand(3.5), 
+                new WaitCommand(2.8), 
                 new AutoShootNear()),
                 new ResetShooter(),
                 new ResetHopper(),
@@ -61,7 +61,7 @@ public class AutoTrench8Ball extends SequentialCommandGroup {
                 new StopTrajectory(),
                 new WaitCommand(.25),
                 new IndexCells(),
-                new ShootMidShot(),
+                new AutoShootMidShot(),
                 new RamseteCommand(
                         mTrajectories.getEndOfTrenchToStartOfTrench(),
                         mDrive::getPose,
@@ -77,9 +77,10 @@ public class AutoTrench8Ball extends SequentialCommandGroup {
                         mDrive::tankDriveVolts,
                         mDrive),
                 new StopTrajectory(),
+                new WaitCommand(1),
                 new ParallelDeadlineGroup(
                         new WaitCommand(2.5), 
-                        new FeedCells()),
+                        new AutoFeedCells()),
                 new ResetShooter(),
                 new ResetHopper()
         );

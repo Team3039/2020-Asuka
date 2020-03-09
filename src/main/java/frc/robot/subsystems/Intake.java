@@ -12,9 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
 /**
@@ -25,8 +23,6 @@ public class Intake extends SubsystemBase {
 
   public TalonSRX intake = new TalonSRX(RobotMap.intake);
   public Solenoid intakeTilt = new Solenoid(RobotMap.intakeTilt);
-
-  private static final int CURRENT_THRESHOLD = -16;
 
   public Intake() {
     intake.setNeutralMode(NeutralMode.Brake);
@@ -50,9 +46,5 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Intake Current", getIntakeCurrent());
-    if(getIntakeCurrent() > CURRENT_THRESHOLD && RobotContainer.getOperator().getR1().get()){
-        setIntakeSpeed(.5);
-      }
     }
 }

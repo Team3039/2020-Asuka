@@ -257,8 +257,8 @@ public class Drive extends SubsystemBase {
   }
 
   public synchronized void driveWithJoystick() {
-    double y = -1 * RobotContainer.getDriver().getLeftYAxis() * .90;
-    double rot = RobotContainer.getDriver().getRightXAxis() * .35;
+    double y = -1 * RobotContainer.getDriver().getLeftYAxis() * Constants.DRIVER_Y;
+    double rot = RobotContainer.getDriver().getRightXAxis() * Constants.DRIVER_ROT;
 
     // Calculated Outputs (Limits Output to 12V)
     double leftOutput = rot + y ;

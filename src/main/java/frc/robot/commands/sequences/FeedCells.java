@@ -8,6 +8,7 @@
 package frc.robot.commands.sequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.ActuateIntake;
 import frc.robot.commands.SetHopperFeedingMode;
 import frc.robot.commands.SetIntakeSpeed;
@@ -24,6 +25,7 @@ public class FeedCells extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     super(new ActuateIntake(false),
           new SetIntakeSpeed(-.4),
+          new WaitCommand(1.5),
           new SetHopperFeedingMode());
   }
 }

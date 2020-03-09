@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -41,13 +40,13 @@ public class Turret extends SubsystemBase {
     setCamMode(false);
     turret.config_kP(0, 0.05);
     turret.selectProfileSlot(0, 0);
-
   }
 
   public enum TurretControlMode {
     DRIVER, 
     TRACKING,
-    JOYSTICK
+    JOYSTICK,
+    CLIMB
   }
 
   public TurretControlMode turretControlMode = TurretControlMode.DRIVER;
@@ -85,10 +84,10 @@ public class Turret extends SubsystemBase {
   public void trackTarget() {
     double errorX = (0 - getTargetX()) * kP_TURRET;
 
-    if (getTurretSwitch() && getTurretPosition() > 70) {
+    if (getTurretSwitch() && getTurretPosition() > 245) {
       turret.set(ControlMode.PercentOutput, -.1);
     }
-    else if (getTurretSwitch() && getTurretPosition() < -270) {
+    else if (getTurretSwitch() && getTurretPosition() < -110) {
       turret.set(ControlMode.PercentOutput, .1);
     }
     else {
@@ -99,10 +98,10 @@ public class Turret extends SubsystemBase {
   public void resetPose() {
     double errorX = (getTurretPosition()) * kP_TURRET;
 
-    if (getTurretSwitch() && getTurretPosition() > 70) {
+    if (getTurretSwitch() && getTurretPosition() > 245) {
       turret.set(ControlMode.PercentOutput, -.1);
     }
-    else if (getTurretSwitch() && getTurretPosition() < -270) {
+    else if (getTurretSwitch() && getTurretPosition() < -110) {
       turret.set(ControlMode.PercentOutput, .1);
     }
     else {
@@ -139,6 +138,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setTurretPosition(double degrees) {
+    turret.config_kP(0, 0.0001);
     double modDegrees = degrees % 360;
     turret.set(ControlMode.Position, modDegrees);
   }
@@ -180,6 +180,18 @@ public class Turret extends SubsystemBase {
     }
   }
   
+  public void turretReverse() {
+    double errorX = (getTurretPosition() - 180) * kP_TURRET;
+    if (getTurretSwitch() && getTurretPosition() > 245) {
+      turret.set(ControlMode.PercentOutput, -.1);
+    }
+    else if (getTurretSwitch() && getTurretPosition() < -110) {
+      turret.set(ControlMode.PercentOutput, .1);
+    }
+    else {
+      turret.set(ControlMode.PercentOutput, errorX);
+    }
+  }
 
   public Boolean getTurretSwitch() {
     return !turretSwitch.get();
@@ -203,10 +215,15 @@ public class Turret extends SubsystemBase {
           break;
         case JOYSTICK:
           manualControl();
-        default:
           break;
+        case CLIMB:
+          turretReverse();
+          break;
+        default:
+        setDriverCamMode();
+        resetPose();
+        break;
       }
     }
-    SmartDashboard.putBoolean("Has Target", hasTarget());
   }
 }

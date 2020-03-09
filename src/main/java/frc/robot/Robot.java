@@ -5,10 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+
 package frc.robot;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,7 +35,7 @@ import frc.robot.subsystems.Turret.TurretControlMode;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  public Command m_autonomousCommand;
   private SendableChooser<Command> autonTaskChooser;
 
 
@@ -53,7 +58,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     drive.resetOdometry(new Pose2d());
-
+ 
     autonTaskChooser = new SendableChooser<>();
 
     autonTaskChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
@@ -67,6 +72,9 @@ public class Robot extends TimedRobot {
     autonTaskChooser.addOption("Test", new AutoTest());
 
     SmartDashboard.putData("Autonomous", autonTaskChooser);
+
+    UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
+    usbCamera.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 180, 60);
   }
 
   /**
@@ -80,9 +88,10 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    //Gather Vision Info=\
+    // and running subsystem periodic() methods. This must be called from the robot's periodic
+    // block in order for anything in 
+    //  Command-based framework to work.
+    //Gather Vision Info
     targetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     targetX = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
     targetY = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
@@ -96,9 +105,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drive.resetOdometry(new Pose2d());
-    RobotContainer.turret.setControlMode(TurretControlMode.TRACKING);
-
-
+    // RobotContainer.turret.setControlMode(TurretControlMode.DRIVER);
   }
 
   @Override
@@ -135,6 +142,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+
   }
 
   @Override
@@ -148,7 +156,6 @@ public class Robot extends TimedRobot {
     }
     drive.setControlMode(Drive.DriveControlMode.JOYSTICK);
     RobotContainer.turret.setControlMode(TurretControlMode.DRIVER);
-
   }
 
   /**
@@ -156,7 +163,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-
   }
 
   @Override
@@ -170,5 +176,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  public static double getTime(){
+    return Timer.getFPGATimestamp();
   }
 }

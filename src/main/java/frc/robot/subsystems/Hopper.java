@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
 /**
@@ -99,7 +100,7 @@ public class Hopper extends SubsystemBase {
           break;
         case INTAKING:
           if (!getTopBeam() && !getLowBeam()) {
-            setHopperSpeed(.2, .5, .5);
+            setHopperSpeed(.2, .4, .4);
           }
           else if (getTopBeam() && !getLowBeam()) {
             setKickerSpeed(.2);
@@ -111,10 +112,15 @@ public class Hopper extends SubsystemBase {
           }
           break;
         case FEEDING:
-          setHopperSpeed(.2, .5, .5);
+            if (RobotContainer.shooter.isFar) {
+            setHopperSpeed(.2, .28, .28);
+            }
+            else {
+              setHopperSpeed(.2, .5, .5);
+            }
           break;
         case UNJAMMING:
-          setHopperSpeed(-.4, -.6, -.6);
+          setHopperSpeed(-.4, -.75, -.75);
           break;
       }
     }

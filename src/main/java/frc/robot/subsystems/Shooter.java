@@ -21,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.RobotMap;
@@ -34,6 +35,7 @@ public class Shooter extends SubsystemBase {
     public TalonFX shooterB = new TalonFX(RobotMap.shooterB);
 
     public Solenoid hood = new Solenoid(RobotMap.hood);
+    public boolean isFar = false;
 
     public void actuateHood(boolean lowerHood) {
         if(lowerHood){
@@ -105,7 +107,22 @@ public class Shooter extends SubsystemBase {
         return rpm * SHOOTER_OUTPUT_TO_ENCODER_RATIO * TICKS_PER_ROTATION / 10.0 / 60.0;
     }
 
+    public void setIsFar(boolean isFar){
+        this.isFar = isFar;
+    }
+
+    public boolean isFar(){
+        return isFar;
+    }
+
     @Override
     public void periodic() {
+        // if (getShooterRPM() >= 5100) {
+        //     isFar = true;
+        // }
+        // else {
+        //     isFar = false;
+        // }
+        SmartDashboard.putBoolean("Is Far", isFar());
     }
 }
