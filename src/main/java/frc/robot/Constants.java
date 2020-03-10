@@ -68,12 +68,12 @@ public final class Constants {
     public static final int kIZone_SHOOTER = 200;
     public static final double SHOOTER_OUTPUT_TO_ENCODER_RATIO = .44;
     public static final double TICKS_PER_ROTATION = 2048.0;
-    public static final int kLongCANTimeOutMs = 100;
+    public static final int kLongCANTimeOutMs = 100; 
     public static final double kFlywheelTicksPerRevolution = 0;
 
     public static final double SHOOT_NEAR_SHOT_RPM = 4975;
     public static final double SHOOT_MID_SHOT_RPM = 5750;
-    public static final double SHOOT_FAR_SHOT_RPM = 6475;
+    public static final double SHOOT_FAR_SHOT_RPM = 5800;
 
     public static final double AUTO_SHOOT_NEAR_SHOT_RPM = 5000;
     public static final double AUTO_SHOOT_MID_SHOT_RPM =  5600;

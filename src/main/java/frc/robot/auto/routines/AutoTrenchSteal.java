@@ -77,7 +77,6 @@ public class AutoTrenchSteal extends SequentialCommandGroup {
                         new AutoShootNear()),
                 new ResetShooter(),
                 new ResetHopper()
-        
         );
     }
 }

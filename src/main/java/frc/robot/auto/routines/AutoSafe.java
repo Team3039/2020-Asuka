@@ -48,9 +48,7 @@ public class AutoSafe extends ParallelCommandGroup {
                     // RamseteCommand passes volts to the callback
                     mDrive::tankDriveVolts,
                     mDrive),
-
             new StopTrajectory()
-
     );
   }
 }

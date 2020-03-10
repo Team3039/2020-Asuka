@@ -43,7 +43,6 @@ public class AutoTest extends ParallelCommandGroup {
             // RamseteCommand passes volts to the callback
             mDrive::tankDriveVolts,
             mDrive),
-
             new StopTrajectory(),
             new WaitCommand(.5),
             new RamseteCommand(
