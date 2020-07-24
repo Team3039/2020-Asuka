@@ -21,14 +21,11 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
-//True Ledgends Know
 public class Drive extends SubsystemBase {
 
   public enum DriveControlMode {
     JOYSTICK, PATH_FOLLOWING
   }
-
-  //Test
 
   private DriveControlMode driveControlMode = DriveControlMode.JOYSTICK;
 

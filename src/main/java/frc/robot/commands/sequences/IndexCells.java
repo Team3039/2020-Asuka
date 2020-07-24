@@ -25,6 +25,5 @@ public class IndexCells extends SequentialCommandGroup {
     super(new ActuateIntake(false),
           new SetIntakeSpeed(0),
           new SetHopperIntakingMode());
-    //Test
   }
 }
