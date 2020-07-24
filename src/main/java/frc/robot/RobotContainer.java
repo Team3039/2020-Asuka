@@ -96,7 +96,7 @@ public class RobotContainer {
     startButton.whenReleased(new SetClimbArmSpeed(0));
 
     //Operator
-    //When X is pressed it turns on the shooter to a set RPM (6350) raises the hood and starts tracking
+    //When X is pressed it turns on the shooter to a set RPM (5800) raises the hood and starts tracking
     operatorX.whenPressed(new ShootFarShot());
     //When Circle is pressed it turns on the shooter to a set RPM (5250) raises the hood and starts tracking
     operatorCircle.whenPressed(new ShootMidShot());
